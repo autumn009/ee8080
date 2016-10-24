@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EELibs
 {
-    public class Class1
+    public class Component
     {
     }
 }
