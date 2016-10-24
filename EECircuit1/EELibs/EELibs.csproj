@@ -37,6 +37,7 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Circuit.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="CPU.cs" />
     <Compile Include="LatchRegister.cs" />

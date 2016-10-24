@@ -6,8 +6,26 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="200"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
+
+            <Grid Grid.Column="0" Grid.Row="0">
+                <TextBlock FontSize="30">A</TextBlock>
+            </Grid>
+            <Grid Grid.Column="1" Grid.Row="0">
+                <TextBlock FontSize="30" Text="{x:Bind Circuit.Cpu.a.Data}"></TextBlock>
+            </Grid>
+
+        </Grid>
     </Grid>
 </Page>
