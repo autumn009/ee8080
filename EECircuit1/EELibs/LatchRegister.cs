@@ -27,6 +27,13 @@ namespace EELibs
         {
             Data--;
         }
+        public string DataByHex
+        {
+            get
+            {
+                return Data.ToString("X2");
+            }
+        }
     }
 
     public class Register16 : Register<ushort>

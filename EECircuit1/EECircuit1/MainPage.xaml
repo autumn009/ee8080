@@ -23,7 +23,7 @@
                 <TextBlock FontSize="30">A</TextBlock>
             </Grid>
             <Grid Grid.Column="1" Grid.Row="0">
-                <TextBlock FontSize="30" Text="{x:Bind Circuit.Cpu.a.Data}"></TextBlock>
+                <TextBlock FontSize="30" Text="{x:Bind Circuit.Cpu.a.DataByHex}"></TextBlock>
             </Grid>
 
         </Grid>
