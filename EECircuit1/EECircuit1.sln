@@ -7,6 +7,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EECircuit1", "EECircuit1\EE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EELibs", "EELibs\EELibs.csproj", "{42929BA3-5D6E-4172-9BB2-F38C5E6E075C}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "EECircuitWeb", "EECircuitWeb\EECircuitWeb.xproj", "{9157518B-A251-4A05-A372-EA49999C04CF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C9E13C7A-0B40-4170-8648-BB140B4875D2}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +62,22 @@ Global
 		{42929BA3-5D6E-4172-9BB2-F38C5E6E075C}.Release|x64.Build.0 = Release|Any CPU
 		{42929BA3-5D6E-4172-9BB2-F38C5E6E075C}.Release|x86.ActiveCfg = Release|Any CPU
 		{42929BA3-5D6E-4172-9BB2-F38C5E6E075C}.Release|x86.Build.0 = Release|Any CPU
+		{9157518B-A251-4A05-A372-EA49999C04CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9157518B-A251-4A05-A372-EA49999C04CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9157518B-A251-4A05-A372-EA49999C04CF}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{9157518B-A251-4A05-A372-EA49999C04CF}.Debug|ARM.Build.0 = Debug|Any CPU
+		{9157518B-A251-4A05-A372-EA49999C04CF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9157518B-A251-4A05-A372-EA49999C04CF}.Debug|x64.Build.0 = Debug|Any CPU
+		{9157518B-A251-4A05-A372-EA49999C04CF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9157518B-A251-4A05-A372-EA49999C04CF}.Debug|x86.Build.0 = Debug|Any CPU
+		{9157518B-A251-4A05-A372-EA49999C04CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9157518B-A251-4A05-A372-EA49999C04CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9157518B-A251-4A05-A372-EA49999C04CF}.Release|ARM.ActiveCfg = Release|Any CPU
+		{9157518B-A251-4A05-A372-EA49999C04CF}.Release|ARM.Build.0 = Release|Any CPU
+		{9157518B-A251-4A05-A372-EA49999C04CF}.Release|x64.ActiveCfg = Release|Any CPU
+		{9157518B-A251-4A05-A372-EA49999C04CF}.Release|x64.Build.0 = Release|Any CPU
+		{9157518B-A251-4A05-A372-EA49999C04CF}.Release|x86.ActiveCfg = Release|Any CPU
+		{9157518B-A251-4A05-A372-EA49999C04CF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
