@@ -1,7 +1,10 @@
 ﻿"use strict";
 
+function test() {
+    test.prototype.doit = function () {
+        alert('here')
+    }
+}
 
-//b = 0;
-var b = 0;
-
-
+var t = new test();
+t.doit();
