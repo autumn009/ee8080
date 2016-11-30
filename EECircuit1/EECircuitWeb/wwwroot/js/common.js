@@ -1,10 +1,15 @@
 ﻿"use strict";
 
-function test() {
-    test.prototype.doit = function () {
-        alert('here')
+function logicalValue()
+{
+    this.value = null;
+    // valueの値がHかLならそのまま返します。それ以外ならハイインピーダンス(Z)を返します。
+    logicalValue.prototype.toString = function () {
+        if (this.value == "H" || this.value == "L") return this.value;
+        return "Z";
     }
 }
 
-var t = new test();
-t.doit();
+var t = new logicalValue();
+t.value = "L";
+alert(t.toString());
