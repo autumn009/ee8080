@@ -49,7 +49,6 @@ textarea {
   }
 }
 
-td
-{
-    border-width:1px;
+td, table {
+    border-style: solid;
 }
