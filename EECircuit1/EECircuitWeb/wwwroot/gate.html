@@ -4,12 +4,27 @@
     <meta charset="utf-8" />
     <title>GATES</title>
     <script src="/js/common.js"></script>
+    <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body onload="loaded();">
     <select name="typeSelector" id="typeSelector" onChange="typeSelector_Changed()">
         <option value="">(種類)</option>
     </select>
 
-
+    <table>
+        <tr>
+            <td>
+                A <input type="checkbox" />
+                <br />
+                B <input type="checkbox" />
+            </td>
+            <td>
+                <img src="images/gate/128px-IEC_NAND_svg.png" />
+            </td>
+            <td>
+                <span id="result">!!!</span>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

@@ -47,4 +47,4 @@ function typeSelector_Changed()
 
 var t = new logicalValue();
 t.value = "L";
-alert(t.toString());
+//alert(t.toString());

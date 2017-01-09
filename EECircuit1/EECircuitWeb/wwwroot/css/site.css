@@ -48,3 +48,8 @@ textarea {
     display: none
   }
 }
+
+td
+{
+    border-width:1px;
+}
