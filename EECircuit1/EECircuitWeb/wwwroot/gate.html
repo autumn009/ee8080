@@ -3,6 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <title>GATES</title>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
     <script src="/js/common.js"></script>
     <link rel="stylesheet" href="/css/site.css" />
 </head>
@@ -11,20 +14,25 @@
         <option value="">(種類)</option>
     </select>
 
-    <table>
+    <table style="background-color:gray">
         <tr>
             <td>
-                A <input type="checkbox" />
-                <br />
-                B <input type="checkbox" />
+                <fieldset data-role="controlgroup">
+                    <input name="checka" id="checka" type="checkbox">
+                    <label for="checka">A</label>
+                    <input name="checkb" id="checkb" type="checkbox">
+                    <label for="checkb">B</label>
+                </fieldset>
             </td>
             <td>
                 <img src="images/gate/128px-IEC_NAND_svg.png" />
             </td>
             <td>
-                <span id="result">!!!</span>
+                <input name="checkr" id="checkr" type="checkbox" disabled="disabled">
+                <label for="checkr">R</label>
             </td>
         </tr>
     </table>
+    <script src="/js/gate.js"></script>
 </body>
 </html>
