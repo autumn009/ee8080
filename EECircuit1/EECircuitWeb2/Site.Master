@@ -60,6 +60,7 @@
             </div>
         </div>
         <div class="container body-content">
+            <p>MY MEMO</p>
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
             <hr />
