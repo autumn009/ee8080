@@ -12,6 +12,7 @@ namespace EECircuitWeb2
         // バンドルの詳細については、https://go.microsoft.com/fwlink/?LinkID=303951 を参照してください
         public static void RegisterBundles(BundleCollection bundles)
         {
+#if false
             bundles.Add(new ScriptBundle("~/bundles/WebFormsJs").Include(
                             "~/Scripts/WebForms/WebForms.js",
                             "~/Scripts/WebForms/WebUIValidation.js",
@@ -41,6 +42,7 @@ namespace EECircuitWeb2
                     Path = "~/Scripts/respond.min.js",
                     DebugPath = "~/Scripts/respond.js",
                 });
+#endif
         }
     }
 }

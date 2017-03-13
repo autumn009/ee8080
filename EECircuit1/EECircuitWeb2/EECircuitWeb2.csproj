@@ -135,6 +135,12 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\images\ajax-loader.gif" />
+    <Content Include="Content\images\gate\128px-IEC_AND_svg.png" />
+    <Content Include="Content\images\gate\128px-IEC_NAND_svg.png" />
+    <Content Include="Content\images\gate\128px-IEC_NOR_svg.png" />
+    <Content Include="Content\images\gate\128px-IEC_NOT_svg.png" />
+    <Content Include="Content\images\gate\128px-IEC_OR_svg.png" />
+    <Content Include="Content\images\gate\128px-IEC_XOR_svg.png" />
     <Content Include="Content\images\icons-png\action-black.png" />
     <Content Include="Content\images\icons-png\action-white.png" />
     <Content Include="Content\images\icons-png\alert-black.png" />
@@ -351,6 +357,7 @@
     <Content Include="Content\jquery.mobile.theme-1.4.5.min.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Default.aspx" />
+    <Content Include="emu.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -367,6 +374,7 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Properties\PublishProfiles\EE8080 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
+    <Content Include="logic.aspx" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-3.1.1.js" />
@@ -431,8 +439,22 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="emu.aspx.cs">
+      <DependentUpon>emu.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="emu.aspx.designer.cs">
+      <DependentUpon>emu.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="logic.aspx.cs">
+      <DependentUpon>logic.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="logic.aspx.designer.cs">
+      <DependentUpon>logic.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Site.Master.cs">
@@ -473,6 +495,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\common.ts" />
+    <TypeScriptCompile Include="Scripts\logics.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquerymobile\jquerymobile.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
   </ItemGroup>

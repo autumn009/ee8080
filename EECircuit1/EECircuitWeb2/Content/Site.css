@@ -29,3 +29,7 @@ textarea {
         padding: 0;
     }
 }
+
+td, table {
+    border-style: solid;
+}

@@ -7,13 +7,28 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%: Page.Title %> - マイ ASP.NET アプリケーション</title>
+    <title>EE8080</title>
 
+    <%--
     <asp:PlaceHolder runat="server">
         <%: Scripts.Render("~/bundles/modernizr") %>
     </asp:PlaceHolder>
+    --%>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script>
+        $(document).bind("mobileinit", function () {
+            $.mobile.pushStateEnabled = false;
+            $.mobile.ajaxEnabled = false;
+        });
+    </script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script src="/Scripts/common.js"></script>
+    <link rel="stylesheet" href="/Content/Site.css" />
 
+    <%--
     <webopt:bundlereference runat="server" path="~/Content/css" />
+    --%>
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 
 </head>
@@ -22,7 +37,7 @@
         <asp:ScriptManager runat="server">
             <Scripts>
                 <%--ScriptManager でのスクリプトのバンドルの詳細については、https://go.microsoft.com/fwlink/?LinkID=301884 を参照してください --%>
-                <%--Framework スクリプト--%>
+                <%--Framework スクリプト
                 <asp:ScriptReference Name="MsAjaxBundle" />
                 <asp:ScriptReference Name="jquery" />
                 <asp:ScriptReference Name="bootstrap" />
@@ -36,39 +51,19 @@
                 <asp:ScriptReference Name="WebParts.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebParts.js" />
                 <asp:ScriptReference Name="Focus.js" Assembly="System.Web" Path="~/Scripts/WebForms/Focus.js" />
                 <asp:ScriptReference Name="WebFormsBundle" />
+                    --%>
                 <%--サイト スクリプト--%>
             </Scripts>
         </asp:ScriptManager>
 
-        <div class="navbar navbar-inverse navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" runat="server" href="~/">アプリケーション名</a>
-                </div>
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li><a runat="server" href="~/">ホーム</a></li>
-                        <li><a runat="server" href="~/About">詳細</a></li>
-                        <li><a runat="server" href="~/Contact">問い合わせ</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
         <div class="container body-content">
-            <p>MY MEMO</p>
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
             <hr />
             <footer>
-                <p>&copy; <%: DateTime.Now.Year %> - マイ ASP.NET アプリケーション</p>
+                <p>&copy; 2017 EE8080</p>
             </footer>
         </div>
-
     </form>
 </body>
 </html>
