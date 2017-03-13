@@ -56,13 +56,14 @@
             </Scripts>
         </asp:ScriptManager>
 
-        <div class="container body-content">
+        <div class="container body-content" data-role="page">
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
-            <hr />
-            <footer>
-                <p>&copy; 2017 EE8080</p>
-            </footer>
+            <div data-role="footer">
+                <footer>
+                    <p>&copy; 2017 EE8080</p>
+                </footer>
+            </div>
         </div>
     </form>
 </body>
