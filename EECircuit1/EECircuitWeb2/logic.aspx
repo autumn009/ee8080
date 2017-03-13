@@ -6,7 +6,7 @@
         <h1><a href="#menu-left" id="logicname">AND</a></h1>
     </div>
     <div role="main" class="ui-content">
-        <h2 id="simname">論理シミュレーター</h2>
+        <h2 id="simname">---</h2>
         <table>
             <tr>
                 <td>
@@ -18,7 +18,7 @@
                     </fieldset>
                 </td>
                 <td>
-                    <img src="/Content/images/gate/128px-IEC_NAND_svg.png" id="logicicon" />
+                    <img id="logicicon" />
                 </td>
                 <td>
                     <input name="checkr" id="checkr" type="checkbox" disabled="disabled" />
@@ -26,7 +26,7 @@
                 </td>
             </tr>
         </table>
-        <h2 id="tablename">真理表</h2>
+        <h2 id="tablename">---</h2>
         <table>
             <tr>
                 <th></th>
