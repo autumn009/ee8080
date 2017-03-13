@@ -30,8 +30,11 @@ textarea {
     }
 }
 
-td, table {
+th, td {
     border-style: solid;
 }
 
-
+.thick{
+    padding-left: 3em;
+    padding-right: 3em;
+}

@@ -35,13 +35,13 @@
             </tr>
             <tr>
                 <th>0</th>
-                <td id="t00">X</td>
-                <td id="t01">X</td>
+                <td id="t00" class="thick">X</td>
+                <td id="t01" class="thick">X</td>
             </tr>
             <tr>
                 <th>1</th>
-                <td id="t10">X</td>
-                <td id="t11">X</td>
+                <td id="t10" class="thick">X</td>
+                <td id="t11" class="thick">X</td>
             </tr>
         </table>
 

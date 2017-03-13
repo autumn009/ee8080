@@ -1,7 +1,19 @@
 function update() {
-    var r = thefunc($("#checka").prop('checked'), $("#checkb").prop('checked'));
+    var x0 = $("#checka").prop('checked');
+    var y0 = $("#checkb").prop('checked');
+    var r = thefunc(x0, y0);
     $("#checkr").prop('checked', r);
     $("#checkr").checkboxradio("refresh");
+    for (var x = 0; x < 2; x++) {
+        for (var y = 0; y < 2; y++) {
+            var col = "#ffffff";
+            if (x == x0 && y == y0)
+                col = "#00ffff";
+            var id = "#t" + x.toString() + y.toString();
+            $(id).attr("data-theme", col);
+            $(id).css("background-color", col);
+        }
+    }
 }
 $("#checka").click(update);
 $("#checkb").click(update);
@@ -31,4 +43,7 @@ $("#navand").click(function () {
     andsetup();
 });
 andsetup();
+$(document).on("mobileinit", function () {
+    update();
+});
 //# sourceMappingURL=logic.js.map
