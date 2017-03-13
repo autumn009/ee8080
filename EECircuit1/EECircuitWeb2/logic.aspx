@@ -1,15 +1,9 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="logic.aspx.cs" Inherits="EECircuitWeb2.logic" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Site.Master" CodeBehind="logic.aspx.cs" Inherits="EECircuitWeb2.logic" %>
+
+<asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title></title>
-</head>
-<body>
-    <form id="form1" runat="server">
-        <div>
             <select name="typeSelector" id="typeSelector" onchange="typeSelector_Changed()">
                 <option value="">(種類)</option>
             </select>
@@ -53,8 +47,5 @@
                     </td>
                 </tr>
             </table>
-            <script src="/Scripts/gate.js"></script>
-        </div>
-    </form>
-</body>
-</html>
+            <script src="/Scripts/logic.js"></script>
+</asp:Content>
