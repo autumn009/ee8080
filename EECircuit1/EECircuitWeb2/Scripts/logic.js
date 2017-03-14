@@ -28,17 +28,18 @@ function setup(name, func, inputLabels, outputLabels) {
     $("#simname").text(name + "ゲート・シミュレーター");
     $("#tablename").text(name + "ゲート真理表");
     thefunc = func;
+    $("#tableroot").empty();
     var table = document.createElement("table");
     $("#tableroot").append(table);
     var tr1 = document.createElement("tr");
     $(table).append(tr1);
     var thInput = document.createElement("th");
     $(thInput).text("INPUT");
-    $(thInput).addClass("border");
+    $(thInput).addClass("borderh");
     $(tr1).append(thInput);
     var thOutput = document.createElement("th");
     $(thOutput).text("OUTPUT");
-    $(thOutput).addClass("border");
+    $(thOutput).addClass("borderh");
     $(tr1).append(thOutput);
     var tr2 = document.createElement("tr");
     $(table).append(tr2);
@@ -46,21 +47,59 @@ function setup(name, func, inputLabels, outputLabels) {
     $(tr2).append(tdInput);
     var tdOutput = document.createElement("td");
     $(tr2).append(tdOutput);
-    // TBW create Input table
-    // TBW create output table
+    var totalCount = Math.pow(2, inputLabels.length);
+    // create Input table
+    var tableInput = document.createElement("table");
+    $(tdInput).append(tableInput);
+    var trih = document.createElement("tr");
+    $(tableInput).append(trih);
+    for (var i = 0; i < inputLabels.length; i++) {
+        var thi = document.createElement("th");
+        $(thi).text(inputLabels[i]);
+        $(thi).addClass("borderh");
+        $(trih).append(thi);
+    }
+    for (var j = 0; j < totalCount; j++) {
+        var trid = document.createElement("tr");
+        $(tableInput).append(trid);
+        var values = [];
+        var t = j;
+        for (var i = 0; i < inputLabels.length; i++) {
+            values.unshift(((t & 1) != 0));
+        }
+        for (var i = 0; i < inputLabels.length; i++) {
+            var thd = document.createElement("td");
+            $(thd).addClass("border");
+            $(thd).addClass("thick");
+            $(thd).text(values[i] ? "1" : "0");
+            $(trid).append(thd);
+        }
+    }
+    // TBW
+    // create output table
+    var tableOutput = document.createElement("table");
+    $(tdOutput).append(tableOutput);
+    var troh = document.createElement("tr");
+    $(tableOutput).append(troh);
+    for (var i = 0; i < outputLabels.length; i++) {
+        var tho = document.createElement("th");
+        $(tho).text(outputLabels[i]);
+        $(troh).append(tho);
+    }
+    // TBW
     $("#t00").text(func(0, 0));
     $("#t01").text(func(0, 1));
     $("#t10").text(func(1, 0));
     $("#t11").text(func(1, 1));
 }
 function andsetup() {
-    setup("AND", function (a, b) {
-        return a && b;
+    setup("AND", function (input) {
+        return [input[0] && input[1]];
     }, null, null);
 }
 $("#navor").click(function () {
-    setup("OR", function (a, b) {
-        return a || b;
+    setup("OR", function (input) {
+        return [input[0] || input[1]];
     }, null, null);
 });
 $("#navand").click(function () {

@@ -32,6 +32,12 @@ textarea {
 
 th.border, td.border {
     border-style: solid;
+    border-width: 2px;
+}
+
+th.borderh {
+    border-style: solid;
+    border-width: 1px;
 }
 
 .thick{
