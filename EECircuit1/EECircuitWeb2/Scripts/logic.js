@@ -66,6 +66,7 @@ function setup(name, func, inputLabels, outputLabels) {
         var t = j;
         for (var i = 0; i < inputLabels.length; i++) {
             values.unshift(((t & 1) != 0));
+            t = t >> 1;
         }
         for (var i = 0; i < inputLabels.length; i++) {
             var thd = document.createElement("td");
@@ -75,7 +76,6 @@ function setup(name, func, inputLabels, outputLabels) {
             $(trid).append(thd);
         }
     }
-    // TBW
     // create output table
     var tableOutput = document.createElement("table");
     $(tdOutput).append(tableOutput);
@@ -84,9 +84,27 @@ function setup(name, func, inputLabels, outputLabels) {
     for (var i = 0; i < outputLabels.length; i++) {
         var tho = document.createElement("th");
         $(tho).text(outputLabels[i]);
+        $(tho).addClass("borderh");
         $(troh).append(tho);
     }
-    // TBW
+    for (var j = 0; j < totalCount; j++) {
+        var trod = document.createElement("tr");
+        $(tableOutput).append(trod);
+        var values = [];
+        var t = j;
+        for (var i = 0; i < inputLabels.length; i++) {
+            values.unshift(((t & 1) != 0));
+            t = t >> 1;
+        }
+        var results = thefunc(values);
+        for (var i = 0; i < outputLabels.length; i++) {
+            var thd = document.createElement("td");
+            $(thd).addClass("border");
+            $(thd).addClass("thick");
+            $(thd).text(results[i] ? "1" : "0");
+            $(trod).append(thd);
+        }
+    }
     $("#t00").text(func(0, 0));
     $("#t01").text(func(0, 1));
     $("#t10").text(func(1, 0));

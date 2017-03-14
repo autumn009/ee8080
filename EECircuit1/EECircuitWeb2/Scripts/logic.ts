@@ -72,7 +72,8 @@ function setup(name: string, func, inputLabels: string[], outputLabels: string[]
         var values: boolean[] = [];
         var t = j;
         for (var i = 0; i < inputLabels.length; i++) {
-            values.unshift(((t & 1)!=0));
+            values.unshift(((t & 1) != 0));
+            t = t >> 1;
         }
         for (var i = 0; i < inputLabels.length; i++) {
             var thd = document.createElement("td");
@@ -82,13 +83,6 @@ function setup(name: string, func, inputLabels: string[], outputLabels: string[]
             $(trid).append(thd);
         }
     }
-    // TBW
-
-
-
-
-
-
 
     // create output table
     var tableOutput = document.createElement("table");
@@ -98,9 +92,28 @@ function setup(name: string, func, inputLabels: string[], outputLabels: string[]
     for (var i = 0; i < outputLabels.length; i++) {
         var tho = document.createElement("th");
         $(tho).text(outputLabels[i]);
+        $(tho).addClass("borderh");
         $(troh).append(tho);
     }
-    // TBW
+
+    for (var j = 0; j < totalCount; j++) {
+        var trod = document.createElement("tr");
+        $(tableOutput).append(trod);
+        var values: boolean[] = [];
+        var t = j;
+        for (var i = 0; i < inputLabels.length; i++) {
+            values.unshift(((t & 1) != 0));
+            t = t >> 1;
+        }
+        var results: boolean[] = thefunc(values);
+        for (var i = 0; i < outputLabels.length; i++) {
+            var thd = document.createElement("td");
+            $(thd).addClass("border");
+            $(thd).addClass("thick");
+            $(thd).text(results[i] ? "1" : "0");
+            $(trod).append(thd);
+        }
+    }
 
 
     $("#t00").text(func(0, 0));
