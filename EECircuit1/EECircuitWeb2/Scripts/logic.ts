@@ -93,6 +93,7 @@ function setup(name: string, func, inputLabels: string[], outputLabels: string[]
         var tho = document.createElement("th");
         $(tho).text(outputLabels[i]);
         $(tho).addClass("borderh");
+        $(tho).addClass("result");
         $(troh).append(tho);
     }
 
@@ -110,16 +111,11 @@ function setup(name: string, func, inputLabels: string[], outputLabels: string[]
             var thd = document.createElement("td");
             $(thd).addClass("border");
             $(thd).addClass("thick");
+            $(thd).addClass("result");
             $(thd).text(results[i] ? "1" : "0");
             $(trod).append(thd);
         }
     }
-
-
-    $("#t00").text(func(0, 0));
-    $("#t01").text(func(0, 1));
-    $("#t10").text(func(1, 0));
-    $("#t11").text(func(1, 1));
 }
 
 function andsetup() {
@@ -136,10 +132,13 @@ $("#navor").click(() => {
 $("#navand").click(() => {
     andsetup();
 });
+$("#navand4").click(() => {
+    setup("AND(4Input)", (input: boolean[]): boolean[] => {
+        return [input[0] && input[1] && input[2] && input[3]];
+    }, ["A", "B", "C", "D"], null);
+});
 
 andsetup();
 $(document).on("mobileinit", function () {
     update();
 });
-
-

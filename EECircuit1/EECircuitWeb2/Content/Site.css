@@ -44,3 +44,12 @@ th.borderh {
     padding-left: 3em;
     padding-right: 3em;
 }
+
+.match {
+    background-color: #00ffff;
+}
+
+.result {
+    border-color: #808080;
+}
+

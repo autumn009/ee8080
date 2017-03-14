@@ -28,31 +28,13 @@
         </table>
         <h2 id="tablename">---</h2>
         <div id="tableroot"></div>
-
-        <table>
-            <tr>
-                <th></th>
-                <th>0</th>
-                <th>1</th>
-            </tr>
-            <tr>
-                <th>0</th>
-                <td id="t00" class="thick">X</td>
-                <td id="t01" class="thick">X</td>
-            </tr>
-            <tr>
-                <th>1</th>
-                <td id="t10" class="thick">X</td>
-                <td id="t11" class="thick">X</td>
-            </tr>
-        </table>
-
     </div>
     <div data-role="panel" id="menu-left" data-theme="b" data-display="push" data-position="left">
         <ul data-role="listview">
             <li><a data-rel="close" class="anchor" href="#" id="navand">AND</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navor">OR</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navnot">NOT</a></li>
+            <li><a data-rel="close" class="anchor" href="#" id="navand4">AND(4Input)</a></li>
         </ul>
         <p class="close-btn"><a href="#" data-rel="close" data-role="button" data-theme="c" data-icon="delete">Close</a></p>
     </div>
