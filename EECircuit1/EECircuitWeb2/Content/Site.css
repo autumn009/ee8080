@@ -30,7 +30,7 @@ textarea {
     }
 }
 
-th, td {
+th.border, td.border {
     border-style: solid;
 }
 

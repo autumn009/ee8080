@@ -27,6 +27,8 @@
             </tr>
         </table>
         <h2 id="tablename">---</h2>
+        <div id="tableroot"></div>
+
         <table>
             <tr>
                 <th></th>
