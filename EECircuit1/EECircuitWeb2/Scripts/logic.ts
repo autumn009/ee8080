@@ -1,24 +1,59 @@
 ﻿
 function update() {
-    var x0 = $("#checka").prop('checked');
-    var y0 = $("#checkb").prop('checked');
-    var r = thefunc(x0, y0);
-    $("#checkr").prop('checked', r);
-    $("#checkr").checkboxradio("refresh");
 
-    for (var x = 0; x < 2; x++) {
-        for (var y = 0; y < 2; y++) {
-            var col = "#ffffff";
-            if (x == x0 && y == y0) col = "#00ffff";
-            var id = "#t" + x.toString() + y.toString();
-            $(id).attr("data-theme", col);
-            $(id).css("background-color", col);
-        }
-    }
+    //var x0 = $("#checka").prop('checked');
+    //var y0 = $("#checkb").prop('checked');
+    //var r = thefunc(x0, y0);
+    //$("#checkr").prop('checked', r);
+    //$("#checkr").checkboxradio("refresh");
+
+    //for (var x = 0; x < 2; x++) {
+    //    for (var y = 0; y < 2; y++) {
+    //        var col = "#ffffff";
+    //        if (x == x0 && y == y0) col = "#00ffff";
+    //        var id = "#t" + x.toString() + y.toString();
+    //        $(id).attr("data-theme", col);
+    //        $(id).css("background-color", col);
+    //    }
+    //}
 }
 
-$("#checka").click(update);
-$("#checkb").click(update);
+//$("#checka").click(update);
+//$("#checkb").click(update);
+
+var checkCount = 0;
+
+function setupInputChecks(inputLabels: string[]) {
+    var newCount: number = inputLabels.length;
+    var currentCount = checkCount;  //$("#inputCheckHolder tbody").length / 2;
+    var delta = newCount - currentCount;
+    if (delta == 0) return;
+    if (delta < 0) {
+        for (var i = 0; i < -delta * 2; i++) {
+            $("#inputCheckHolder").remove("*:last-child");
+        }
+    }
+    else {
+        for (var i = currentCount; i < newCount; i++) {
+            var check = document.createElement("input");
+            $(check).attr("type", "checkbox");
+            $(check).attr("name", "check" + i);
+            $(check).attr("id", "check" + i);
+            $("#inputCheckHolder div").append(check);
+            var label = document.createElement("label");
+            $(label).attr("for", "check" + i);
+            $(label).text(inputLabels[i]);
+            $("#inputCheckHolder div").append(label);
+            $(check).checkboxradio();
+            $(label).checkboxradio();
+        }
+    }
+    //$("#inputCheckHolder").checkboxradio();
+    //$("#inputCheckHolder").controlgroup("refresh");
+    //$("input[type='checkbox']").checkboxradio("refresh");
+    //$("input[type='checkbox']").checkboxradio();
+    checkCount = newCount;
+}
 
 var thefunc;
 
@@ -30,6 +65,9 @@ function setup(name: string, func, inputLabels: string[], outputLabels: string[]
     $("#logicicon").attr("src", "/Content/images/gate/" + name + ".png");
     $("#simname").text(name +"ゲート・シミュレーター");
     $("#tablename").text(name + "ゲート真理表");
+
+    setupInputChecks(inputLabels);
+    //setupOutputFlags(outputLabels.length);
 
     thefunc = func;
     $("#tableroot").empty();
@@ -138,7 +176,7 @@ $("#navand4").click(() => {
     }, ["A", "B", "C", "D"], null);
 });
 
-andsetup();
-$(document).on("mobileinit", function () {
+$(document).on("pagecreate", function () {
+    andsetup();
     update();
 });

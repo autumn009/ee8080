@@ -10,11 +10,7 @@
         <table>
             <tr>
                 <td>
-                    <fieldset data-role="controlgroup">
-                        <input name="checka" id="checka" type="checkbox" />
-                        <label for="checka">A</label>
-                        <input name="checkb" id="checkb" type="checkbox" />
-                        <label for="checkb">B</label>
+                    <fieldset data-role="controlgroup" id="inputCheckHolder">
                     </fieldset>
                 </td>
                 <td>
