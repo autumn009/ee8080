@@ -9,7 +9,7 @@
         <h2 id="simname">---</h2>
         <table>
             <tr>
-                <td>
+                <td id="inputCheckHolderTd">
                     <fieldset data-role="controlgroup" id="inputCheckHolder">
                     </fieldset>
                 </td>

@@ -26,32 +26,37 @@ var checkCount = 0;
 function setupInputChecks(inputLabels: string[]) {
     var newCount: number = inputLabels.length;
     var currentCount = checkCount;  //$("#inputCheckHolder tbody").length / 2;
-    var delta = newCount - currentCount;
-    if (delta == 0) return;
-    if (delta < 0) {
-        for (var i = 0; i < -delta * 2; i++) {
-            $("#inputCheckHolder").remove("*:last-child");
-        }
-    }
-    else {
-        for (var i = currentCount; i < newCount; i++) {
-            var check = document.createElement("input");
-            $(check).attr("type", "checkbox");
-            $(check).attr("name", "check" + i);
-            $(check).attr("id", "check" + i);
-            $("#inputCheckHolder div").append(check);
-            var label = document.createElement("label");
-            $(label).attr("for", "check" + i);
-            $(label).text(inputLabels[i]);
-            $("#inputCheckHolder div").append(label);
-            $(check).checkboxradio();
-            $(label).checkboxradio();
-        }
+    // TBW
+    $("#inputCheckHolderTd").empty();
+
+    var div = document.createElement("div");
+    $(div).attr("data-role","fieldcontain");
+    $("#inputCheckHolderTd").append(div);
+    var fc = document.createElement("fieldset");
+    $(fc).attr("data-role", "controlgroup");
+    $(fc).attr("id", "inputCheckHolder");
+    $(div).append(fc);
+    for (var i = 0; i < newCount; i++) {
+        var check = document.createElement("input");
+        $(check).attr("type", "checkbox");
+        $(check).attr("name", "check" + i);
+        $(check).attr("id", "check" + i);
+        $("#inputCheckHolder").append(check);
+        var label = document.createElement("label");
+        $(label).attr("for", "check" + i);
+        $(label).text(inputLabels[i]);
+        $(label).css("width","2em");
+        $("#inputCheckHolder").append(label);
+        //$(check).checkboxradio();
+        //$(label).checkboxradio();
     }
     //$("#inputCheckHolder").checkboxradio();
     //$("#inputCheckHolder").controlgroup("refresh");
     //$("input[type='checkbox']").checkboxradio("refresh");
     //$("input[type='checkbox']").checkboxradio();
+    //$("input[type='checkbox']").checkboxradio("refresh");
+    //$("#inputCheckHolder").trigger('create');
+    $("#inputCheckHolderTd").trigger('create');
     checkCount = newCount;
 }
 
