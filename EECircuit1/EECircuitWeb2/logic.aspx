@@ -10,15 +10,12 @@
         <table>
             <tr>
                 <td id="inputCheckHolderTd">
-                    <fieldset data-role="controlgroup" id="inputCheckHolder">
-                    </fieldset>
                 </td>
                 <td>
                     <img id="logicicon" />
                 </td>
-                <td>
-                    <input name="checkr" id="checkr" type="checkbox" disabled="disabled" />
-                    <label for="checkr">R</label>
+                <td id="outputCheckHolderTd">
+                    <img id="test" style="width:2em;height:2em;" />
                 </td>
             </tr>
         </table>

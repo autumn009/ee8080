@@ -53,3 +53,12 @@ th.borderh {
     border-color: #808080;
 }
 
+#test {
+    background-color: #3388cc /*{a-active-background-color}*/;
+    border-color: #3388cc /*{a-active-border}*/;
+    color: #fff /*{a-active-color}*/;
+    text-shadow: 0 /*{a-active-shadow-x}*/ 1px /*{a-active-shadow-y}*/ 0 /*{a-active-shadow-radius}*/ #005599 /*{a-active-shadow-color}*/;
+    background-image: url("/Content/images/check-white.png");
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+}
