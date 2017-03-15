@@ -25,10 +25,13 @@ var checkCount = 0;
 
 function setupInputChecks(inputLabels: string[]) {
     var newCount: number = inputLabels.length;
-    var currentCount = checkCount;  //$("#inputCheckHolder tbody").length / 2;
-    // TBW
-    $("#inputCheckHolderTd").empty();
+    var currentCount = checkCount;
+    var currentState: boolean[] = [];
+    for (var i = 0; i < currentCount; i++) {
+        currentState.push($("#check" + i).prop("checked"));
+    }
 
+    $("#inputCheckHolderTd").empty();
     var div = document.createElement("div");
     $(div).attr("data-role","fieldcontain");
     $("#inputCheckHolderTd").append(div);
@@ -41,21 +44,16 @@ function setupInputChecks(inputLabels: string[]) {
         $(check).attr("type", "checkbox");
         $(check).attr("name", "check" + i);
         $(check).attr("id", "check" + i);
+        if (currentState[i]) {
+            $(check).attr("checked", "checked");
+        }
         $("#inputCheckHolder").append(check);
         var label = document.createElement("label");
         $(label).attr("for", "check" + i);
         $(label).text(inputLabels[i]);
         $(label).css("width","2em");
         $("#inputCheckHolder").append(label);
-        //$(check).checkboxradio();
-        //$(label).checkboxradio();
     }
-    //$("#inputCheckHolder").checkboxradio();
-    //$("#inputCheckHolder").controlgroup("refresh");
-    //$("input[type='checkbox']").checkboxradio("refresh");
-    //$("input[type='checkbox']").checkboxradio();
-    //$("input[type='checkbox']").checkboxradio("refresh");
-    //$("#inputCheckHolder").trigger('create');
     $("#inputCheckHolderTd").trigger('create');
     checkCount = newCount;
 }
