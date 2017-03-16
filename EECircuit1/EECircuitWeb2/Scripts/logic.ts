@@ -183,6 +183,11 @@ function andsetup() {
     }, null, null);
 }
 
+$("#navnot").click(() => {
+    setup("NOT", (input: boolean[]): boolean[] => {
+        return [!input[0]];
+    }, ["A"], null);
+});
 $("#navor").click(() => {
     setup("OR", (input: boolean[]): boolean[] => {
         return [input[0] || input[1]];
@@ -195,6 +200,21 @@ $("#navand4").click(() => {
     setup("AND(4Input)", (input: boolean[]): boolean[] => {
         return [input[0] && input[1] && input[2] && input[3]];
     }, ["A", "B", "C", "D"], null);
+});
+$("#navxor").click(() => {
+    setup("XOR", (input: boolean[]): boolean[] => {
+        return [input[0] !== input[1]];
+    }, null, null);
+});
+$("#navnor").click(() => {
+    setup("NOR", (input: boolean[]): boolean[] => {
+        return [!(input[0] || input[1])];
+    }, null, null);
+});
+$("#navnand").click(() => {
+    setup("NAND", (input: boolean[]): boolean[] => {
+        return [!(input[0] && input[1])];
+    }, null, null);
 });
 
 $(document).on("pagecreate", function () {

@@ -23,9 +23,12 @@
     </div>
     <div data-role="panel" id="menu-left" data-theme="b" data-display="push" data-position="left">
         <ul data-role="listview">
+            <li><a data-rel="close" class="anchor" href="#" id="navnot">NOT</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navand">AND</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navor">OR</a></li>
-            <li><a data-rel="close" class="anchor" href="#" id="navnot">NOT</a></li>
+            <li><a data-rel="close" class="anchor" href="#" id="navxor">XOR</a></li>
+            <li><a data-rel="close" class="anchor" href="#" id="navnand">NAND</a></li>
+            <li><a data-rel="close" class="anchor" href="#" id="navnor">NOR</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navand4">AND(4Input)</a></li>
         </ul>
         <p class="close-btn"><a href="#" data-rel="close" data-role="button" data-theme="c" data-icon="delete">Close</a></p>

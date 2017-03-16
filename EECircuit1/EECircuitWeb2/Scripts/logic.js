@@ -166,6 +166,11 @@ function andsetup() {
         return [input[0] && input[1]];
     }, null, null);
 }
+$("#navnot").click(function () {
+    setup("NOT", function (input) {
+        return [!input[0]];
+    }, ["A"], null);
+});
 $("#navor").click(function () {
     setup("OR", function (input) {
         return [input[0] || input[1]];
@@ -178,6 +183,21 @@ $("#navand4").click(function () {
     setup("AND(4Input)", function (input) {
         return [input[0] && input[1] && input[2] && input[3]];
     }, ["A", "B", "C", "D"], null);
+});
+$("#navxor").click(function () {
+    setup("XOR", function (input) {
+        return [input[0] !== input[1]];
+    }, null, null);
+});
+$("#navnor").click(function () {
+    setup("NOR", function (input) {
+        return [!(input[0] || input[1])];
+    }, null, null);
+});
+$("#navnand").click(function () {
+    setup("NAND", function (input) {
+        return [!(input[0] && input[1])];
+    }, null, null);
 });
 $(document).on("pagecreate", function () {
     andsetup();
