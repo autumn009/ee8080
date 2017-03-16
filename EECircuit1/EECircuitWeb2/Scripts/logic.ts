@@ -6,6 +6,19 @@ function update() {
     for (var i = 0; i < checkCount; i++) {
         input.push($("#check" + i).prop("checked"));
     }
+    var active: number = 0;
+    for (var i = 0; i < checkCount; i++) {
+        if (input[i]) active += Math.pow(2,i);
+    }
+    for (var i = 0; i < Math.pow(2, checkCount); i++) {
+        if (i == active) {
+            $("#tri" + i).addClass("active");
+            $("#tro" + i).addClass("active");
+        } else {
+            $("#tri" + i).removeClass("active");
+            $("#tro" + i).removeClass("active");
+        }
+    }
     var output: boolean[] = thefunc(input);
     for (var i = 0; i < output.length; i++) {
         var img = $("#flag" + i);
@@ -81,6 +94,8 @@ function setup(name: string, func, inputLabels: string[], outputLabels: string[]
     if (!inputLabels) inputLabels = ["A","B"];
     if (!outputLabels) outputLabels = ["Q"];
 
+    thefunc = func;
+
     $("#logicname").text(name);
     $("#logicicon").attr("src", "/Content/images/gate/" + name + ".png");
     $("#simname").text(name +"ゲート・シミュレーター");
@@ -88,9 +103,7 @@ function setup(name: string, func, inputLabels: string[], outputLabels: string[]
 
     setupInputChecks(inputLabels);
     setupOutputFlags(outputLabels);
-    update();
 
-    thefunc = func;
     $("#tableroot").empty();
     var table = document.createElement("table");
     $("#tableroot").append(table);
@@ -127,6 +140,7 @@ function setup(name: string, func, inputLabels: string[], outputLabels: string[]
 
     for (var j = 0; j < totalCount; j++) {
         var trid = document.createElement("tr");
+        $(trid).attr("id", "tri" + j);
         $(tableInput).append(trid);
         var values: boolean[] = [];
         var t = j;
@@ -158,6 +172,7 @@ function setup(name: string, func, inputLabels: string[], outputLabels: string[]
 
     for (var j = 0; j < totalCount; j++) {
         var trod = document.createElement("tr");
+        $(trod).attr("id", "tro" + j);
         $(tableOutput).append(trod);
         var values: boolean[] = [];
         var t = j;
@@ -175,6 +190,8 @@ function setup(name: string, func, inputLabels: string[], outputLabels: string[]
             $(trod).append(thd);
         }
     }
+
+    update();
 }
 
 function andsetup() {
