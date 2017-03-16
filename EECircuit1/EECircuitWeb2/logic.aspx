@@ -15,7 +15,6 @@
                     <img id="logicicon" />
                 </td>
                 <td id="outputCheckHolderTd">
-                    <img id="test" style="width:2em;height:2em;" />
                 </td>
             </tr>
         </table>

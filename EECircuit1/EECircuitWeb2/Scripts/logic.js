@@ -1,21 +1,21 @@
 function update() {
-    //var x0 = $("#checka").prop('checked');
-    //var y0 = $("#checkb").prop('checked');
-    //var r = thefunc(x0, y0);
-    //$("#checkr").prop('checked', r);
-    //$("#checkr").checkboxradio("refresh");
-    //for (var x = 0; x < 2; x++) {
-    //    for (var y = 0; y < 2; y++) {
-    //        var col = "#ffffff";
-    //        if (x == x0 && y == y0) col = "#00ffff";
-    //        var id = "#t" + x.toString() + y.toString();
-    //        $(id).attr("data-theme", col);
-    //        $(id).css("background-color", col);
-    //    }
-    //}
+    if (!thefunc)
+        return;
+    var input = [];
+    for (var i = 0; i < checkCount; i++) {
+        input.push($("#check" + i).prop("checked"));
+    }
+    var output = thefunc(input);
+    for (var i = 0; i < output.length; i++) {
+        var img = $("#flag" + i);
+        img.removeClass("flag-on");
+        img.removeClass("flag-off");
+        if (output[i])
+            img.addClass("flag-on");
+        else
+            img.addClass("flag-off");
+    }
 }
-//$("#checka").click(update);
-//$("#checkb").click(update);
 var checkCount = 0;
 function setupInputChecks(inputLabels) {
     var newCount = inputLabels.length;
@@ -40,6 +40,7 @@ function setupInputChecks(inputLabels) {
         if (currentState[i]) {
             $(check).attr("checked", "checked");
         }
+        $(check).click(function () { update(); });
         $("#inputCheckHolder").append(check);
         var label = document.createElement("label");
         $(label).attr("for", "check" + i);
@@ -49,6 +50,22 @@ function setupInputChecks(inputLabels) {
     }
     $("#inputCheckHolderTd").trigger('create');
     checkCount = newCount;
+}
+function setupOutputFlags(outputLabels) {
+    var newCount = outputLabels.length;
+    $("#outputCheckHolderTd").empty();
+    var table = document.createElement("table");
+    $("#outputCheckHolderTd").append(table);
+    for (var i = 0; i < newCount; i++) {
+        var tr = document.createElement("tr");
+        $(table).append(tr);
+        var td = document.createElement("td");
+        $(tr).append(td);
+        var img = document.createElement("img");
+        $(img).addClass("flag-off");
+        $(img).attr("id", "flag" + i);
+        $(td).append(img);
+    }
 }
 var thefunc;
 function setup(name, func, inputLabels, outputLabels) {
@@ -61,7 +78,8 @@ function setup(name, func, inputLabels, outputLabels) {
     $("#simname").text(name + "ゲート・シミュレーター");
     $("#tablename").text(name + "ゲート真理表");
     setupInputChecks(inputLabels);
-    //setupOutputFlags(outputLabels.length);
+    setupOutputFlags(outputLabels);
+    update();
     thefunc = func;
     $("#tableroot").empty();
     var table = document.createElement("table");

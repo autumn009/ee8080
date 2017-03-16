@@ -53,7 +53,7 @@ th.borderh {
     border-color: #808080;
 }
 
-#test {
+.flag-on {
     background-color: #3388cc /*{a-active-background-color}*/;
     border-color: #3388cc /*{a-active-border}*/;
     color: #fff /*{a-active-color}*/;
@@ -61,4 +61,16 @@ th.borderh {
     background-image: url("/Content/images/check-white.png");
     background-repeat: no-repeat;
     background-position: 50% 50%;
+    width: 2em;
+    height: 2em;
+}
+
+.flag-off {
+    border-color: #3388cc /*{a-active-border}*/;
+    border-width:1px;
+    border-style:solid;
+    color: #fff /*{a-active-color}*/;
+    text-shadow: 0 /*{a-active-shadow-x}*/ 1px /*{a-active-shadow-y}*/ 0 /*{a-active-shadow-radius}*/ #005599 /*{a-active-shadow-color}*/;
+    width: 2em;
+    height: 2em;
 }
