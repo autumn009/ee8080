@@ -59,8 +59,17 @@ function setupInputChecks(inputLabels) {
         $("#inputCheckHolder").append(check);
         var label = document.createElement("label");
         $(label).attr("for", "check" + i);
-        $(label).text(inputLabels[i]);
-        $(label).css("width", "2em");
+        var lbl = inputLabels[i];
+        if (lbl.substring(0, 1) == "_") {
+            var span = document.createElement("span");
+            $(span).css("text-decoration", "overline");
+            $(span).text(lbl.substring(1));
+            $(label).append(span);
+        }
+        else {
+            $(label).text(lbl);
+        }
+        $(label).css("width", "3em");
         $("#inputCheckHolder").append(label);
     }
     $("#inputCheckHolderTd").trigger('create');
@@ -80,19 +89,34 @@ function setupOutputFlags(outputLabels) {
         $(img).addClass("flag-off");
         $(img).attr("id", "flag" + i);
         $(td).append(img);
+        $(td).append(" ");
+        var lbl = outputLabels[i];
+        if (lbl.substring(0, 1) == "_") {
+            var span = document.createElement("span");
+            $(span).css("text-decoration", "overline");
+            $(span).text(lbl.substring(1));
+            $(td).append(span);
+        }
+        else {
+            $(td).append(lbl);
+        }
+        $(td).append(" ");
     }
 }
 var thefunc;
-function setup(name, func, inputLabels, outputLabels) {
+function setup(name, pictureName, func, inputLabels, outputLabels) {
     if (!inputLabels)
         inputLabels = ["A", "B"];
     if (!outputLabels)
         outputLabels = ["Q"];
     thefunc = func;
+    var expand = false;
+    if (inputLabels.length + outputLabels.length <= 3)
+        expand = true;
     $("#logicname").text(name);
-    $("#logicicon").attr("src", "/Content/images/gate/" + name + ".png");
-    $("#simname").text(name + "ゲート・シミュレーター");
-    $("#tablename").text(name + "ゲート真理表");
+    $("#logicicon").attr("src", "/Content/images/gate/" + pictureName + ".png");
+    $("#simname").text(name + "・シミュレーター");
+    $("#tablename").text(name + "真理表");
     setupInputChecks(inputLabels);
     setupOutputFlags(outputLabels);
     $("#tableroot").empty();
@@ -139,7 +163,8 @@ function setup(name, func, inputLabels, outputLabels) {
         for (var i = 0; i < inputLabels.length; i++) {
             var thd = document.createElement("td");
             $(thd).addClass("border");
-            $(thd).addClass("thick");
+            if (expand)
+                $(thd).addClass("thick");
             $(thd).text(values[i] ? "1" : "0");
             $(trid).append(thd);
         }
@@ -170,7 +195,8 @@ function setup(name, func, inputLabels, outputLabels) {
         for (var i = 0; i < outputLabels.length; i++) {
             var thd = document.createElement("td");
             $(thd).addClass("border");
-            $(thd).addClass("thick");
+            if (expand)
+                $(thd).addClass("thick");
             $(thd).addClass("result");
             $(thd).text(results[i] ? "1" : "0");
             $(trod).append(thd);
@@ -179,17 +205,17 @@ function setup(name, func, inputLabels, outputLabels) {
     update();
 }
 function andsetup() {
-    setup("AND", function (input) {
+    setup("AND GATE", "AND", function (input) {
         return [input[0] && input[1]];
     }, null, null);
 }
 $("#navnot").click(function () {
-    setup("NOT", function (input) {
+    setup("NOT GATE", "NOT", function (input) {
         return [!input[0]];
     }, ["A"], null);
 });
 $("#navor").click(function () {
-    setup("OR", function (input) {
+    setup("OR GATE", "OR", function (input) {
         return [input[0] || input[1]];
     }, null, null);
 });
@@ -197,24 +223,32 @@ $("#navand").click(function () {
     andsetup();
 });
 $("#navand4").click(function () {
-    setup("AND(4Input)", function (input) {
+    setup("AND(4Input) GATE", "AND(4Input)", function (input) {
         return [input[0] && input[1] && input[2] && input[3]];
     }, ["A", "B", "C", "D"], null);
 });
 $("#navxor").click(function () {
-    setup("XOR", function (input) {
+    setup("XOR GATE", "XOR", function (input) {
         return [input[0] !== input[1]];
     }, null, null);
 });
 $("#navnor").click(function () {
-    setup("NOR", function (input) {
+    setup("NOR GATE", "NOR", function (input) {
         return [!(input[0] || input[1])];
     }, null, null);
 });
 $("#navnand").click(function () {
-    setup("NAND", function (input) {
+    setup("NAND GATE", "NAND", function (input) {
         return [!(input[0] && input[1])];
     }, null, null);
+});
+$("#navdec").click(function () {
+    setup("ADDRESS DECODER", "ADDRESSDECODER", function (input) {
+        var n = -1;
+        if (input[3] && !input[4] && !input[5])
+            n = (input[0] ? 1 : 0) + (input[1] ? 2 : 0) + (input[2] ? 4 : 0);
+        return [n == 0, n == 1, n == 2, n == 3, n == 4, n == 5, n == 6, n == 7];
+    }, ["A", "B", "C", "G1", "_G2A", "_G2B"], ["_Y0", "_Y1", "_Y2", "_Y3", "_Y4", "_Y5", "_Y6", "_Y7"]);
 });
 $(document).on("pagecreate", function () {
     andsetup();
