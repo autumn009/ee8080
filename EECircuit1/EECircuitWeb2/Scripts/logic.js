@@ -261,11 +261,11 @@ $("#navnand").click(function () {
     }, null, null);
 });
 $("#navdec").click(function () {
-    setup("ADDRESS DECODER", "ADDRESSDECODER", function (input) {
+    setup("DECODER", "DECODER", function (input) {
         var n = -1;
         if (input[3] && !input[4] && !input[5])
             n = (input[0] ? 1 : 0) + (input[1] ? 2 : 0) + (input[2] ? 4 : 0);
-        return [n == 0, n == 1, n == 2, n == 3, n == 4, n == 5, n == 6, n == 7];
+        return [n != 0, n != 1, n != 2, n != 3, n != 4, n != 5, n != 6, n != 7];
     }, ["A", "B", "C", "G1", "_G2A", "_G2B"], ["_Y0", "_Y1", "_Y2", "_Y3", "_Y4", "_Y5", "_Y6", "_Y7"]);
 });
 $(document).on("pagecreate", function () {
