@@ -38,6 +38,7 @@ th.border, td.border {
 th.borderh {
     border-style: solid;
     border-width: 1px;
+    border-color: lightgrey;
     height: 2em;
 }
 
@@ -77,5 +78,5 @@ th.borderh {
 }
 
 tr.active {
-    background-color:magenta;
+    background-color:mediumorchid;
 }
