@@ -159,7 +159,17 @@ function setup(name: string, pictureName: string, func, inputLabels: string[], o
     $(tableInput).append(trih);
     for (var i = 0; i < inputLabels.length; i++) {
         var thi = document.createElement("th");
-        $(thi).text(inputLabels[i]);
+        if (inputLabels[i].substring(0, 1) == "_")
+        {
+            var span = document.createElement("span");
+            $(span).css("text-decoration", "overline");
+            $(span).text(inputLabels[i].substring(1));
+            $(thi).append(span);
+        }
+        else
+        {
+            $(thi).text(inputLabels[i]);
+        }
         $(thi).addClass("borderh");
         $(trih).append(thi);
     }
@@ -190,7 +200,15 @@ function setup(name: string, pictureName: string, func, inputLabels: string[], o
     $(tableOutput).append(troh);
     for (var i = 0; i < outputLabels.length; i++) {
         var tho = document.createElement("th");
-        $(tho).text(outputLabels[i]);
+        if (outputLabels[i].substring(0, 1) == "_") {
+            var span = document.createElement("span");
+            $(span).css("text-decoration", "overline");
+            $(span).text(outputLabels[i].substring(1));
+            $(tho).append(span);
+        }
+        else {
+            $(tho).text(outputLabels[i]);
+        }
         $(tho).addClass("borderh");
         $(tho).addClass("result");
         $(troh).append(tho);
