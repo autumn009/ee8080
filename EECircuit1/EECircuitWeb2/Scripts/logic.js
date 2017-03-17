@@ -165,7 +165,7 @@ function setup(name, pictureName, func, inputLabels, outputLabels) {
         var values = [];
         var t = j;
         for (var i = 0; i < inputLabels.length; i++) {
-            values.unshift(((t & 1) != 0));
+            values.push(((t & 1) != 0));
             t = t >> 1;
         }
         for (var i = 0; i < inputLabels.length; i++) {
@@ -173,6 +173,7 @@ function setup(name, pictureName, func, inputLabels, outputLabels) {
             $(thd).addClass("border");
             if (expand)
                 $(thd).addClass("thick");
+            $(thd).addClass(values[i] ? "one" : "zero");
             $(thd).text(values[i] ? "1" : "0");
             $(trid).append(thd);
         }
@@ -204,7 +205,7 @@ function setup(name, pictureName, func, inputLabels, outputLabels) {
         var values = [];
         var t = j;
         for (var i = 0; i < inputLabels.length; i++) {
-            values.unshift(((t & 1) != 0));
+            values.push(((t & 1) != 0));
             t = t >> 1;
         }
         var results = thefunc(values);
@@ -214,6 +215,7 @@ function setup(name, pictureName, func, inputLabels, outputLabels) {
             if (expand)
                 $(thd).addClass("thick");
             $(thd).addClass("result");
+            $(thd).addClass(results[i] ? "one" : "zero");
             $(thd).text(results[i] ? "1" : "0");
             $(trod).append(thd);
         }

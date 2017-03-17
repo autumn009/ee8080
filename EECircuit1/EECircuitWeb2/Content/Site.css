@@ -80,3 +80,16 @@ th.borderh {
 tr.active {
     background-color:mediumorchid;
 }
+
+td.zero {
+    border-color: darkgray;
+    text-align: center;
+}
+
+td.one {
+    border-color: darkgray;
+    background-color: gray;
+    /*color: white;*/
+    font-weight: bold;
+    text-align: center;
+}

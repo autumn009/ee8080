@@ -181,13 +181,14 @@ function setup(name: string, pictureName: string, func, inputLabels: string[], o
         var values: boolean[] = [];
         var t = j;
         for (var i = 0; i < inputLabels.length; i++) {
-            values.unshift(((t & 1) != 0));
+            values.push(((t & 1) != 0));
             t = t >> 1;
         }
         for (var i = 0; i < inputLabels.length; i++) {
             var thd = document.createElement("td");
             $(thd).addClass("border");
             if (expand) $(thd).addClass("thick");
+            $(thd).addClass(values[i] ? "one" : "zero");
             $(thd).text(values[i] ? "1" : "0");
             $(trid).append(thd);
         }
@@ -221,7 +222,7 @@ function setup(name: string, pictureName: string, func, inputLabels: string[], o
         var values: boolean[] = [];
         var t = j;
         for (var i = 0; i < inputLabels.length; i++) {
-            values.unshift(((t & 1) != 0));
+            values.push(((t & 1) != 0));
             t = t >> 1;
         }
         var results: boolean[] = thefunc(values);
@@ -230,6 +231,7 @@ function setup(name: string, pictureName: string, func, inputLabels: string[], o
             $(thd).addClass("border");
             if (expand) $(thd).addClass("thick");
             $(thd).addClass("result");
+            $(thd).addClass(results[i] ? "one" : "zero");
             $(thd).text(results[i] ? "1" : "0");
             $(trod).append(thd);
         }
