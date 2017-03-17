@@ -78,7 +78,7 @@ th.borderh {
 }
 
 tr.active {
-    background-color:mediumorchid;
+    background-color: mediumorchid;
 }
 
 td.zero {
@@ -88,8 +88,9 @@ td.zero {
 
 td.one {
     border-color: darkgray;
-    background-color: gray;
-    /*color: white;*/
+    /*background-color: gray;*/
+    color: cornflowerblue;
     font-weight: bold;
     text-align: center;
 }
+
