@@ -10,16 +10,8 @@ function update() {
         if (input[i])
             active += Math.pow(2, i);
     }
-    for (var i = 0; i < Math.pow(2, checkCount); i++) {
-        if (i == active) {
-            $("#tri" + i).addClass("active");
-            $("#tro" + i).addClass("active");
-        }
-        else {
-            $("#tri" + i).removeClass("active");
-            $("#tro" + i).removeClass("active");
-        }
-    }
+    $(".trall").removeClass("active");
+    $(".tr" + active).addClass("active");
     var output = thefunc(input);
     for (var i = 0; i < output.length; i++) {
         var img = $("#flag" + i);
@@ -160,7 +152,8 @@ function setup(name, pictureName, func, inputLabels, outputLabels) {
     }
     for (var j = 0; j < totalCount; j++) {
         var trid = document.createElement("tr");
-        $(trid).attr("id", "tri" + j);
+        $(trid).addClass("tr" + j);
+        $(trid).addClass("trall");
         $(tableInput).append(trid);
         var values = [];
         var t = j;
@@ -200,7 +193,8 @@ function setup(name, pictureName, func, inputLabels, outputLabels) {
     }
     for (var j = 0; j < totalCount; j++) {
         var trod = document.createElement("tr");
-        $(trod).attr("id", "tro" + j);
+        $(trod).addClass("tr" + j);
+        $(trod).addClass("trall");
         $(tableOutput).append(trod);
         var values = [];
         var t = j;
