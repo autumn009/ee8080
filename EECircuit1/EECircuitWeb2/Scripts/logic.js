@@ -99,6 +99,7 @@ var thefunc;
 var LogicTableUnit = (function () {
     function LogicTableUnit() {
         this.outputValues = [];
+        this.canShurink = false;
     }
     return LogicTableUnit;
 }());
@@ -110,22 +111,42 @@ var LogicTable = (function () {
 }());
 function createLogicalTable(ignoreableInputLabels, inputLabels, outputLabels) {
     var table = new LogicTable();
+    var count = 0;
     for (var i = 0; i < Math.pow(2, ignoreableInputLabels.length); i++) {
         var unit = new LogicTableUnit();
-        var inputValues = [];
-        var t = i;
-        for (var j = 0; j < inputLabels.length; j++) {
-            inputValues.push(((t & 1) != 0));
-            t = t >> 1;
-        }
         for (var j = 0; j < Math.pow(2, inputLabels.length); j++) {
-            unit.outputValues.push(thefunc(inputValues));
+            var inputValues = [];
+            var t = count++;
+            for (var k = 0; k < inputLabels.length + ignoreableInputLabels.length; k++) {
+                inputValues.push(((t & 1) != 0));
+                t = t >> 1;
+            }
+            var n = thefunc(inputValues);
+            unit.outputValues.push(n);
         }
         table.logicTables.push(unit);
     }
     return table;
 }
 function optimizeTable(table) {
+    for (var i = 0; i < table.logicTables.length; i++) {
+        var t = [];
+        for (var j = 0; j < table.logicTables[i].outputValues.length; j++) {
+            var n = 0;
+            for (var k = 0; k < table.logicTables[i].outputValues[j].length; k++) {
+                n <<= 1;
+                n |= (!table.logicTables[i].outputValues[j][k]) ? 0 : 1;
+            }
+            t.push(n);
+        }
+        table.logicTables[i].canShurink = true;
+        for (var j = 1; j < t.length; j++) {
+            if (t[0] != t[j]) {
+                table.logicTables[i].canShurink = false;
+                break;
+            }
+        }
+    }
 }
 function createLabel(label) {
     var thi = document.createElement("th");
@@ -178,19 +199,26 @@ function createHtmlTable(logicTable, ignoreableInputLabels, inputLabels, outputL
     }
     var count = 0;
     for (var j = 0; j < logicTable.logicTables.length; j++) {
-        for (var k = 0; k < logicTable.logicTables[j].outputValues.length; k++) {
+        if (logicTable.logicTables[j].canShurink) {
             var trid = document.createElement("tr");
-            $(trid).addClass("tr" + count);
             $(trid).addClass("trall");
-            $(tableInput).append(trid);
-            var values = [];
-            var t = k;
-            for (var i = 0; i < inputLabels.length; i++) {
-                values.push(((t & 1) != 0));
-                t = t >> 1;
+            for (var k = 0; k < logicTable.logicTables[j].outputValues.length; k++) {
+                $(trid).addClass("tr" + count);
+                count++;
             }
-            var t = j;
+            $(tableInput).append(trid);
             for (var i = 0; i < ignoreableInputLabels.length; i++) {
+                var thd = document.createElement("td");
+                $(thd).addClass("border");
+                if (expand)
+                    $(thd).addClass("thick");
+                $(thd).addClass("ex");
+                $(thd).text("X");
+                $(trid).append(thd);
+            }
+            var values = [];
+            var t = j;
+            for (var i = 0; i < inputLabels.length; i++) {
                 values.push(((t & 1) != 0));
                 t = t >> 1;
             }
@@ -203,7 +231,35 @@ function createHtmlTable(logicTable, ignoreableInputLabels, inputLabels, outputL
                 $(thd).text(values[i] ? "1" : "0");
                 $(trid).append(thd);
             }
-            count++;
+        }
+        else {
+            for (var k = 0; k < logicTable.logicTables[j].outputValues.length; k++) {
+                var trid = document.createElement("tr");
+                $(trid).addClass("tr" + count);
+                $(trid).addClass("trall");
+                $(tableInput).append(trid);
+                var values = [];
+                var t = k;
+                for (var i = 0; i < inputLabels.length; i++) {
+                    values.push(((t & 1) != 0));
+                    t = t >> 1;
+                }
+                var t = j;
+                for (var i = 0; i < ignoreableInputLabels.length; i++) {
+                    values.push(((t & 1) != 0));
+                    t = t >> 1;
+                }
+                for (var i = 0; i < values.length; i++) {
+                    var thd = document.createElement("td");
+                    $(thd).addClass("border");
+                    if (expand)
+                        $(thd).addClass("thick");
+                    $(thd).addClass(values[i] ? "one" : "zero");
+                    $(thd).text(values[i] ? "1" : "0");
+                    $(trid).append(thd);
+                }
+                count++;
+            }
         }
     }
     // create output table
@@ -228,23 +284,15 @@ function createHtmlTable(logicTable, ignoreableInputLabels, inputLabels, outputL
     }
     var count = 0;
     for (var j = 0; j < logicTable.logicTables.length; j++) {
-        for (var k = 0; k < logicTable.logicTables[j].outputValues.length; k++) {
+        if (logicTable.logicTables[j].canShurink) {
             var trod = document.createElement("tr");
-            $(trod).addClass("tr" + count);
             $(trod).addClass("trall");
+            for (var k = 0; k < logicTable.logicTables[j].outputValues.length; k++) {
+                $(trod).addClass("tr" + count);
+                count++;
+            }
             $(tableOutput).append(trod);
-            var values = [];
-            var t = k;
-            for (var i = 0; i < inputLabels.length; i++) {
-                values.push(((t & 1) != 0));
-                t = t >> 1;
-            }
-            var t = j;
-            for (var i = 0; i < ignoreableInputLabels.length; i++) {
-                values.push(((t & 1) != 0));
-                t = t >> 1;
-            }
-            var results = thefunc(values);
+            var results = logicTable.logicTables[j].outputValues[0];
             for (var i = 0; i < outputLabels.length; i++) {
                 var thd = document.createElement("td");
                 $(thd).addClass("border");
@@ -255,7 +303,26 @@ function createHtmlTable(logicTable, ignoreableInputLabels, inputLabels, outputL
                 $(thd).text(results[i] ? "1" : "0");
                 $(trod).append(thd);
             }
-            count++;
+        }
+        else {
+            for (var k = 0; k < logicTable.logicTables[j].outputValues.length; k++) {
+                var trod = document.createElement("tr");
+                $(trod).addClass("tr" + count);
+                $(trod).addClass("trall");
+                $(tableOutput).append(trod);
+                var results = logicTable.logicTables[j].outputValues[k];
+                for (var i = 0; i < outputLabels.length; i++) {
+                    var thd = document.createElement("td");
+                    $(thd).addClass("border");
+                    if (expand)
+                        $(thd).addClass("thick");
+                    $(thd).addClass("result");
+                    $(thd).addClass(results[i] ? "one" : "zero");
+                    $(thd).text(results[i] ? "1" : "0");
+                    $(trod).append(thd);
+                }
+                count++;
+            }
         }
     }
 }

@@ -94,3 +94,9 @@ td.one {
     text-align: center;
 }
 
+td.ex {
+    border-color: darkgray;
+    color: darkred;
+    text-align: center;
+}
+
