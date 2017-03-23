@@ -431,8 +431,21 @@ $("#navadd").click(() => {
         return [s, cout];
     }, null, ["A", "B", "C-in"], ["S", "C-out"]);
 });
-
-
+$("#nav2comp").click(() => {
+    setup("Two's complement (3 digit)", "TWOCOMP", (input: boolean[]): boolean[] => {
+        var a1 = input[0] ? 1 : 0;
+        var a2 = input[1] ? 2 : 0;
+        var a3 = input[2] ? 4 : 0;
+        var sum = ((a1 + a2 + a3)+1) % 8;
+        var z1 = false;
+        var z2 = false;
+        var z3 = false;
+        if ((sum & 1) != 0) z1 = true;
+        if ((sum & 2) != 0) z2 = true;
+        if ((sum & 4) != 0) z3 = true;
+        return [z1, z2, z3];
+    }, null, ["A1", "A2", "A3"], ["Z1", "Z2", "Z3"]);
+});
 $(document).on("pagecreate", function () {
     andsetup();
     update();

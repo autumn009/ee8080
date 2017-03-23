@@ -31,6 +31,7 @@
             <li><a data-rel="close" class="anchor" href="#" id="navnor">NOR</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navand4">AND(4Input)</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navadd">ADD with Carry</a></li>
+            <li><a data-rel="close" class="anchor" href="#" id="nav2comp">2's complement(3digit)</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navsel">SELECTOR(like 74153)</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navdec">DECODER(like 74138)</a></li>
         </ul>
