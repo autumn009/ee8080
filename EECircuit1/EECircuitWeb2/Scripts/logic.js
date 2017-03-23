@@ -17,10 +17,13 @@ function update() {
         var img = $("#flag" + i);
         img.removeClass("flag-on");
         img.removeClass("flag-off");
-        if (output[i] == Logic.H)
+        img.removeClass("flag-highz");
+        if (output[i] == Logic.L)
+            img.addClass("flag-off");
+        else if (output[i] == Logic.H)
             img.addClass("flag-on");
         else
-            img.addClass("flag-off");
+            img.addClass("flag-highz");
     }
 }
 var checkCount = 0;
@@ -402,9 +405,14 @@ $("#navnot").click(function () {
     setup("NOT GATE", "NOT", function (input) {
         if (input[0] == Logic.Z)
             return [Logic.Z];
-        if (input[0] == Logic.H)
-            return [Logic.L];
         return [booleanToLogic(!logicToBoolean(input[0]))];
+    }, null, ["A"], null);
+});
+$("#navoc").click(function () {
+    setup("OPEN CORRECTOR NOT GATE", "OCNOT", function (input) {
+        if (input[0] == Logic.L)
+            return [Logic.H];
+        return [Logic.Z];
     }, null, ["A"], null);
 });
 $("#navor").click(function () {
