@@ -1,42 +1,36 @@
-"use strict";
-function logicalValue() {
-    this.value = null;
-    // valueの値がHかLならそのまま返します。それ以外ならハイインピーダンス(Z)を返します。
-    logicalValue.prototype.toString = function () {
-        if (this.value == "H" || this.value == "L")
-            return this.value;
-        return "Z";
-    };
+var Logic;
+(function (Logic) {
+    Logic[Logic["H"] = 0] = "H";
+    Logic[Logic["L"] = 1] = "L";
+    Logic[Logic["Z"] = 2] = "Z";
+})(Logic || (Logic = {}));
+function logicToString(val) {
+    if (val == Logic.L)
+        return "L";
+    if (val == Logic.H)
+        return "H";
+    return "Z";
 }
-var logics = [
-    {
-        name: "NOT",
-        table: [[1, 0]]
-    },
-    {
-        name: "AND",
-        table: [[0, 0, 0, 1]]
-    },
-    {
-        name: "OR",
-        table: [[0, 1, 1, 1]]
-    },
-    {
-        name: "XOR",
-        table: [[0, 1, 1, 1]]
+function logicToBoolean(val) {
+    return val == Logic.H;
+}
+function stringToLogic(val) {
+    if (val == "L")
+        return Logic.L;
+    if (val == "H")
+        return Logic.H;
+    return Logic.Z;
+}
+function booleanToLogic(val) {
+    if (val)
+        return Logic.H;
+    return Logic.L;
+}
+function booleanToLogicArray(ary) {
+    var r = [];
+    for (var i = 0; i < ary.length; i++) {
+        r.push(ary[i] ? Logic.H : Logic.L);
     }
-];
-function loaded() {
-    for (var i = 0; i < logics.length; i++) {
-        var sel = document.getElementById("typeSelector");
-        var newOpt = new Option();
-        newOpt.text = logics[i].name;
-        sel.appendChild(newOpt);
-    }
+    return r;
 }
-function typeSelector_Changed() {
-}
-var t = new logicalValue();
-t.value = "L";
-//alert(t.toString());
 //# sourceMappingURL=common.js.map

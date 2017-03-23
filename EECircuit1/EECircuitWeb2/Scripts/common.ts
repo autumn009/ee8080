@@ -1,51 +1,32 @@
 ﻿
+enum Logic
+{
+    H,L,Z
+}
 
+function logicToString(val: Logic) {
+    if (val == Logic.L) return "L";
+    if (val == Logic.H) return "H";
+    return "Z";
+}
+function logicToBoolean(val: Logic) {
+    return val == Logic.H;
+}
 
-"use strict";
+function stringToLogic(val: string):Logic {
+    if (val == "L") return Logic.L;
+    if (val == "H") return Logic.H;
+    return Logic.Z;
+}
 
-function logicalValue() {
-    this.value = null;
-    // valueの値がHかLならそのまま返します。それ以外ならハイインピーダンス(Z)を返します。
-    logicalValue.prototype.toString = function () {
-        if (this.value == "H" || this.value == "L") return this.value;
-        return "Z";
+function booleanToLogic(val: boolean): Logic {
+    if (val) return Logic.H;
+    return Logic.L;
+}
+function booleanToLogicArray(ary: boolean[]): Logic[] {
+    var r: Logic[] = [];
+    for (var i = 0; i < ary.length; i++) {
+        r.push(ary[i] ? Logic.H : Logic.L);
     }
+    return r;
 }
-
-var logics =
-    [
-        {
-            name: "NOT",
-            table: [[1, 0]]
-        },
-        {
-            name: "AND",
-            table: [[0, 0, 0, 1]]
-        },
-        {
-            name: "OR",
-            table: [[0, 1, 1, 1]]
-        },
-        {
-            name: "XOR",
-            table: [[0, 1, 1, 1]]
-        }
-    ];
-
-function loaded() {
-    for (var i = 0; i < logics.length; i++) {
-        var sel = document.getElementById("typeSelector");
-        var newOpt = new Option();
-        newOpt.text = logics[i].name;
-        sel.appendChild(newOpt);
-    }
-}
-
-
-function typeSelector_Changed() {
-
-}
-
-var t = new logicalValue();
-t.value = "L";
-//alert(t.toString());

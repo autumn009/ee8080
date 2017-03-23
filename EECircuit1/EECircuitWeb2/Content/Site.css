@@ -94,6 +94,13 @@ td.one {
     text-align: center;
 }
 
+td.highz {
+    border-color: darkgray;
+    /*background-color: gray;*/
+    color: orangered;
+    text-align: center;
+}
+
 td.ex {
     border-color: darkgray;
     color: darkred;
