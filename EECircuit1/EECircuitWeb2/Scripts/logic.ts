@@ -118,9 +118,9 @@ class LogicTable {
 function createLogicalTable(ignoreableInputLabels: string[], inputLabels: string[], outputLabels: string[]): LogicTable {
     var table = new LogicTable();
     var count: number = 0;
-    for (var i = 0; i < Math.pow(2,ignoreableInputLabels.length); i++) {
+    for (var i = 0; i < Math.pow(2,inputLabels.length); i++) {
         var unit = new LogicTableUnit();
-        for (var j = 0; j < Math.pow(2, inputLabels.length); j++) {
+        for (var j = 0; j < Math.pow(2, ignoreableInputLabels.length); j++) {
             var inputValues: boolean[] = [];
             var t = count++;
             for (var k = 0; k < inputLabels.length + ignoreableInputLabels.length; k++) {
@@ -250,12 +250,12 @@ function createHtmlTable(logicTable: LogicTable, ignoreableInputLabels: string[]
                 $(tableInput).append(trid);
                 var values: boolean[] = [];
                 var t = k;
-                for (var i = 0; i < inputLabels.length; i++) {
+                for (var i = 0; i < ignoreableInputLabels.length; i++) {
                     values.push(((t & 1) != 0));
                     t = t >> 1;
                 }
                 var t = j;
-                for (var i = 0; i < ignoreableInputLabels.length; i++) {
+                for (var i = 0; i < inputLabels.length; i++) {
                     values.push(((t & 1) != 0));
                     t = t >> 1;
                 }
@@ -403,6 +403,20 @@ $("#navdec").click(() => {
         if (input[3] && !input[4] && !input[5]) n = (input[0] ? 1 : 0) + (input[1] ? 2 : 0) + (input[2] ? 4 : 0)
         return [n != 0, n != 1, n != 2, n != 3, n != 4, n != 5, n != 6, n != 7];
     }, ["A", "B", "C"], ["G1", "_G2A", "_G2B"], ["_Y0", "_Y1", "_Y2", "_Y3", "_Y4", "_Y5", "_Y6", "_Y7"]);
+});
+$("#navsel").click(() => {
+    setup("SELECTOR", "SELECTOR", (input: boolean[]): boolean[] => {
+        if (!input[6]) {
+            var n = (input[0] ? 1 : 0) + (input[1] ? 2 : 0);
+            switch (n) {
+                case 0: return [input[2]];
+                case 1: return [input[3]];
+                case 2: return [input[4]];
+                case 3: return [input[5]];
+            }
+        }
+        return [false];
+    }, ["S1", "S2", "L0", "L1", "L2", "L3"], ["_E"],  ["Z"]);
 });
 
 $(document).on("pagecreate", function () {

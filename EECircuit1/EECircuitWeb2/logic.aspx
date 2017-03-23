@@ -30,6 +30,7 @@
             <li><a data-rel="close" class="anchor" href="#" id="navnand">NAND</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navnor">NOR</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navand4">AND(4Input)</a></li>
+            <li><a data-rel="close" class="anchor" href="#" id="navsel">SELECTOR(like 74153)</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navdec">DECODER(like 74138)</a></li>
         </ul>
         <p class="close-btn"><a href="#" data-rel="close" data-role="button" data-theme="c" data-icon="delete">Close</a></p>
