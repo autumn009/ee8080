@@ -499,6 +499,13 @@ $("#nav2comp").click(function () {
         return booleanToLogicArray([z1, z2, z3]);
     }, null, ["A1", "A2", "A3"], ["Z1", "Z2", "Z3"]);
 });
+$("#navbuf").click(function () {
+    setup("3 STATE BUFFER", "TRIBUFFER", function (input) {
+        if (input[1] == Logic.L)
+            return [input[0]];
+        return [Logic.Z];
+    }, null, ["A", "_E"], ["Y"]);
+});
 $(document).on("pagecreate", function () {
     andsetup();
     update();
