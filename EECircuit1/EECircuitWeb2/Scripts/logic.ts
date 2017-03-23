@@ -418,6 +418,20 @@ $("#navsel").click(() => {
         return [false];
     }, ["S1", "S2", "L0", "L1", "L2", "L3"], ["_E"],  ["Z"]);
 });
+$("#navadd").click(() => {
+    setup("ADD with Carry", "ADDER", (input: boolean[]): boolean[] => {
+        var a = input[0] ? 1 : 0;
+        var b = input[1] ? 1 : 0;
+        var c = input[2] ? 1 : 0;
+        var sum = a + b + c;
+        var s = false;
+        var cout = false;
+        if ((sum & 1) != 0) s = true;
+        if ((sum & 2) != 0) cout = true;
+        return [s, cout];
+    }, null, ["A", "B", "C-in"], ["S", "C-out"]);
+});
+
 
 $(document).on("pagecreate", function () {
     andsetup();
