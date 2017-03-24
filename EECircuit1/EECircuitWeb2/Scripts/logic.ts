@@ -1,4 +1,6 @@
 ﻿
+var lastInputState: Logic[];
+
 function update() {
     if (!thefunc) return;
 
@@ -13,6 +15,7 @@ function update() {
     $(".trall").removeClass("active");
     $(".tr" + active).addClass("active");
     var output: Logic[] = thefunc(input);
+    lastInputState = input;
     for (var i = 0; i < output.length; i++) {
         var val = output[i];
         if (val == null) continue;    // unchanged
@@ -41,6 +44,8 @@ function update() {
 var checkCount = 0;
 
 function setupInputChecks(inputLabels: string[]) {
+    lastInputState = [];
+
     var newCount: number = inputLabels.length;
     var currentCount = checkCount;
     var currentState: Logic[] = [];
@@ -64,6 +69,7 @@ function setupInputChecks(inputLabels: string[]) {
         if (currentState[i]) {
             $(check).attr("checked", "checked");
         }
+        lastInputState.push(currentState[i]);
         $(check).click(() => { update(); });
         $("#inputCheckHolder").append(check);
         var label = document.createElement("label");
@@ -525,7 +531,10 @@ $("#navbuf").click(() => {
 });
 $("#navdff").click(() => {
     setup("D FLIPFLOP", "DFF", (input: Logic[]): Logic[] => {
-        if (input[1] == Logic.H) return [input[0], Logic.Invert0];
+        if (input[1] != lastInputState[1]) 
+        {
+            if (input[1] == Logic.H) return [input[0], Logic.Invert0];
+        }
         return [null, Logic.Invert0];
     }, null, ["D", "C"], ["Q", "_Q"]);
     // rewriting table
