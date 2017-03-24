@@ -527,7 +527,18 @@ $("#navdff").click(function () {
     // rewriting table
     $("#tableroot").empty();
     $("#tableroot").append($("#dfftable").html());
-    $("#tableroot").append("<p>DEBUG</p>");
+});
+$("#navtff").click(function () {
+    setup("T FLIPFLOP", "TFF", function (input) {
+        if (input[0] == Logic.H)
+            return [
+                $("#flag0").hasClass("flag-off") ? Logic.H : Logic.L, Logic.Invert0
+            ];
+        return [null, Logic.Invert0];
+    }, null, ["T"], ["Q", "_Q"]);
+    // rewriting table
+    $("#tableroot").empty();
+    $("#tableroot").append($("#tfftable").html());
 });
 $(document).on("pagecreate", function () {
     andsetup();

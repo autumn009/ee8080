@@ -73,6 +73,65 @@
             </table>
         </div>
     </div>
+    <div id="tfftable" style="display:none;">
+        <table>
+            <tbody>
+                <tr>
+                    <th class="borderh">INPUT</th>
+                    <th class="borderh">OUTPUT</th>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <th class="borderh">T</th>
+                                    <th class="borderh">Q</th>
+                                </tr>
+                                <tr class="trall tr0">
+                                    <td class="border thick zero">0</td>
+                                    <td class="border thick zero">0</td>
+                                </tr>
+                                <tr class="trall tr0">
+                                    <td class="border thick zero">0</td>
+                                    <td class="border thick one">1</td>
+                                </tr>
+                                <tr class="trall tr1">
+                                    <td class="border thick one">1</td>
+                                    <td class="border thick zero">0</td>
+                                </tr>
+                                <tr class="trall tr1">
+                                    <td class="border thick one">1</td>
+                                    <td class="border thick one">1</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <th class="borderh result">Q Next</th>
+                                </tr>
+                                <tr class="trall tr0">
+                                    <td class="border thick result zero">0</td>
+                                </tr>
+                                <tr class="trall tr0">
+                                    <td class="border thick result one">1</td>
+                                </tr>
+                                <tr class="trall tr1">
+                                    <td class="border thick result one">1</td>
+                                </tr>
+                                <tr class="trall tr1">
+                                    <td class="border thick result zero">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
     <div data-role="panel" id="menu-left" data-theme="b" data-display="push" data-position="left">
         <ul data-role="listview">
             <li><a data-rel="close" class="anchor" href="#" id="navnot">NOT</a></li>
