@@ -271,6 +271,65 @@
             </tbody>
         </table>
     </div>
+    <div id="dlatchtable" style="display:none;">
+        <table>
+            <tbody>
+                <tr>
+                    <th class="borderh">INPUT</th>
+                    <th class="borderh">OUTPUT</th>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <th class="borderh">D</th>
+                                    <th class="borderh">E</th>
+                                </tr>
+                                <tr class="trall tr0 active">
+                                    <td class="border zero">0</td>
+                                    <td class="border zero">0</td>
+                                </tr>
+                                <tr class="trall tr1">
+                                    <td class="border one">1</td>
+                                    <td class="border zero">0</td>
+                                </tr>
+                                <tr class="trall tr2">
+                                    <td class="border zero">0</td>
+                                    <td class="border one">1</td>
+                                </tr>
+                                <tr class="trall tr3">
+                                    <td class="border one">1</td>
+                                    <td class="border one">1</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <th class="borderh result">Q</th>
+                                </tr>
+                                <tr class="trall tr0 active">
+                                    <td class="border result special">unchanged</td>
+                                </tr>
+                                <tr class="trall tr1">
+                                    <td class="border result special">unchanged</td>
+                                </tr>
+                                <tr class="trall tr2">
+                                    <td class="border result zero">0</td>
+                                </tr>
+                                <tr class="trall tr3">
+                                    <td class="border result one">1</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
     <div data-role="panel" id="menu-left" data-theme="b" data-display="push" data-position="left">
         <ul data-role="listview">
             <li><a data-rel="close" class="anchor" href="#" id="navnot">NOT</a></li>
@@ -286,11 +345,11 @@
             <li><a data-rel="close" class="anchor" href="#" id="navdec">DECODER(like 74138)</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navoc">OPEN CORRECTOR NOT</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navbuf">3 STATE(like LS244)</a></li>
+            <li><a data-rel="close" class="anchor" href="#" id="navdlatch">D LATCH</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navrsff">RS FLIPFLOP</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navjkff">JK FLIPFLOP</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navdff">D FLIPFLOP</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navtff">T FLIPFLOP</a></li>
-            <li><a data-rel="close" class="anchor" href="#" id="navlatch">D LATCH</a></li>
         </ul>
         <p class="close-btn"><a href="#" data-rel="close" data-role="button" data-theme="c" data-icon="delete">Close</a></p>
 

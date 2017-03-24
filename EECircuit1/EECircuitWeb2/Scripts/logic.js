@@ -578,6 +578,21 @@ $("#navrsff").click(function () {
     $("#tableroot").empty();
     $("#tableroot").append($("#rsfftable").html());
 });
+$("#navdlatch").click(function () {
+    setup("D LATCH", "DLATCH", function (input) {
+        var q = !$("#flag0").hasClass("flag-off");
+        if (input[1] == Logic.L)
+            return [q ? Logic.H : Logic.L, Logic.Invert0];
+        if (input[1] == Logic.H && input[0] == Logic.L)
+            return [Logic.L, Logic.Invert0];
+        if (input[1] == Logic.H && input[0] == Logic.H)
+            return [Logic.H, Logic.Invert0];
+        // 来ないはずである
+    }, null, ["D", "E"], ["Q", "_Q"]);
+    // rewriting table
+    $("#tableroot").empty();
+    $("#tableroot").append($("#dlatchtable").html());
+});
 $(document).on("pagecreate", function () {
     andsetup();
     update();
