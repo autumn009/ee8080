@@ -54,7 +54,7 @@
                             <table>
                                 <tbody>
                                     <tr>
-                                        <th class="borderh result">次のステートのQ</th>
+                                        <th class="borderh result">Q Next</th>
                                     </tr>
                                     <tr class="trall tr0 active">
                                         <td class="border result zero">0</td>
@@ -63,7 +63,7 @@
                                         <td class="border result one">1</td>
                                     </tr>
                                     <tr class="trall tr2 tr3">
-                                        <td class="border result highz">前のステートのQを保持</td>
+                                        <td class="border result highz">Q</td>
                                     </tr>
                                 </tbody>
                             </table>
