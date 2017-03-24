@@ -113,6 +113,14 @@ td.highz {
     text-align: center;
 }
 
+td.special {
+    border-color: darkgray;
+    /*background-color: gray;*/
+    color: darkolivegreen;
+    text-align: center;
+    font-weight: bold;
+}
+
 td.ex {
     border-color: darkgray;
     color: darkred;

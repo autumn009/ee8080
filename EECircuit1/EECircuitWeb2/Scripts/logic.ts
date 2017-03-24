@@ -557,6 +557,20 @@ $("#navjkff").click(() => {
     $("#tableroot").empty();
     $("#tableroot").append($("#jkfftable").html());
 });
+$("#navrsff").click(() => {
+    setup("RS FLIPFLOP", "RSFF", (input: Logic[]): Logic[] => {
+        var q = !$("#flag0").hasClass("flag-off");
+        if (input[0] == Logic.L && input[1] == Logic.L) return [q ? Logic.H : Logic.L, Logic.Invert0];
+        if (input[0] == Logic.L && input[1] == Logic.H) return [Logic.L, Logic.Invert0];
+        if (input[0] == Logic.H && input[1] == Logic.L) return [Logic.H, Logic.Invert0];
+        if (input[0] == Logic.H && input[1] == Logic.H) return [(Math.random() < 0.5) ? Logic.L : Logic.H, Logic.Invert0];
+        // 来ないはずである
+    }, null, ["S", "R"], ["Q", "_Q"]);
+    // rewriting table
+    $("#tableroot").empty();
+    $("#tableroot").append($("#rsfftable").html());
+});
+
 $(document).on("pagecreate", function () {
     andsetup();
     update();
