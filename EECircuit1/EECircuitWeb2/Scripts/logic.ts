@@ -527,7 +527,11 @@ $("#navdff").click(() => {
     setup("D FLIPFLOP", "DFF", (input: Logic[]): Logic[] => {
         if (input[1] == Logic.H) return [input[0], Logic.Invert0];
         return [null, Logic.Invert0];
-    }, null, ["D", "C"], ["Q","_Q"]);
+    }, null, ["D", "C"], ["Q", "_Q"]);
+    // rewriting table
+    $("#tableroot").empty();
+    $("#tableroot").append($("#dfftable").html());
+    $("#tableroot").append("<p>DEBUG</p>");
 });
 $(document).on("pagecreate", function () {
     andsetup();

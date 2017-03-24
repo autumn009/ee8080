@@ -20,6 +20,58 @@
         </table>
         <h2 id="tablename">---</h2>
         <div id="tableroot"></div>
+        <div id="dfftable" style="display:none;">
+            <table>
+                <tbody>
+                    <tr>
+                        <th class="borderh">INPUT</th>
+                        <th class="borderh">OUTPUT</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <th class="borderh">D</th>
+                                        <th class="borderh">C</th>
+                                    </tr>
+                                    <tr class="trall tr0">
+                                        <td class="border zero">0</td>
+                                        <td class="border zero">↑</td>
+                                    </tr>
+                                    <tr class="trall tr1">
+                                        <td class="border one">1</td>
+                                        <td class="border zero">↑</td>
+                                    </tr>
+                                    <tr class="trall tr2 tr3">
+                                        <td class="border ex">X</td>
+                                        <td class="border one">↓</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <th class="borderh result">次のステートのQ</th>
+                                    </tr>
+                                    <tr class="trall tr0 active">
+                                        <td class="border result zero">0</td>
+                                    </tr>
+                                    <tr class="trall tr1">
+                                        <td class="border result one">1</td>
+                                    </tr>
+                                    <tr class="trall tr2 tr3">
+                                        <td class="border result highz">前のステートのQを保持</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     <div data-role="panel" id="menu-left" data-theme="b" data-display="push" data-position="left">
         <ul data-role="listview">
@@ -43,6 +95,7 @@
             <li><a data-rel="close" class="anchor" href="#" id="navlatch">D LATCH</a></li>
         </ul>
         <p class="close-btn"><a href="#" data-rel="close" data-role="button" data-theme="c" data-icon="delete">Close</a></p>
+
     </div>
     <script src="/Scripts/logic.js"></script>
 </asp:Content>
