@@ -542,6 +542,21 @@ $("#navtff").click(() => {
     $("#tableroot").empty();
     $("#tableroot").append($("#tfftable").html());
 });
+$("#navjkff").click(() => {
+    setup("JK FLIPFLOP", "JKFF", (input: Logic[]): Logic[] => {
+        var q = !$("#flag0").hasClass("flag-off");
+        if (input[0] == Logic.L && input[1] == Logic.L && !q) return [Logic.L, Logic.Invert0];
+        if (input[0] == Logic.L && input[1] == Logic.L && q) return [Logic.H, Logic.Invert0];
+        if (input[0] == Logic.L && input[1] == Logic.H) return [Logic.L, Logic.Invert0];
+        if (input[0] == Logic.H && input[1] == Logic.L) return [Logic.H, Logic.Invert0];
+        if (input[0] == Logic.H && input[1] == Logic.H && !q) return [Logic.H, Logic.Invert0];
+        if (input[0] == Logic.H && input[1] == Logic.H && q) return [Logic.L, Logic.Invert0];
+        // 来ないはずである
+    }, null, ["J", "K"], ["Q", "_Q"]);
+    // rewriting table
+    $("#tableroot").empty();
+    $("#tableroot").append($("#jkfftable").html());
+});
 $(document).on("pagecreate", function () {
     andsetup();
     update();
