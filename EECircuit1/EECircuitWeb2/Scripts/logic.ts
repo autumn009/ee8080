@@ -14,13 +14,24 @@ function update() {
     $(".tr" + active).addClass("active");
     var output: Logic[] = thefunc(input);
     for (var i = 0; i < output.length; i++) {
+        var val = output[i];
+        if (val == null) continue;    // unchanged
+        if (val == Logic.Invert0) {     // for overline Q
+            var img0 = $("#flag0");
+            if (img0.hasClass("flag-on"))
+                val = Logic.L;
+            else if (img0.hasClass("flag-off"))
+                val = Logic.H;
+            else
+                val = Logic.Z;
+        }
         var img = $("#flag" + i);
         img.removeClass("flag-on");
         img.removeClass("flag-off");
         img.removeClass("flag-highz");
-        if (output[i] == Logic.L)
+        if (val == Logic.L)
             img.addClass("flag-off");
-        else if (output[i] == Logic.H)
+        else if (val == Logic.H)
             img.addClass("flag-on");
         else
             img.addClass("flag-highz");
@@ -511,6 +522,12 @@ $("#navbuf").click(() => {
         if (input[1] == Logic.L) return [input[0]];
         return [Logic.Z];
     }, null, ["A", "_E"], ["Y"]);
+});
+$("#navdff").click(() => {
+    setup("D FLIPFLOP", "DFF", (input: Logic[]): Logic[] => {
+        if (input[1] == Logic.H) return [input[0], Logic.Invert0];
+        return [null, Logic.Invert0];
+    }, null, ["D", "C"], ["Q","_Q"]);
 });
 $(document).on("pagecreate", function () {
     andsetup();

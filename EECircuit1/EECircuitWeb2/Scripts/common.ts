@@ -1,7 +1,8 @@
 ﻿
 enum Logic
 {
-    H,L,Z
+    H, L, Z,
+    Invert0// for overline Q
 }
 
 function logicToString(val: Logic) {

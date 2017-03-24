@@ -3,6 +3,7 @@ var Logic;
     Logic[Logic["H"] = 0] = "H";
     Logic[Logic["L"] = 1] = "L";
     Logic[Logic["Z"] = 2] = "Z";
+    Logic[Logic["Invert0"] = 3] = "Invert0"; // for overline Q
 })(Logic || (Logic = {}));
 function logicToString(val) {
     if (val == Logic.L)
