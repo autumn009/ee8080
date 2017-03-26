@@ -170,6 +170,7 @@ $("#navreset").click(() => {
 
 function binarySetup() {
     $("#simname").text("Binary Counter");
+    $("#logicname").text("Binary Counter");
     bcdMode = false;
     updateCounter();
 }
@@ -180,6 +181,7 @@ $("#navbin").click(() => {
 
 $("#navbcd").click(() => {
     $("#simname").text("BCD Counter");
+    $("#logicname").text("BCD Counter");
     bcdMode = true;
     updateCounter();
 });
