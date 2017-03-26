@@ -46,7 +46,7 @@ $(".bit").click(function () {
     updateCounter();
 });
 function incrementBinarySub(digit, val) {
-    if (digit >= 8)
+    if (digit >= val.length)
         return val;
     if (val[digit] == false) {
         val[digit] = true;
@@ -57,6 +57,19 @@ function incrementBinarySub(digit, val) {
 }
 function incrementBinary(val) {
     return incrementBinarySub(0, val);
+}
+function decrementBinarySub(digit, val) {
+    if (digit >= val.length)
+        return val;
+    if (val[digit] == true) {
+        val[digit] = false;
+        return val;
+    }
+    val[digit] = true;
+    return decrementBinarySub(digit + 1, val);
+}
+function decrementBinary(val) {
+    return decrementBinarySub(0, val);
 }
 function incrementBCD(val) {
     var l4 = val.slice(0, 4);
@@ -71,6 +84,23 @@ function incrementBCD(val) {
     }
     return l4.concat(h4);
 }
+function decrementBCD(val) {
+    var l4 = val.slice(0, 4);
+    var h4 = val.slice(4, 8);
+    if (array2binaryUnsinged(l4) == 0) {
+        l4 = [true, false, false, true];
+        if (array2binaryUnsinged(h4) == 0) {
+            h4 = [true, false, false, true];
+        }
+        else {
+            h4 = decrementBinary(h4);
+        }
+    }
+    else {
+        l4 = decrementBinary(l4);
+    }
+    return l4.concat(h4);
+}
 $("#navcountup").click(function () {
     var r = getValue();
     if (bcdMode)
@@ -81,6 +111,12 @@ $("#navcountup").click(function () {
     updateCounter();
 });
 $("#navcountdown").click(function () {
+    var r = getValue();
+    if (bcdMode)
+        r = decrementBCD(r);
+    else
+        r = decrementBinary(r);
+    setValue(r);
     updateCounter();
 });
 $("#navreset").click(function () {
