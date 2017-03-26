@@ -33,6 +33,14 @@ function array2binarySinged(val: boolean[]): number {
     return r;
 }
 
+function isBCDOK(val: boolean[]) {
+    var l4 = val.slice(0, 4);
+    var h4 = val.slice(4, 8);
+    if (array2binaryUnsinged(l4) > 9) return false;
+    if (array2binaryUnsinged(h4) > 9) return false;
+    return true;
+}
+
 function updateCounter() {
     var r = getValue();
     var us = array2binaryUnsinged(r);
@@ -46,6 +54,11 @@ function updateCounter() {
         b = (r[i] ? "1" : "0") + b;
     }
     $("#binary").text(b);
+
+    var ok = (!bcdMode) || isBCDOK(r);
+    $("#navcountup").prop("disabled", !ok);
+    $("#navcountdown").prop("disabled", !ok);
+    $(".ui-content").css("background-color", ok ? "" : "Red");
 }
 
 $(".bit").click(() => {
