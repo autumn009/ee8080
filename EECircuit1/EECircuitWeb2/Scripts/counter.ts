@@ -68,15 +68,33 @@ function incrementBinary(val: boolean[]): boolean[]
     return incrementBinarySub(0, val);
 }
 
+function incrementBCD(val: boolean[]): boolean[]
+{
+    var l4 = val.slice(0, 4);
+    var h4 = val.slice(4, 8);
+    l4 = incrementBinary(l4);
+    if (array2binaryUnsinged(l4) > 9)
+    {
+        l4 = [false, false, false, false];
+        h4 = incrementBinary(h4);
+        if (array2binaryUnsinged(h4) > 9) {
+            h4 = [false, false, false, false];
+        }
+    }
+    return l4.concat(h4);
+}
+
 $("#navcountup").click(() => {
     var r = getValue();
-    r = incrementBinary(r);
+    if (bcdMode)
+        r = incrementBCD(r);
+    else
+        r = incrementBinary(r);
     setValue(r);
     updateCounter();
 });
 
 $("#navcountdown").click(() => {
-
     updateCounter();
 });
 
