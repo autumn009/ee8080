@@ -43,6 +43,17 @@ function isBCDOK(val: boolean[]) {
 
 function updateCounter() {
     var r = getValue();
+    var ok = !bcdMode;
+    if (isBCDOK(r)) {
+        $("#bcdStatus").text("BCD NUMBER");
+        $("#bcdStatus").css("color", "");
+        ok = true;
+    }
+    else {
+        $("#bcdStatus").text("NOT A BCD NUMBER");
+        $("#bcdStatus").css("color","#B8860B");
+    }
+
     var us = array2binaryUnsinged(r);
     $("#unsigned").text(us.toString());
     $("#signed").text(array2binarySinged(r));
@@ -55,10 +66,9 @@ function updateCounter() {
     }
     $("#binary").text(b);
 
-    var ok = (!bcdMode) || isBCDOK(r);
     $("#navcountup").prop("disabled", !ok);
     $("#navcountdown").prop("disabled", !ok);
-    $(".ui-content").css("background-color", ok ? "" : "Red");
+    $(".ui-content").css("background-color", ok ? "" : "DarkRed");
 }
 
 $(".bit").click(() => {
@@ -161,6 +171,7 @@ $("#navreset").click(() => {
 function binarySetup() {
     $("#simname").text("Binary Counter");
     bcdMode = false;
+    updateCounter();
 }
 
 $("#navbin").click(() => {
@@ -170,6 +181,7 @@ $("#navbin").click(() => {
 $("#navbcd").click(() => {
     $("#simname").text("BCD Counter");
     bcdMode = true;
+    updateCounter();
 });
 
 $(document).on("pagecreate", function () {

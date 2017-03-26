@@ -42,6 +42,14 @@
                     XXXXXXXX
                 </td>
             </tr>
+            <tr>
+                <td>
+                    BCD Status:
+                </td>
+                <td style="width:50%;" id="bcdStatus">
+                    OK
+                </td>
+            </tr>
         </table>
         <table>
             <tr>
