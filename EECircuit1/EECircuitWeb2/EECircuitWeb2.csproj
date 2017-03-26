@@ -148,6 +148,7 @@
     <Content Include="Content\images\gate\TWOCOMP.png" />
     <Content Include="Content\images\gate\XOR.png" />
     <Content Include="Content\Site.css" />
+    <Content Include="counter.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="emu.aspx" />
     <Content Include="favicon.ico" />
@@ -222,6 +223,13 @@
     <Compile Include="Contact.aspx.designer.cs">
       <DependentUpon>Contact.aspx</DependentUpon>
     </Compile>
+    <Compile Include="counter.aspx.cs">
+      <DependentUpon>counter.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="counter.aspx.designer.cs">
+      <DependentUpon>counter.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -285,6 +293,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\common.ts" />
+    <TypeScriptCompile Include="Scripts\counter.ts" />
     <TypeScriptCompile Include="Scripts\logic.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquerymobile\jquerymobile.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />

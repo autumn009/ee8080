@@ -3,6 +3,9 @@
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <ul data-role="listview" data-inset="true">
         <li><a href="/logic.aspx">Simple Logics</a></li>
+        <li><a href="/counter.aspx">Counters</a></li>
+        <li><a href="/sr.aspx">Shift Register</a></li>
+        <li><a href="/seripara.aspx">Serial/Parallel</a></li>
         <li><a href="/emu.aspx">CPU Emulation</a></li>
     </ul>
 </asp:Content>
