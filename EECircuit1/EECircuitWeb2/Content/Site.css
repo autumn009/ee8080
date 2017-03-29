@@ -127,3 +127,10 @@ td.ex {
     text-align: center;
 }
 
+td.mainText{
+    font-size:x-large;
+    font-weight:bold;
+    color:darkblue;
+    text-align:center;
+}
+
