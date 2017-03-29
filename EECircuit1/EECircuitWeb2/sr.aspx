@@ -44,15 +44,15 @@
             </tr>
             <tr>
                 <td>
-                    BCD Status:
+                    Mode:
                 </td>
-                <td style="width:50%;" id="bcdStatus">
-                    OK
+                <td style="width:50%;" id="mode">
+                    XXXXXXXX
                 </td>
             </tr>
             <tr>
                 <td>
-                    S-Output:
+                    S-Output (Carry):
                 </td>
                 <td style="width:50%;" id="sout">
                     X
@@ -90,7 +90,7 @@
                 </td>
             </tr>
             <tr>
-                <td class="mainText">
+                <td class="mainText" id="shifts">
                     XXXXXXXX
                 </td>
             </tr>
@@ -101,6 +101,8 @@
                         <a data-role="button" href="#" id="navright" data-theme="b">→</a>
                         <input name="rot" id="rot" type="checkbox">
                         <label for="rot">Rotate</label>
+                        <input name="withC" id="withC" type="checkbox">
+                        <label for="withC">w/ C</label>
                         <a data-role="button" href="#" id="navreset">Reset</a>
                     </div>
                 </td>

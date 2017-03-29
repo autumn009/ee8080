@@ -1,6 +1,7 @@
 var SR;
 (function (SR) {
-    var bcdMode = false;
+    var paraMode = false;
+    var current = [];
     function getValue() {
         var r = [];
         for (var i = 0; i < 8; i++) {
@@ -29,119 +30,80 @@ var SR;
         }
         return r;
     }
-    function isBCDOK(val) {
-        var l4 = val.slice(0, 4);
-        var h4 = val.slice(4, 8);
-        if (array2binaryUnsinged(l4) > 9)
-            return false;
-        if (array2binaryUnsinged(h4) > 9)
-            return false;
-        return true;
-    }
     function updateCounter() {
-        var r = getValue();
-        var ok = !bcdMode;
-        if (isBCDOK(r)) {
-            $("#bcdStatus").text("BCD NUMBER");
-            $("#bcdStatus").css("color", "");
-            ok = true;
-        }
-        else {
-            $("#bcdStatus").text("NOT A BCD NUMBER");
-            $("#bcdStatus").css("color", "#B8860B");
-        }
-        var us = array2binaryUnsinged(r);
+        var us = array2binaryUnsinged(current);
         $("#unsigned").text(us.toString());
-        $("#signed").text(array2binarySinged(r));
+        $("#signed").text(array2binarySinged(current));
         var h = us.toString(16);
         if (h.length < 2)
             h = "0" + h;
         $("#hexa").text(h);
         var b = "";
-        for (var i = 0; i < r.length; i++) {
-            b = (r[i] ? "1" : "0") + b;
+        for (var i = 0; i < current.length; i++) {
+            b = (current[i] ? "1" : "0") + b;
         }
         $("#binary").text(b);
-        $("#navcountup").prop("disabled", !ok);
-        $("#navcountdown").prop("disabled", !ok);
-        $(".ui-content").css("background-color", ok ? "" : "DarkRed");
     }
-    $(".bit").click(function () {
-        updateCounter();
-    });
-    function incrementBinarySub(digit, val) {
-        if (digit >= val.length)
-            return val;
-        if (val[digit] == false) {
-            val[digit] = true;
-            return val;
-        }
-        val[digit] = false;
-        return incrementBinarySub(digit + 1, val);
-    }
-    function incrementBinary(val) {
-        return incrementBinarySub(0, val);
-    }
-    function decrementBinarySub(digit, val) {
-        if (digit >= val.length)
-            return val;
-        if (val[digit] == true) {
-            val[digit] = false;
-            return val;
-        }
-        val[digit] = true;
-        return decrementBinarySub(digit + 1, val);
-    }
-    function decrementBinary(val) {
-        return decrementBinarySub(0, val);
-    }
-    function incrementBCD(val) {
-        var l4 = val.slice(0, 4);
-        var h4 = val.slice(4, 8);
-        l4 = incrementBinary(l4);
-        if (array2binaryUnsinged(l4) > 9) {
-            l4 = [false, false, false, false];
-            h4 = incrementBinary(h4);
-            if (array2binaryUnsinged(h4) > 9) {
-                h4 = [false, false, false, false];
-            }
-        }
-        return l4.concat(h4);
-    }
-    function decrementBCD(val) {
-        var l4 = val.slice(0, 4);
-        var h4 = val.slice(4, 8);
-        if (array2binaryUnsinged(l4) == 0) {
-            l4 = [true, false, false, true];
-            if (array2binaryUnsinged(h4) == 0) {
-                h4 = [true, false, false, true];
+    function updateShifts() {
+        var s = "";
+        for (var i = 0; i < current.length; i++) {
+            if (current[i]) {
+                s = "●" + s;
             }
             else {
-                h4 = decrementBinary(h4);
+                s = "○" + s;
             }
         }
-        else {
-            l4 = decrementBinary(l4);
-        }
-        return l4.concat(h4);
+        $("#shifts").text(s);
     }
-    $("#navcountup").click(function () {
-        var r = getValue();
-        if (bcdMode)
-            r = incrementBCD(r);
-        else
-            r = incrementBinary(r);
-        setValue(r);
+    function updateRegister(ar) {
+        current = ar;
+        updateShifts();
         updateCounter();
+    }
+    function isWithC() {
+        return $("#withC").prop("checked");
+    }
+    function isRotate() {
+        return $("#rot").prop("checked");
+    }
+    function SInput() {
+        return $("#sin").prop("checked");
+    }
+    $("#navleft").click(function () {
+        var lastBit7 = current[7];
+        for (var i = 6; i >= 0; i--) {
+            current[i + 1] = current[i];
+        }
+        if (isRotate()) {
+            if (isWithC())
+                current[0] = $("#sout").text() == "●";
+            else
+                current[0] = lastBit7;
+        }
+        else
+            current[0] = SInput();
+        updateRegister(current);
+        $("#sout").text(lastBit7 ? "●" : "○");
     });
-    $("#navcountdown").click(function () {
-        var r = getValue();
-        if (bcdMode)
-            r = decrementBCD(r);
+    $("#navright").click(function () {
+        var lastBit0 = current[0];
+        for (var i = 0; i < 7; i++) {
+            current[i] = current[i + 1];
+        }
+        if (isRotate()) {
+            if (isWithC())
+                current[7] = $("#sout").text() == "●";
+            else
+                current[7] = lastBit0;
+        }
         else
-            r = decrementBinary(r);
-        setValue(r);
-        updateCounter();
+            current[7] = SInput();
+        updateRegister(current);
+        $("#sout").text(lastBit0 ? "●" : "○");
+    });
+    $("#loadValue").click(function () {
+        updateRegister(getValue());
     });
     $("#navreset").click(function () {
         var r = [];
@@ -149,9 +111,10 @@ var SR;
             r.push(false);
         }
         setValue(r);
-        updateCounter();
+        updateRegister([false, false, false, false, false, false, false, false]);
     });
     function parallelSetup() {
+        paraMode = true;
         $("#simname").text("Parallel Input Shift Register");
         $("#logicname").text("Parallel Input Shift Register");
         $("#loadValueHolder").show();
@@ -160,21 +123,44 @@ var SR;
         $("#setpara").show();
         updateCounter();
     }
+    function updateMode() {
+        var s = "";
+        if (isWithC()) {
+            s = " w/ Carry";
+        }
+        if (isRotate()) {
+            $("#mode").text("Rotate" + s);
+            $("#sin").prop("disabled", true);
+        }
+        else {
+            $("#mode").text("Shift" + s);
+            $("#sin").prop("disabled", false);
+        }
+    }
+    $("#rot").click(function () {
+        updateMode();
+    });
+    $("#withC").click(function () {
+        updateMode();
+    });
     $("#navpara").click(function () {
         parallelSetup();
     });
     $("#navseri").click(function () {
+        paraMode = false;
         $("#simname").text("Serial Input Shift Register");
         $("#logicname").text("Serial Input Shift Register");
         $("#loadValueHolder").hide();
         $("#sin").show();
         $("#sinlabel").show();
         $("#setpara").hide();
+        $("#mode").text("");
         updateCounter();
     });
     $(document).on("pagecreate", function () {
         parallelSetup();
-        updateCounter();
+        updateRegister([false, false, false, false, false, false, false, false]);
+        updateMode();
     });
 })(SR || (SR = {}));
 //# sourceMappingURL=sr.js.map
