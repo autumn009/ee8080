@@ -49,3 +49,16 @@ function array2binarySinged(val: boolean[]): number {
     return r;
 }
 
+function createBitsString(current: boolean[]): string {
+    var s = "";
+    for (var i = 0; i < current.length; i++) {
+        if (current[i]) {
+            s = "●" + s;
+        }
+        else {
+            s = "○" + s;
+        }
+    }
+    return s;
+}
+

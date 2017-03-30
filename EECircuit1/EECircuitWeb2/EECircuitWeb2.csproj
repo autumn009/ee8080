@@ -200,6 +200,7 @@
     <Content Include="Scripts\WebForms\WebForms.js" />
     <Content Include="Scripts\WebForms\WebParts.js" />
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
+    <Content Include="seripara.aspx" />
     <Content Include="Site.Master" />
     <Content Include="sr.aspx" />
     <Content Include="ViewSwitcher.ascx" />
@@ -256,6 +257,13 @@
       <DependentUpon>logic.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="seripara.aspx.cs">
+      <DependentUpon>seripara.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="seripara.aspx.designer.cs">
+      <DependentUpon>seripara.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -303,6 +311,7 @@
     <TypeScriptCompile Include="Scripts\common.ts" />
     <TypeScriptCompile Include="Scripts\counter.ts" />
     <TypeScriptCompile Include="Scripts\logic.ts" />
+    <TypeScriptCompile Include="Scripts\seripara.ts" />
     <TypeScriptCompile Include="Scripts\sr.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquerymobile\jquerymobile.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />

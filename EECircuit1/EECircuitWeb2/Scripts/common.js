@@ -50,4 +50,16 @@ function array2binarySinged(val) {
     }
     return r;
 }
+function createBitsString(current) {
+    var s = "";
+    for (var i = 0; i < current.length; i++) {
+        if (current[i]) {
+            s = "●" + s;
+        }
+        else {
+            s = "○" + s;
+        }
+    }
+    return s;
+}
 //# sourceMappingURL=common.js.map
