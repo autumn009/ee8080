@@ -17,23 +17,6 @@ namespace SR {
         }
     }
 
-    function array2binaryUnsinged(val: boolean[]): number {
-        var n = 0;
-        for (var i = val.length - 1; i >= 0; i--) {
-            n = n * 2;
-            if (val[i]) n += 1;
-        }
-        return n;
-    }
-
-    function array2binarySinged(val: boolean[]): number {
-        var r = array2binaryUnsinged(val);
-        if (val[val.length - 1]) {
-            r = r - 256;
-        }
-        return r;
-    }
-
     function updateCounter() {
         var us = array2binaryUnsinged(current);
         $("#unsigned").text(us.toString());
