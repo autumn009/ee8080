@@ -266,7 +266,9 @@ var emu;
                 var g2 = (machinCode1 >> 3) & 0x7;
                 var g3 = machinCode1 & 0x7;
                 if (g1 == 0) {
-                    if (g3 == 6) {
+                    if (g2 == 0 && g3 == 0) {
+                    }
+                    else if (g3 == 6) {
                         this.setRegister(g2, this.fetchNextByte());
                     }
                     else {
