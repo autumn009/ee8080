@@ -52,6 +52,8 @@
             </table>
             <div data-role="controlgroup" data-type="horizontal">
                 <a href="#" id="restart" data-role="button" data-theme="b">Restart</a>
+                <a href="#" id="restartbreak" data-role="button" >Restart and break</a>
+                <a href="#" id="step" data-role="button">Step Run</a>
                 <a href="#" id="stopcont" data-role="button">Stop/Continue</a>
             </div>
         </div>
