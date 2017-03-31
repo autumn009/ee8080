@@ -310,6 +310,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\common.ts" />
     <TypeScriptCompile Include="Scripts\counter.ts" />
+    <TypeScriptCompile Include="Scripts\emu.ts" />
     <TypeScriptCompile Include="Scripts\logic.ts" />
     <TypeScriptCompile Include="Scripts\seripara.ts" />
     <TypeScriptCompile Include="Scripts\sr.ts" />

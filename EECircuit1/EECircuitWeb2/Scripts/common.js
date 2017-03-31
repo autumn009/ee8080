@@ -62,4 +62,8 @@ function createBitsString(current) {
     }
     return s;
 }
+function dec2hex(n, width) {
+    var s = "000" + n.toString(16);
+    return s.substring(s.length - width, s.length);
+}
 //# sourceMappingURL=common.js.map
