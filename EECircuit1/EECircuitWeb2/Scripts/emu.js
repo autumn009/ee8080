@@ -247,6 +247,18 @@ var emu;
             this.regarray.pc.Increment();
             return m;
         };
+        i8080.prototype.setRuning = function () {
+            $("#runStopStatus").removeClass("stop");
+            $("#runStopStatus").removeClass("run");
+            $("#runStopStatus").addClass("run");
+            $("#runStopStatus").text("RUN");
+        };
+        i8080.prototype.setStopped = function () {
+            $("#runStopStatus").removeClass("stop");
+            $("#runStopStatus").removeClass("run");
+            $("#runStopStatus").addClass("stop");
+            $("#runStopStatus").text("STOP");
+        };
         i8080.prototype.runMain = function () {
             for (;;) {
                 var machinCode1 = this.fetchNextByte();
@@ -265,6 +277,7 @@ var emu;
                         if (g3 == 6) {
                             this.halt = true;
                             virtualMachine.update();
+                            this.setStopped();
                             return;
                         }
                     }
@@ -284,6 +297,7 @@ var emu;
             this.randomInitialize();
             this.regarray.pc.setValue(0);
             this.halt = false;
+            this.setRuning();
             setTimeout(function () {
                 _this.runMain();
             }, 100);

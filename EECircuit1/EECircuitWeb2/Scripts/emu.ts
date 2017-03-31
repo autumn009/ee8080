@@ -176,6 +176,20 @@
             this.regarray.pc.Increment();
             return m;
         }
+        public setRuning()
+        {
+            $("#runStopStatus").removeClass("stop");
+            $("#runStopStatus").removeClass("run");
+            $("#runStopStatus").addClass("run");
+            $("#runStopStatus").text("RUN");
+        }
+        public setStopped() {
+            $("#runStopStatus").removeClass("stop");
+            $("#runStopStatus").removeClass("run");
+            $("#runStopStatus").addClass("stop");
+            $("#runStopStatus").text("STOP");
+        }
+
         public runMain()
         {
             for (; ;)
@@ -203,6 +217,7 @@
                         {
                             this.halt = true;
                             virtualMachine.update();
+                            this.setStopped();
                             return;
                         }
                     }
@@ -226,6 +241,7 @@
             this.randomInitialize();
             this.regarray.pc.setValue(0);
             this.halt = false;
+            this.setRuning();
             setTimeout(() => {
                 this.runMain();
             }, 100);

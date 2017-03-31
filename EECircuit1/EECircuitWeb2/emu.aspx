@@ -8,6 +8,7 @@
 
     <div role="main" class="ui-content">
         <div id="mon">
+            <p class="stop" id="runStopStatus" >STOP</p>
             <table>
                 <tr>
                     <th >A</th>

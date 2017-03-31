@@ -142,3 +142,17 @@ span.fixed {
 #memoryAddress {
     width: 4em;
 }
+
+p.stop {
+    font-size: x-large;
+    font-weight: bold;
+    text-align: center;
+    color: darkblue;
+}
+
+p.run {
+    font-size: x-large;
+    font-weight: bold;
+    text-align: center;
+    color: darkred;
+}
