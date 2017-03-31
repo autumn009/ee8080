@@ -135,7 +135,7 @@ td.mainText{
     text-align:center;
 }
 
-td.fixed {
+span.fixed {
     font-family: Consolas, 'Courier New', Courier, Monaco, monospace;
 }
 

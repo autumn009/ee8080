@@ -10,16 +10,49 @@
         <div id="mon">
             <table>
                 <tr>
+                    <th >A</th>
+                    <th >BC</th>
+                    <th >DE</th>
+                    <th >HL</th>
+                    <th >M</th>
+                    <th >SP</th>
+                    <th >PC</th>
+                    <th >S</th>
+                    <th >Z</th>
+                    <th >P</th>
+                    <th >C</th>
+                    <th >AC</th>
+                </tr>
+                <tr>
+                    <td  class="border"><span id="regA" class="fixed">XX</span></td>
+                    <td  class="border"><span id="regBC" class="fixed">XX</span></td>
+                    <td  class="border"><span id="regDE" class="fixed">XX</span></td>
+                    <td  class="border"><span id="regHL" class="fixed">XX</span></td>
+                    <td  class="border"><span id="regM" class="fixed">XX</span></td>
+                    <td  class="border"><span id="regSP" class="fixed">XX</span></td>
+                    <td  class="border"><span id="regPC" class="fixed">XX</span></td>
+                    <td  class="border"><span id="regS" class="fixed">XX</span></td>
+                    <td  class="border"><span id="regZ" class="fixed">XX</span></td>
+                    <td  class="border"><span id="regP" class="fixed">XX</span></td>
+                    <td  class="border"><span id="regC" class="fixed">XX</span></td>
+                    <td  class="border"><span id="regAC" class="fixed">XX</span></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
                     <td>
                          <label for="memoryAddress">MEMORY:</label>
                     </td>
-                    <td class="fixed">
+                    <td>
                          <input name="memoryAddress" id="memoryAddress" type="text" value="" data-clear-btn="true">
                     </td>
-                    <td id="memoryDump" class="fixed">XX XX</td>
+                    <td><span id="memoryDump" class="fixed">XX XX</span></td>
                 </tr>
             </table>
-
+            <div data-role="controlgroup" data-type="horizontal">
+                <a href="#" id="restart" data-role="button" data-theme="b">Restart</a>
+                <a href="#" id="stopcont" data-role="button">Stop/Continue</a>
+            </div>
         </div>
 
         <div id="con">

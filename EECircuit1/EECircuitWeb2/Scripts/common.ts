@@ -64,5 +64,5 @@ function createBitsString(current: boolean[]): string {
 
 function dec2hex(n: number, width: number): string {
     var s = "000" + n.toString(16);
-    return s.substring(s.length - width, s.length);
+    return s.substring(s.length - width, s.length).toUpperCase();
 }
