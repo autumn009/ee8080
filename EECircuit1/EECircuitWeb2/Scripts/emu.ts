@@ -59,6 +59,15 @@
         public getValue(): number {
             return this.value;
         }
+        public Increment()
+        {
+            this.value++;
+            if (this.value > this.upperLimit) this.value = 0;
+        }
+        public Decrement() {
+            this.value--;
+            if (this.value > this.upperLimit) this.value = 0;
+        }
         public randomInitialize() {
             this.value = Math.random() * this.upperLimit;
         }
@@ -128,6 +137,88 @@
             this.regarray.l.randomInitialize();
             this.regarray.sp.randomInitialize();
         }
+        public selectRegister(n: number) {
+            var r: Register;
+            switch (n) {
+                case 0: return this.regarray.b;
+                case 1: return this.regarray.c;
+                case 2: return this.regarray.d;
+                case 3: return this.regarray.e;
+                case 4: return this.regarray.h;
+                case 5: return this.regarray.l;
+                case 6: return null;
+                case 7: return this.accumulator;
+            }
+        }
+
+        public setRegister(n: number, v: number) {
+            var r = this.selectRegister(n);
+            if (r == null) {
+                var hl = this.regarray.h.getValue() * 256 + this.regarray.l.getValue();
+                virtualMachine.memory.Bytes.write(Math.floor(hl), v);
+            }
+            else
+                r.setValue(v);
+        }
+        public getRegister(n: number) {
+            var r = this.selectRegister(n);
+            if (r == null) {
+                var hl = this.regarray.h.getValue() * 256 + this.regarray.l.getValue();
+                return virtualMachine.memory.Bytes.read(Math.floor(hl));
+            }
+            else
+                return r.getValue();
+        }
+        public fetchNextByte()
+        {
+            var pc = this.regarray.pc.getValue();
+            var m = virtualMachine.memory.Bytes.read(Math.floor(pc));
+            this.regarray.pc.Increment();
+            return m;
+        }
+        public runMain()
+        {
+            for (; ;)
+            {
+                var machinCode1 = this.fetchNextByte();
+                var g1 = machinCode1 >> 6;
+                var g2 = (machinCode1 >> 3)&0x7;
+                var g3 = machinCode1 & 0x7;
+                if (g1 == 0)
+                {
+                    if (g3 == 6)    // MVI r,x
+                    {
+                        this.setRegister(g2, this.fetchNextByte());
+                    }
+                    else
+                    {
+                        // TBW
+                    }
+                }
+                else if (g1 == 1)
+                {
+                    if (g2 == 6)
+                    {
+                        if (g3 == 6)    // HLT
+                        {
+                            this.halt = true;
+                            virtualMachine.update();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        // TBW
+                    }
+                }
+                else if (g1 == 2) {
+                    // TBW
+                }
+                else {
+                    // TBW
+                }
+            }
+        }
         public reset() {
             // TBW
             this.regarray.b.setValue(255);  // DEBUG
@@ -135,6 +226,9 @@
             this.randomInitialize();
             this.regarray.pc.setValue(0);
             this.halt = false;
+            setTimeout(() => {
+                this.runMain();
+            }, 100);
         }
     }
     class ee8080 {
