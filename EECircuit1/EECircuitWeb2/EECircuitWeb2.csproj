@@ -312,6 +312,7 @@
     <TypeScriptCompile Include="Scripts\counter.ts" />
     <TypeScriptCompile Include="Scripts\emu.ts" />
     <TypeScriptCompile Include="Scripts\logic.ts" />
+    <TypeScriptCompile Include="Scripts\miniAssembler.ts" />
     <TypeScriptCompile Include="Scripts\seripara.ts" />
     <TypeScriptCompile Include="Scripts\sr.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquerymobile\jquerymobile.d.ts" />

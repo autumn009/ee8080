@@ -33,6 +33,7 @@ var emu;
         };
         return NumberArray;
     }());
+    emu.NumberArray = NumberArray;
     var MemoryUnit = (function () {
         function MemoryUnit() {
             this.Bytes = new NumberArray();
@@ -197,7 +198,7 @@ var emu;
             $("#regSP").text(dec2hex(this.regarray.sp.getValue(), 4));
             $("#regPC").text(dec2hex(this.regarray.pc.getValue(), 4));
             var hl = this.regarray.h.getValue() * 256 + this.regarray.l.getValue();
-            var m = virtualMachine.memory.Bytes.read(Math.floor(hl));
+            var m = emu.virtualMachine.memory.Bytes.read(Math.floor(hl));
             $("#regM").text(dec2hex(m, 2));
         };
         i8080.prototype.randomInitialize = function () {
@@ -227,7 +228,7 @@ var emu;
             var r = this.selectRegister(n);
             if (r == null) {
                 var hl = this.regarray.h.getValue() * 256 + this.regarray.l.getValue();
-                virtualMachine.memory.Bytes.write(Math.floor(hl), v);
+                emu.virtualMachine.memory.Bytes.write(Math.floor(hl), v);
             }
             else
                 r.setValue(v);
@@ -236,14 +237,14 @@ var emu;
             var r = this.selectRegister(n);
             if (r == null) {
                 var hl = this.regarray.h.getValue() * 256 + this.regarray.l.getValue();
-                return virtualMachine.memory.Bytes.read(Math.floor(hl));
+                return emu.virtualMachine.memory.Bytes.read(Math.floor(hl));
             }
             else
                 return r.getValue();
         };
         i8080.prototype.fetchNextByte = function () {
             var pc = this.regarray.pc.getValue();
-            var m = virtualMachine.memory.Bytes.read(Math.floor(pc));
+            var m = emu.virtualMachine.memory.Bytes.read(Math.floor(pc));
             this.regarray.pc.Increment();
             return m;
         };
@@ -278,7 +279,7 @@ var emu;
                     if (g2 == 6) {
                         if (g3 == 6) {
                             this.halt = true;
-                            virtualMachine.update();
+                            emu.virtualMachine.update();
                             this.setStopped();
                             return;
                         }
@@ -322,18 +323,21 @@ var emu;
         };
         return ee8080;
     }());
-    var virtualMachine = new ee8080();
+    emu.virtualMachine = new ee8080();
+    function getVirtualMachine() {
+        return emu.virtualMachine;
+    }
     $("#restart").click(function () {
-        virtualMachine.cpu.reset();
-        virtualMachine.cpu.update();
+        emu.virtualMachine.cpu.reset();
+        emu.virtualMachine.cpu.update();
     });
     $("#stopcont").click(function () {
         // TBW
     });
     function loadTest1() {
-        virtualMachine.memory.Bytes.write(0, 0x3e); // MVI A,12 (1)
-        virtualMachine.memory.Bytes.write(1, 0x12); // MVI A,12 (2)
-        virtualMachine.memory.Bytes.write(2, 0x76); // HLT
+        emu.virtualMachine.memory.Bytes.write(0, 0x3e); // MVI A,12 (1)
+        emu.virtualMachine.memory.Bytes.write(1, 0x12); // MVI A,12 (2)
+        emu.virtualMachine.memory.Bytes.write(2, 0x76); // HLT
     }
     $("#navtest1").click(function () {
         loadTest1();
@@ -363,13 +367,13 @@ var emu;
         setIde();
     });
     $("#navreset").click(function () {
-        virtualMachine.reset();
+        emu.virtualMachine.reset();
     });
     $(".ideCommands").click(function () {
         $("#collapsibleIdeCommands").collapsible("collapse");
     });
     $(document).on("pagecreate", function () {
-        virtualMachine.reset();
+        emu.virtualMachine.reset();
         setIde();
     });
 })(emu || (emu = {}));

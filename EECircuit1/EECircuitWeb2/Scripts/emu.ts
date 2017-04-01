@@ -1,5 +1,5 @@
 ﻿namespace emu {
-    class NumberArray {
+    export class NumberArray {
         private buffer = new ArrayBuffer(65536);
         private view = new Uint8ClampedArray(this.buffer);
         public read(address: number): number {
@@ -266,7 +266,11 @@
         }
     }
 
-    var virtualMachine = new ee8080();
+    export var virtualMachine = new ee8080();
+
+    function getVirtualMachine() {
+        return virtualMachine;
+    }
 
     $("#restart").click(() => {
         virtualMachine.cpu.reset();

@@ -67,7 +67,7 @@
             <div data-role="collapsible" data-mini="true" id="collapsibleIdeCommands">
                 <h4>Commands</h4>
                 <ul data-role="listview">
-                    <li><a href="#" class="ideCommands">Compile</a></li>
+                    <li><a href="#" class="ideCommands" id="ideCompile">Compile</a></li>
                     <li><a href="#" class="ideCommands">Compile and Run</a></li>
                     <li><a href="#" class="ideCommands">New File</a></li>
                     <li><a href="#" class="ideCommands">Load File</a></li>
@@ -94,4 +94,5 @@
         <p class="close-btn"><a href="#" data-rel="close" data-role="button" data-theme="c" data-icon="delete">Close</a></p>
     </div>
     <script src="/Scripts/emu.js"></script>
+    <script src="/Scripts/miniAssembler.js"></script>
 </asp:Content>
