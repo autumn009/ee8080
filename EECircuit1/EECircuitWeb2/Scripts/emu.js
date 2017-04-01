@@ -339,20 +339,28 @@ var emu;
         loadTest1();
     });
     function setConsole() {
+        $(".mypane").css("display", "none");
         $("#con").css("display", "inherit");
-        $("#mon").css("display", "none");
         $("#logicname").text("Console");
     }
     function setMonitor() {
-        $("#con").css("display", "none");
+        $(".mypane").css("display", "none");
         $("#mon").css("display", "inherit");
         $("#logicname").text("Monitor");
+    }
+    function setIde() {
+        $(".mypane").css("display", "none");
+        $("#ide").css("display", "inherit");
+        $("#logicname").text("IDE");
     }
     $("#navcon").click(function () {
         setConsole();
     });
     $("#navmon").click(function () {
         setMonitor();
+    });
+    $("#navide").click(function () {
+        setIde();
     });
     $("#navreset").click(function () {
         virtualMachine.reset();

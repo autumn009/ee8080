@@ -289,14 +289,19 @@
     });
 
     function setConsole() {
+        $(".mypane").css("display", "none");
         $("#con").css("display", "inherit");
-        $("#mon").css("display", "none");
         $("#logicname").text("Console");
     }
     function setMonitor() {
-        $("#con").css("display", "none");
+        $(".mypane").css("display", "none");
         $("#mon").css("display", "inherit");
         $("#logicname").text("Monitor");
+    }
+    function setIde() {
+        $(".mypane").css("display", "none");
+        $("#ide").css("display", "inherit");
+        $("#logicname").text("IDE");
     }
 
     $("#navcon").click(() => {
@@ -305,6 +310,10 @@
 
     $("#navmon").click(() => {
         setMonitor();
+    });
+
+    $("#navide").click(() => {
+        setIde();
     });
 
     $("#navreset").click(() => {
