@@ -64,9 +64,22 @@
 
         </div>
         <div id="ide" class="mypane">
-<!-- TBW -->
-
-
+            <div data-role="collapsible" data-mini="true" id="collapsibleIdeCommands">
+                <h4>Commands</h4>
+                <ul data-role="listview">
+                    <li><a href="#" class="ideCommands">Compile</a></li>
+                    <li><a href="#" class="ideCommands">Compile and Run</a></li>
+                    <li><a href="#" class="ideCommands">New File</a></li>
+                    <li><a href="#" class="ideCommands">Load File</a></li>
+                    <li><a href="#" class="ideCommands">Save File</a></li>
+                    <li><a href="#" class="ideCommands">Save As File</a></li>
+                    <li><a href="#" class="ideCommands">Cut</a></li>
+                    <li><a href="#" class="ideCommands">Copy</a></li>
+                    <li><a href="#" class="ideCommands">Paste</a></li>
+                </ul>
+            </div>
+            <label for="sourceCode">Soluce Code:</label>
+            <textarea name="sourceCode" id="sourceCode"></textarea>
         </div>
     </div>
 

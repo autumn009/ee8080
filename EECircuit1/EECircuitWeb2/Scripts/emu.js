@@ -365,9 +365,12 @@ var emu;
     $("#navreset").click(function () {
         virtualMachine.reset();
     });
+    $(".ideCommands").click(function () {
+        $("#collapsibleIdeCommands").collapsible("collapse");
+    });
     $(document).on("pagecreate", function () {
         virtualMachine.reset();
-        setMonitor();
+        setIde();
     });
 })(emu || (emu = {}));
 //# sourceMappingURL=emu.js.map

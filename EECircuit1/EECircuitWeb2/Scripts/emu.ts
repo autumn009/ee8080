@@ -320,8 +320,12 @@
         virtualMachine.reset();
     });
 
+    $(".ideCommands").click(() => {
+        $("#collapsibleIdeCommands").collapsible("collapse");
+    });
+
     $(document).on("pagecreate", function () {
         virtualMachine.reset();
-        setMonitor();
+        setIde();
     });
 }
