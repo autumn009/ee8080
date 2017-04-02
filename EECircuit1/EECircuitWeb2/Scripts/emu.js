@@ -335,9 +335,13 @@ var emu;
     function getVirtualMachine() {
         return emu.virtualMachine;
     }
-    $("#restart").click(function () {
+    function restart() {
         emu.virtualMachine.cpu.reset();
         emu.virtualMachine.cpu.update();
+    }
+    emu.restart = restart;
+    $("#restart").click(function () {
+        restart();
     });
     $("#stopcont").click(function () {
         // TBW
@@ -371,6 +375,7 @@ var emu;
         $("#logicname").text("Monitor");
         emu.virtualMachine.update();
     }
+    emu.setMonitor = setMonitor;
     function setIde() {
         $(".mypane").css("display", "none");
         $("#ide").css("display", "inherit");

@@ -191,17 +191,34 @@
         //    result += r[i] + "\r\n";
         //}
     }
-    
-    $("#ideCompile").click(() => {
+
+    function compileCommon(completion:()=>void)
+    {
         $("#result").text("");
         resultMessage = "";
         setTimeout(() => {
+            var result = false;
             compile($("#sourceCode").val(), emu.virtualMachine.memory.Bytes);
-            if (!resultMessage) resultMessage += "Compile Completed\r\n"
+            if (!resultMessage) {
+                resultMessage += "Compile Completed\r\n"
+                result = true;
+            }
             resultMessage += "Done\r\n";
             $("#result").text(resultMessage);
+            if (result && completion) completion();
         }, 10);
         $('#result').keyup();   // 枠を広げるおまじない
+    }
+
+    $("#ideCompile").click(() => {
+        compileCommon(null);
+    });
+
+    $("#ideCompileAndRun").click(() => {
+        var r = compileCommon(() => {
+            emu.setMonitor();
+            emu.restart();
+        });
     });
 
     $(document).on("pagecreate", function () {

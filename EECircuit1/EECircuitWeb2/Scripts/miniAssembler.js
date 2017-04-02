@@ -197,17 +197,31 @@ var miniAssembler;
         //    result += r[i] + "\r\n";
         //}
     }
-    $("#ideCompile").click(function () {
+    function compileCommon(completion) {
         $("#result").text("");
         resultMessage = "";
         setTimeout(function () {
+            var result = false;
             compile($("#sourceCode").val(), emu.virtualMachine.memory.Bytes);
-            if (!resultMessage)
+            if (!resultMessage) {
                 resultMessage += "Compile Completed\r\n";
+                result = true;
+            }
             resultMessage += "Done\r\n";
             $("#result").text(resultMessage);
+            if (result && completion)
+                completion();
         }, 10);
         $('#result').keyup(); // 枠を広げるおまじない
+    }
+    $("#ideCompile").click(function () {
+        compileCommon(null);
+    });
+    $("#ideCompileAndRun").click(function () {
+        var r = compileCommon(function () {
+            emu.setMonitor();
+            emu.restart();
+        });
     });
     $(document).on("pagecreate", function () {
         // TBW

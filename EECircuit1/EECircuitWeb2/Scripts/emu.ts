@@ -286,9 +286,14 @@
         return virtualMachine;
     }
 
-    $("#restart").click(() => {
+    export function restart()
+    {
         virtualMachine.cpu.reset();
         virtualMachine.cpu.update();
+    }
+
+    $("#restart").click(() => {
+        restart();
     });
 
     $("#stopcont").click(() => {
@@ -323,7 +328,7 @@
         $("#con").css("display", "inherit");
         $("#logicname").text("Console");
     }
-    function setMonitor() {
+    export function setMonitor() {
         $(".mypane").css("display", "none");
         $("#mon").css("display", "inherit");
         $("#logicname").text("Monitor");

@@ -68,7 +68,7 @@
                 <h4>Commands</h4>
                 <ul data-role="listview">
                     <li><a href="#" class="ideCommands" id="ideCompile">Compile</a></li>
-                    <li><a href="#" class="ideCommands">Compile and Run</a></li>
+                    <li><a href="#" class="ideCommands" id="ideCompileAndRun">Compile and Run</a></li>
                     <li><a href="#" class="ideCommands">New File</a></li>
                     <li><a href="#" class="ideCommands">Load File</a></li>
                     <li><a href="#" class="ideCommands">Save File</a></li>
