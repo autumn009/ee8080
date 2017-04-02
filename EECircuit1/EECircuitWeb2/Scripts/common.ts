@@ -63,7 +63,11 @@ function createBitsString(current: boolean[]): string {
 }
 
 function dec2hex(n: number, width: number): string {
-    var s = "000" + n.toString(16);
+    var x: string;
+    if (n == undefined) x = "XXXX";
+    else
+        x = n.toString(16);
+    var s = "000" + x;
     return s.substring(s.length - width, s.length).toUpperCase();
 }
 

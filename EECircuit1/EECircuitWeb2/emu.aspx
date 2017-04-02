@@ -45,9 +45,9 @@
                          <label for="memoryAddress">MEMORY:</label>
                     </td>
                     <td>
-                         <input name="memoryAddress" id="memoryAddress" type="text" value="" data-clear-btn="true">
+                         <input name="memoryAddress" id="memoryAddress" type="text" value="0000" data-clear-btn="true">
                     </td>
-                    <td><span id="memoryDump" class="fixed">XX XX</span></td>
+                    <td><span id="memoryDump" class="fixed"></span></td>
                 </tr>
             </table>
             <div data-role="controlgroup" data-type="horizontal">
@@ -78,7 +78,7 @@
                     <li><a href="#" class="ideCommands">Paste</a></li>
                 </ul>
             </div>
-            <label for="sourceCode">Soluce Code:</label>
+            <label for="sourceCode">Source Code:</label>
             <textarea name="sourceCode" id="sourceCode"></textarea>
             <label for="result">Compiler Results:</label>
             <textarea name="result" id="result" readonly="readonly"></textarea>

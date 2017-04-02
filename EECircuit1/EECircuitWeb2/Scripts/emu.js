@@ -20,6 +20,7 @@ var emu;
         };
         NumberArray.prototype.updateDump = function (address, length) {
             $("#memoryAddress").val(dec2hex(address, 4));
+            address = parseInt($("#memoryAddress").val(), 16);
             var s = "";
             for (var i = address; i < address + length; i++) {
                 s = s + dec2hex(this.view[i], 2) + " ";
@@ -321,7 +322,7 @@ var emu;
             this.cpu = new i8080();
         }
         ee8080.prototype.update = function () {
-            this.memory.Bytes.updateDump(0, 8);
+            updateMonitorMemoryView();
             this.cpu.update();
         };
         ee8080.prototype.reset = function () {
@@ -335,6 +336,15 @@ var emu;
     function getVirtualMachine() {
         return emu.virtualMachine;
     }
+    function updateMonitorMemoryView() {
+        var s = $("#memoryAddress").val();
+        var addr = parseInt(s, 16);
+        if (addr || addr == 0)
+            emu.virtualMachine.memory.Bytes.updateDump(addr, 8);
+    }
+    $("#memoryAddress").keyup(function () {
+        updateMonitorMemoryView();
+    });
     function restart() {
         emu.virtualMachine.cpu.reset();
         emu.virtualMachine.cpu.update();

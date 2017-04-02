@@ -10,6 +10,7 @@
         }
         public updateDump(address: number, length: number) {
             $("#memoryAddress").val(dec2hex(address, 4));
+            address = parseInt($("#memoryAddress").val(), 16);
             var s = "";
             for (var i = address; i < address + length; i++) {
                 s = s + dec2hex(this.view[i], 2) + " ";
@@ -269,7 +270,7 @@
         public memory = new MemoryUnit();
         public cpu = new i8080();
         public update() {
-            this.memory.Bytes.updateDump(0, 8);
+            updateMonitorMemoryView();
             this.cpu.update();
         }
 
@@ -285,6 +286,16 @@
     function getVirtualMachine() {
         return virtualMachine;
     }
+
+    function updateMonitorMemoryView() {
+        var s = $("#memoryAddress").val();
+        var addr = parseInt(s, 16);
+        if (addr || addr == 0) virtualMachine.memory.Bytes.updateDump(addr, 8);
+    }
+
+    $("#memoryAddress").keyup(() => {
+        updateMonitorMemoryView();
+    });
 
     export function restart()
     {

@@ -63,7 +63,12 @@ function createBitsString(current) {
     return s;
 }
 function dec2hex(n, width) {
-    var s = "000" + n.toString(16);
+    var x;
+    if (n == undefined)
+        x = "XXXX";
+    else
+        x = n.toString(16);
+    var s = "000" + x;
     return s.substring(s.length - width, s.length).toUpperCase();
 }
 function lowByte(v) {
