@@ -269,6 +269,14 @@ var emu;
                 if (g1 == 0) {
                     if (g2 == 0 && g3 == 0) {
                     }
+                    if (g3 == 1) {
+                        if ((g2 & 1) == 0) {
+                            this.setRegister(g2 + 1, this.fetchNextByte());
+                            this.setRegister(g2, this.fetchNextByte());
+                        }
+                        else {
+                        }
+                    }
                     else if (g3 == 6) {
                         this.setRegister(g2, this.fetchNextByte());
                     }

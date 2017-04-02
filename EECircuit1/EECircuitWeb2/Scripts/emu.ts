@@ -204,6 +204,20 @@
                     {
                         // NO OPETATION
                     }
+                    if (g3 == 1) // LXI or DAD
+                    {
+                        if( (g2 & 1) == 0) // LXI
+                        {
+                            this.setRegister(g2 + 1, this.fetchNextByte());
+                            this.setRegister(g2, this.fetchNextByte());
+                        }
+                        else // DAD
+                        {
+                            // TBW
+                        }
+
+
+                    }
                     else if (g3 == 6)    // MVI r,x
                     {
                         this.setRegister(g2, this.fetchNextByte());
