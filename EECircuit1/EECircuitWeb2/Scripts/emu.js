@@ -338,6 +338,7 @@ var emu;
         emu.virtualMachine.memory.Bytes.write(0, 0x3e); // MVI A,12 (1)
         emu.virtualMachine.memory.Bytes.write(1, 0x12); // MVI A,12 (2)
         emu.virtualMachine.memory.Bytes.write(2, 0x76); // HLT
+        $("#sourceCode").val(" MVI A,21h\r\n hlt\r\n");
     }
     $("#navtest1").click(function () {
         loadTest1();
