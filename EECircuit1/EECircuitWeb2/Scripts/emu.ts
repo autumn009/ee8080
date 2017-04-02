@@ -31,7 +31,34 @@
         public Bytes = new NumberArray();
     }
     class IOUnit {
+        private getBitsPortFF(): number {
+            var n = 0;
+            for (var i = 8 - 1; i >= 0; i--) {
+                n <<= 1;
+                if ($("#bit" + i).prop("checked")) {
+                    n |= 1;
+                }
+            }
+            return n;
+        }
+        private putBitsPortFF(v: number)
+        {
+            var ar: boolean[] = [];
+            var n = v;
+            for (var i = 0; i < 8; i++) {
+                ar.push((n & 1) != 0 ? true : false);
+                n >>= 1;
+            }
+            $("#outPortFF").text(createBitsString(ar));
+        }
 
+        public in(addr: number): number {
+            if (addr == 0xff) return this.getBitsPortFF();
+            return 0;
+        }
+        public out(addr: number, v: number): void {
+            if (addr == 0xff) this.putBitsPortFF(v);
+        }
     }
     class DataBus {
 
@@ -249,6 +276,25 @@
                     // TBW
                 }
                 else {
+                    if (g2 == 3 && g3 == 3) // IN
+                    {
+                        var port = this.fetchNextByte();
+                        var r = virtualMachine.io.in(port);
+                        this.setRegister(7, r);
+                    }
+                    else if (g2 == 2 && g3 == 3) // OUT
+                    {
+                        var port = this.fetchNextByte();
+                        var v = this.getRegister(7);
+                        virtualMachine.io.out(port, v);
+                    }
+                    else
+                    {
+                        // TBW
+                    }
+
+
+
                     // TBW
                 }
             }
@@ -268,6 +314,7 @@
     }
     class ee8080 {
         public memory = new MemoryUnit();
+        public io = new IOUnit();
         public cpu = new i8080();
         public update() {
             updateMonitorMemoryView();
@@ -322,6 +369,8 @@
     function loadTest2() {
         var s = "";
         s += " lxi h,1234h\r\n"
+        s += " in 0ffh\r\n";
+        s += " out 0ffh\r\n";
         s += " hlt\r\n"
         $("#sourceCode").val(s);
     }

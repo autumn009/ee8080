@@ -44,6 +44,34 @@ var emu;
     var IOUnit = (function () {
         function IOUnit() {
         }
+        IOUnit.prototype.getBitsPortFF = function () {
+            var n = 0;
+            for (var i = 8 - 1; i >= 0; i--) {
+                n <<= 1;
+                if ($("#bit" + i).prop("checked")) {
+                    n |= 1;
+                }
+            }
+            return n;
+        };
+        IOUnit.prototype.putBitsPortFF = function (v) {
+            var ar = [];
+            var n = v;
+            for (var i = 0; i < 8; i++) {
+                ar.push((n & 1) != 0 ? true : false);
+                n >>= 1;
+            }
+            $("#outPortFF").text(createBitsString(ar));
+        };
+        IOUnit.prototype.in = function (addr) {
+            if (addr == 0xff)
+                return this.getBitsPortFF();
+            return 0;
+        };
+        IOUnit.prototype.out = function (addr, v) {
+            if (addr == 0xff)
+                this.putBitsPortFF(v);
+        };
         return IOUnit;
     }());
     var DataBus = (function () {
@@ -299,6 +327,18 @@ var emu;
                 else if (g1 == 2) {
                 }
                 else {
+                    if (g2 == 3 && g3 == 3) {
+                        var port = this.fetchNextByte();
+                        var r = emu.virtualMachine.io.in(port);
+                        this.setRegister(7, r);
+                    }
+                    else if (g2 == 2 && g3 == 3) {
+                        var port = this.fetchNextByte();
+                        var v = this.getRegister(7);
+                        emu.virtualMachine.io.out(port, v);
+                    }
+                    else {
+                    }
                 }
             }
         };
@@ -319,6 +359,7 @@ var emu;
     var ee8080 = (function () {
         function ee8080() {
             this.memory = new MemoryUnit();
+            this.io = new IOUnit();
             this.cpu = new i8080();
         }
         ee8080.prototype.update = function () {
@@ -365,6 +406,8 @@ var emu;
     function loadTest2() {
         var s = "";
         s += " lxi h,1234h\r\n";
+        s += " in 0ffh\r\n";
+        s += " out 0ffh\r\n";
         s += " hlt\r\n";
         $("#sourceCode").val(s);
     }

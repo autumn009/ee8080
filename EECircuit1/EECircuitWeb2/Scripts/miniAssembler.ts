@@ -92,6 +92,14 @@
             out(lowByte(hl));
             out(highByte(hl));
         });
+        mnemonicTable["IN"] = new mnemonicUnit(1, 2, (opr1, opr2, out) => {
+            out(0xdb);
+            out(myParseNumber(opr1));
+        });
+        mnemonicTable["OUT"] = new mnemonicUnit(1, 2, (opr1, opr2, out) => {
+            out(0xd3);
+            out(myParseNumber(opr1));
+        });
     }
 
     fillMnemonicTable();

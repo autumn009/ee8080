@@ -50,6 +50,39 @@
                     <td><span id="memoryDump" class="fixed"></span></td>
                 </tr>
             </table>
+            <table>
+                <tr>
+                    <th>Input Port 0FFH</th>
+                </tr>
+                <tr>
+                    <td>
+                        <fieldset data-role="controlgroup" data-type="horizontal" id="setpara">
+                            <input name="bit7" id="bit7" type="checkbox" class="bit">
+                            <label for="bit7">7</label>
+                            <input name="bit6" id="bit6" type="checkbox" class="bit">
+                            <label for="bit6">6</label>
+                            <input name="bit5" id="bit5" type="checkbox" class="bit">
+                            <label for="bit5">5</label>
+                            <input name="bit4" id="bit4" type="checkbox" class="bit">
+                            <label for="bit4">4</label>
+                            <input name="bit3" id="bit3" type="checkbox" class="bit">
+                            <label for="bit3">3</label>
+                            <input name="bit2" id="bit2" type="checkbox" class="bit">
+                            <label for="bit2">2</label>
+                            <input name="bit1" id="bit1" type="checkbox" class="bit">
+                            <label for="bit1">1</label>
+                            <input name="bit0" id="bit0" type="checkbox" class="bit">
+                            <label for="bit0">0</label>
+                        </fieldset>
+                    </td>
+                </tr>
+                <tr>
+                    <th>output Port 0FFH</th>
+                </tr>
+                <tr>
+                    <td class="mainText" id="outPortFF">○○○○○○○○</td>
+                </tr>
+            </table>
             <div data-role="controlgroup" data-type="horizontal">
                 <a href="#" id="restart" data-role="button" data-theme="b">Restart</a>
                 <a href="#" id="restartbreak" data-role="button" >Restart and break</a>
