@@ -39,6 +39,16 @@ var miniAssembler;
     function myParseDDD(opr) {
         return myParseSSS(opr) << 3;
     }
+    function myParseBDH(opr) {
+        if (opr == "B")
+            return 0;
+        if (opr == "D")
+            return 0x10;
+        if (opr == "H")
+            return 0x20;
+        writeError(opr + " is not a register pair name. Assumed that it's for BC");
+        return 0;
+    }
     function myParseNumber(oprorg) {
         var opr = oprorg;
         var hex = false;
@@ -82,6 +92,12 @@ var miniAssembler;
         });
         mnemonicTable["HLT"] = new mnemonicUnit(0, 1, function (opr1, opr2, out) {
             out(0x76);
+        });
+        mnemonicTable["LXI"] = new mnemonicUnit(2, 3, function (opr1, opr2, out) {
+            out(1 | myParseBDH(opr1));
+            var hl = myParseNumber(opr2);
+            out(lowByte(hl));
+            out(highByte(hl));
         });
     }
     fillMnemonicTable();

@@ -318,7 +318,7 @@ var emu;
         };
         ee8080.prototype.reset = function () {
             this.memory.Bytes.clear();
-            loadTest1();
+            loadTest2();
             this.update();
         };
         return ee8080;
@@ -340,6 +340,15 @@ var emu;
         emu.virtualMachine.memory.Bytes.write(2, 0x76); // HLT
         $("#sourceCode").val(" MVI A,21h\r\n hlt\r\n");
     }
+    function loadTest2() {
+        var s = "";
+        s += " lxi h,1234h\r\n";
+        s += " hlt\r\n";
+        $("#sourceCode").val(s);
+    }
+    $("#navtest2").click(function () {
+        loadTest2();
+    });
     $("#navtest1").click(function () {
         loadTest1();
     });

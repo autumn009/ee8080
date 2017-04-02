@@ -66,4 +66,10 @@ function dec2hex(n, width) {
     var s = "000" + n.toString(16);
     return s.substring(s.length - width, s.length).toUpperCase();
 }
+function lowByte(v) {
+    return v & 255;
+}
+function highByte(v) {
+    return (v >> 8) & 255;
+}
 //# sourceMappingURL=common.js.map

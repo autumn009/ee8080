@@ -32,6 +32,14 @@
         return myParseSSS(opr) << 3;
     }
 
+    function myParseBDH(opr: string): number {
+        if (opr == "B") return 0;
+        if (opr == "D") return 0x10;
+        if (opr == "H") return 0x20;
+        writeError(opr + " is not a register pair name. Assumed that it's for BC");
+        return 0;
+    }
+
     function myParseNumber(oprorg: string): number {
         var opr = oprorg;
         var hex = false;
@@ -70,18 +78,20 @@
 
     var mnemonicTable = new Object();
 
-    function fillMnemonicTable()
-    {
+    function fillMnemonicTable() {
         mnemonicTable["MVI"] = new mnemonicUnit(2, 2, (opr1, opr2, out) => {
-            out(6 | myParseDDD(opr1))
+            out(6 | myParseDDD(opr1));
             out(myParseNumber(opr2));
         });
         mnemonicTable["HLT"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
             out(0x76);
         });
-
-
-
+        mnemonicTable["LXI"] = new mnemonicUnit(2, 3, (opr1, opr2, out) => {
+            out(1 | myParseBDH(opr1));
+            var hl = myParseNumber(opr2);
+            out(lowByte(hl));
+            out(highByte(hl));
+        });
     }
 
     fillMnemonicTable();

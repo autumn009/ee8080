@@ -261,7 +261,7 @@
 
         public reset() {
             this.memory.Bytes.clear();
-            loadTest1();
+            loadTest2();
             this.update();
         }
     }
@@ -281,7 +281,6 @@
         // TBW
     });
 
-
     function loadTest1() {
         virtualMachine.memory.Bytes.write(0, 0x3e);    // MVI A,12 (1)
         virtualMachine.memory.Bytes.write(1, 0x12);    // MVI A,12 (2)
@@ -289,6 +288,17 @@
 
         $("#sourceCode").val(" MVI A,21h\r\n hlt\r\n");
     }
+
+    function loadTest2() {
+        var s = "";
+        s += " lxi h,1234h\r\n"
+        s += " hlt\r\n"
+        $("#sourceCode").val(s);
+    }
+
+    $("#navtest2").click(() => {
+        loadTest2();
+    });
 
     $("#navtest1").click(() => {
         loadTest1();

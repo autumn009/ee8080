@@ -66,3 +66,11 @@ function dec2hex(n: number, width: number): string {
     var s = "000" + n.toString(16);
     return s.substring(s.length - width, s.length).toUpperCase();
 }
+
+function lowByte( v : number) :number
+{
+    return v & 255;
+}
+function highByte(v: number): number {
+    return (v >> 8) & 255;
+}

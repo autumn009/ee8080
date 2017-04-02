@@ -91,6 +91,7 @@
             <li><a data-rel="close" class="anchor" href="#" id="navmon">Monitor</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navide">Ide</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navtest1">Load Test-1</a></li>
+            <li><a data-rel="close" class="anchor" href="#" id="navtest2">Load Test-2</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navreset">Reset System</a></li>
         </ul>
         <p class="close-btn"><a href="#" data-rel="close" data-role="button" data-theme="c" data-icon="delete">Close</a></p>
