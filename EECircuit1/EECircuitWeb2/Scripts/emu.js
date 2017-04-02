@@ -294,9 +294,9 @@ var emu;
             }
         };
         i8080.prototype.reset = function () {
-            var _this = this;
             // TBW
-            this.regarray.b.setValue(255); // DEBUG
+            //this.regarray.b.setValue(255);  // DEBUG
+            var _this = this;
             this.randomInitialize();
             this.regarray.pc.setValue(0);
             this.halt = false;
@@ -352,6 +352,7 @@ var emu;
         $(".mypane").css("display", "none");
         $("#mon").css("display", "inherit");
         $("#logicname").text("Monitor");
+        emu.virtualMachine.update();
     }
     function setIde() {
         $(".mypane").css("display", "none");

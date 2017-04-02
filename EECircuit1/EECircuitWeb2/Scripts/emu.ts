@@ -240,7 +240,7 @@
         }
         public reset() {
             // TBW
-            this.regarray.b.setValue(255);  // DEBUG
+            //this.regarray.b.setValue(255);  // DEBUG
 
             this.randomInitialize();
             this.regarray.pc.setValue(0);
@@ -303,7 +303,8 @@
         $(".mypane").css("display", "none");
         $("#mon").css("display", "inherit");
         $("#logicname").text("Monitor");
-    }
+        virtualMachine.update();
+   }
     function setIde() {
         $(".mypane").css("display", "none");
         $("#ide").css("display", "inherit");

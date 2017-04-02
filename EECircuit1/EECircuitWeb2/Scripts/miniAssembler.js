@@ -54,9 +54,9 @@ var miniAssembler;
         for (var i = 0; i < opr.length; i++) {
             var c = opr.charCodeAt(i);
             if (hex) {
-                if (c >= 0x30 && c >= 0x39)
+                if (c >= 0x30 && c <= 0x39)
                     n = c - 0x30 + n * 16;
-                else if (c >= 0x41 && c >= 0x46)
+                else if (c >= 0x41 && c <= 0x46)
                     n = c - 0x41 + 10 + n * 16;
                 else {
                     writeError(oprorg + " is not a correct number, assumed that it's 0.");
@@ -64,7 +64,7 @@ var miniAssembler;
                 }
             }
             else {
-                if (c >= 0x30 && c >= 0x39)
+                if (c >= 0x30 && c <= 0x39)
                     n = c - 0x30 + n * 10;
                 else {
                     writeError(oprorg + " is not a correct number, assumed that it's 0.");
