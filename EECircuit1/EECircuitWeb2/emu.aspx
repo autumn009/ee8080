@@ -80,6 +80,8 @@
             </div>
             <label for="sourceCode">Soluce Code:</label>
             <textarea name="sourceCode" id="sourceCode"></textarea>
+            <label for="result">Compiler Results:</label>
+            <textarea name="result" id="result" readonly="readonly"></textarea>
         </div>
     </div>
 
