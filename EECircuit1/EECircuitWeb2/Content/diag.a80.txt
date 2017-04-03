@@ -1,0 +1,16 @@
+﻿; This is a diagnostic for ee8080 CPU
+; If all test was passed, all virtual LEDs in port 0FFH are on.
+	org	0h
+	mvi	a,12h
+	lxi	h,3456h
+	jmp	success
+
+fail:
+	mvi	a,080h
+	out	0ffh
+success:
+	mvi	a,0ffh
+	out	0ffh
+	hlt
+
+	end

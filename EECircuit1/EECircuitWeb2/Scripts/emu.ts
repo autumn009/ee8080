@@ -323,7 +323,6 @@
 
         public reset() {
             this.memory.Bytes.clear();
-            loadTest2();
             this.update();
         }
     }
@@ -359,11 +358,14 @@
     });
 
     function loadTest1() {
-        virtualMachine.memory.Bytes.write(0, 0x3e);    // MVI A,12 (1)
-        virtualMachine.memory.Bytes.write(1, 0x12);    // MVI A,12 (2)
-        virtualMachine.memory.Bytes.write(2, 0x76);    // HLT
-
-        $("#sourceCode").val(" MVI A,21h\r\n hlt\r\n");
+        var jqxhr = $.get("/Content/diag.a80.txt")
+            .done(function (data) {
+                $("#sourceCode").val(data);
+                $("#sourceCode").keyup();   // 枠を広げるおまじない
+            })
+            .fail(function () {
+                alert("load error");
+            });
     }
 
     function loadTest2() {
@@ -423,5 +425,6 @@
     $(document).on("pagecreate", function () {
         virtualMachine.reset();
         setIde();
+        loadTest1();
     });
 }

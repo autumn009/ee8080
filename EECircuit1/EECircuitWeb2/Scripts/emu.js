@@ -368,7 +368,6 @@ var emu;
         };
         ee8080.prototype.reset = function () {
             this.memory.Bytes.clear();
-            loadTest2();
             this.update();
         };
         return ee8080;
@@ -398,10 +397,14 @@ var emu;
         // TBW
     });
     function loadTest1() {
-        emu.virtualMachine.memory.Bytes.write(0, 0x3e); // MVI A,12 (1)
-        emu.virtualMachine.memory.Bytes.write(1, 0x12); // MVI A,12 (2)
-        emu.virtualMachine.memory.Bytes.write(2, 0x76); // HLT
-        $("#sourceCode").val(" MVI A,21h\r\n hlt\r\n");
+        var jqxhr = $.get("/Content/diag.a80.txt")
+            .done(function (data) {
+            $("#sourceCode").val(data);
+            $("#sourceCode").keyup(); // 枠を広げるおまじない
+        })
+            .fail(function () {
+            alert("load error");
+        });
     }
     function loadTest2() {
         var s = "";
@@ -452,6 +455,7 @@ var emu;
     $(document).on("pagecreate", function () {
         emu.virtualMachine.reset();
         setIde();
+        loadTest1();
     });
 })(emu || (emu = {}));
 //# sourceMappingURL=emu.js.map

@@ -2,6 +2,8 @@ var miniAssembler;
 (function (miniAssembler) {
     var resultMessage = "";
     var lineNumber = 0;
+    var pass = 0;
+    var symbolTable = null;
     function writeError(msg) {
         if (lineNumber)
             resultMessage += "Line " + lineNumber + ": " + msg + "\r\n";
@@ -52,40 +54,73 @@ var miniAssembler;
     function myParseNumber(oprorg) {
         var opr = oprorg;
         var hex = false;
+        var dec = false;
         if (opr.length > 1 && opr.substring(0, 1) == "$") {
             hex = true;
             opr = opr.substring(1);
         }
-        if (opr.length > 1 && opr.substring(opr.length - 1, opr.length) == "H") {
-            hex = true;
-            opr = opr.substring(0, opr.length - 1);
-        }
-        var n = 0;
-        for (var i = 0; i < opr.length; i++) {
-            var c = opr.charCodeAt(i);
-            if (hex) {
-                if (c >= 0x30 && c <= 0x39)
-                    n = c - 0x30 + n * 16;
-                else if (c >= 0x41 && c <= 0x46)
-                    n = c - 0x41 + 10 + n * 16;
-                else {
-                    writeError(oprorg + " is not a correct number, assumed that it's 0.");
-                    return 0;
-                }
+        else if (opr.length > 1 && (opr.substring(0, 1) >= "0" && opr.substring(0, 1) <= "9")) {
+            if (opr.substring(opr.length - 1, opr.length) == "H") {
+                hex = true;
+                opr = opr.substring(0, opr.length - 1);
             }
             else {
-                if (c >= 0x30 && c <= 0x39)
-                    n = c - 0x30 + n * 10;
+                dec = true;
+                opr = opr.substring(0, opr.length);
+            }
+        }
+        var n = 0;
+        if (hex || dec) {
+            for (var i = 0; i < opr.length; i++) {
+                var c = opr.charCodeAt(i);
+                if (hex) {
+                    if (c >= 0x30 && c <= 0x39)
+                        n = c - 0x30 + n * 16;
+                    else if (c >= 0x41 && c <= 0x46)
+                        n = c - 0x41 + 10 + n * 16;
+                    else {
+                        writeError(oprorg + " is not a correct number, assumed that it's 0.");
+                        return 0;
+                    }
+                }
                 else {
-                    writeError(oprorg + " is not a correct number, assumed that it's 0.");
-                    return 0;
+                    if (c >= 0x30 && c <= 0x39)
+                        n = c - 0x30 + n * 10;
+                    else {
+                        writeError(oprorg + " is not a correct number, assumed that it's 0.");
+                        return 0;
+                    }
+                }
+            }
+        }
+        else {
+            if (pass == 2) {
+                n = symbolTable[opr];
+                if (n == undefined) {
+                    writeError("Symbol " + opr + " was not a found, assumed that it's 0.");
+                    n = 0;
                 }
             }
         }
         return n;
     }
+    function out16(hl, out) {
+        out(lowByte(hl));
+        out(highByte(hl));
+    }
     var mnemonicTable = new Object();
     function fillMnemonicTable() {
+        var _this = this;
+        mnemonicTable["ORG"] = new mnemonicUnit(1, 0, function (opr1, opr2, out) {
+            _this.pc = myParseNumber(opr1);
+        });
+        mnemonicTable["END"] = new mnemonicUnit(0, 0, function (opr1, opr2, out) {
+            endRequest = true;
+        });
+        mnemonicTable["JMP"] = new mnemonicUnit(1, 3, function (opr1, opr2, out) {
+            out(0xc3);
+            out16(myParseNumber(opr1), out);
+        });
         mnemonicTable["MVI"] = new mnemonicUnit(2, 2, function (opr1, opr2, out) {
             out(6 | myParseDDD(opr1));
             out(myParseNumber(opr2));
@@ -95,9 +130,7 @@ var miniAssembler;
         });
         mnemonicTable["LXI"] = new mnemonicUnit(2, 3, function (opr1, opr2, out) {
             out(1 | myParseBDH(opr1));
-            var hl = myParseNumber(opr2);
-            out(lowByte(hl));
-            out(highByte(hl));
+            out16(myParseNumber(opr2), out);
         });
         mnemonicTable["IN"] = new mnemonicUnit(1, 2, function (opr1, opr2, out) {
             out(0xdb);
@@ -148,18 +181,27 @@ var miniAssembler;
             }
         }
     }
-    function compileLine(pass, pc, tokens, symbolTable, out) {
-        if (pass == 1 && tokens[0])
-            symbolTable[tokens[0]] = pc;
-        var mnem = mnemonicTable[tokens[1]];
-        if (mnem)
-            mnem.generate(tokens[2], tokens[3], out);
-        else
-            writeError(tokens[1] + " is not a correct mnemonic.");
+    function compileLine(pc, tokens, out) {
+        if (pass == 1 && tokens[0]) {
+            var n = tokens[0];
+            if (n.substring(n.length - 1, n.length) == ":") {
+                n = n.substring(0, n.length - 1).trim();
+            }
+            symbolTable[n] = pc;
+        }
+        if (tokens[1]) {
+            var mnem = mnemonicTable[tokens[1]];
+            if (mnem)
+                mnem.generate(tokens[2], tokens[3], out);
+            else
+                writeError(tokens[1] + " is not a correct mnemonic.");
+        }
     }
-    function passX(pass, sourceCode, outputMemory, symbolTable) {
+    var endRequest = false;
+    function passX(sourceCode, outputMemory) {
         var pc = 0;
         var start = 0;
+        endRequest = false;
         lineNumber = 1;
         for (;;) {
             var end = start;
@@ -178,11 +220,14 @@ var miniAssembler;
                 }
                 end++;
             }
-            compileLine(pass, pc, lineParser(line.toUpperCase()), symbolTable, function (byte) {
+            var tokens = lineParser(line.toUpperCase());
+            compileLine(pc, tokens, function (byte) {
                 if (pass == 2)
                     outputMemory.write(pc, byte);
                 pc++;
             });
+            if (endRequest)
+                return;
             if (ch == "\r" && sourceCode[end + 1] == "\n")
                 start = end + 2;
             else
@@ -191,14 +236,16 @@ var miniAssembler;
         }
     }
     function compile(sourceCode, outputMemory) {
-        var symbolTable = new Object();
-        passX(1, sourceCode, outputMemory, symbolTable);
+        symbolTable = new Object();
+        pass = 1;
+        passX(sourceCode, outputMemory);
         if (resultMessage) {
             lineNumber = 0;
             writeError("Abnormal Terminated.");
             return;
         }
-        passX(2, sourceCode, outputMemory, symbolTable);
+        pass = 2;
+        passX(sourceCode, outputMemory);
         //var r = lineParser(" mvi \'\"',\"\'\",\",\" ;comment");
         //result += r.length + "tokens\r\n";
         //for (var i = 0; i < r.length; i++) {

@@ -134,6 +134,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\diag.a80.txt" />
     <Content Include="Content\images\arrow-u-white.png" />
     <Content Include="Content\images\check-white.png" />
     <Content Include="Content\images\gate\ADDER.png" />
