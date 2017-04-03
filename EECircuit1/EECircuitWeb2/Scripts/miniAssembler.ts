@@ -118,6 +118,9 @@
 
 
 
+        mnemonicTable["MOV"] = new mnemonicUnit(3, 1, (opr1, opr2, out) => {
+            out(0x40 | myParseDDD(opr1) | myParseSSS(opr2));
+        });
         mnemonicTable["MVI"] = new mnemonicUnit(2, 2, (opr1, opr2, out) => {
             out(6 | myParseDDD(opr1));
             out(myParseNumber(opr2));

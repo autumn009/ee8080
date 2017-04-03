@@ -289,19 +289,15 @@
                 }
                 else if (g1 == 1)
                 {
-                    if (g2 == 6)
+                    if (g2 == 6 && g3 == 6)    // HLT
                     {
-                        if (g3 == 6)    // HLT
-                        {
-                            this.halt = true;
-                            virtualMachine.update();
-                            this.setStopped();
-                            return;
-                        }
+                        this.halt = true;
+                        virtualMachine.update();
+                        this.setStopped();
+                        return;
                     }
-                    else
-                    {
-                        this.notImplemented(machinCode1);
+                    else {  // MOV
+                        this.setRegister(g2, this.getRegister(g3));
                     }
                 }
                 else if (g1 == 2) {

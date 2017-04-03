@@ -347,16 +347,14 @@ var emu;
                     }
                 }
                 else if (g1 == 1) {
-                    if (g2 == 6) {
-                        if (g3 == 6) {
-                            this.halt = true;
-                            emu.virtualMachine.update();
-                            this.setStopped();
-                            return;
-                        }
+                    if (g2 == 6 && g3 == 6) {
+                        this.halt = true;
+                        emu.virtualMachine.update();
+                        this.setStopped();
+                        return;
                     }
                     else {
-                        this.notImplemented(machinCode1);
+                        this.setRegister(g2, this.getRegister(g3));
                     }
                 }
                 else if (g1 == 2) {
