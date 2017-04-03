@@ -111,7 +111,11 @@
 
     }
     class FlagFlipFlop {
-
+        public z: boolean = false;
+        public s: boolean = false;
+        public p: boolean = false;
+        public cy: boolean = false;
+        public ac: boolean = false;
     }
     class DecimalAdjust {
 
@@ -144,6 +148,7 @@
         public accumulatorLatch = new AccumulatorLatch();
         public tempReg = new TempReg();
         public regarray = new RegisterArray();
+        public flags = new FlagFlipFlop();
         public update() {
             $("#regA").text(dec2hex(this.accumulator.getValue(), 2));
             $("#regBC").text(dec2hex(this.regarray.b.getValue(), 2) + dec2hex(this.regarray.c.getValue(), 2));
@@ -204,6 +209,12 @@
             this.regarray.pc.Increment();
             return m;
         }
+        public fetchNextWord() {
+            var l = this.fetchNextByte();
+            var h = this.fetchNextByte();
+            var hl = h * 256 + l;
+            return hl;
+        }
         public setRuning()
         {
             $("#runStopStatus").removeClass("stop");
@@ -216,6 +227,29 @@
             $("#runStopStatus").removeClass("run");
             $("#runStopStatus").addClass("stop");
             $("#runStopStatus").text("STOP");
+        }
+
+        private undefinedInstuction(n: number)
+        {
+            alert(n.toString(16) + " is not undefined machine code");
+        }
+
+        private notImplemented(n: number) {
+            alert(n.toString(16) + " is not implemented");
+        }
+
+        private cmp(a: number, b: number) {
+            this.flags.z = (a == b);
+            this.flags.cy = (a < b);
+            this.flags.s = ((a & 0x80) != 0);
+            var p = 0;
+            var x = a;
+            for (var i = 0; i < 8; i++) {
+                if (x & 1) p++;
+                x >>= 1;
+            }
+            this.flags.s = ((p & 1) == 0);
+            this.flags.ac = false;
         }
 
         public runMain()
@@ -241,10 +275,8 @@
                         }
                         else // DAD
                         {
-                            // TBW
+                            this.notImplemented(machinCode1);
                         }
-
-
                     }
                     else if (g3 == 6)    // MVI r,x
                     {
@@ -252,7 +284,7 @@
                     }
                     else
                     {
-                        // TBW
+                        this.notImplemented(machinCode1);
                     }
                 }
                 else if (g1 == 1)
@@ -269,14 +301,26 @@
                     }
                     else
                     {
-                        // TBW
+                        this.notImplemented(machinCode1);
                     }
                 }
                 else if (g1 == 2) {
-                    // TBW
+                    this.notImplemented(machinCode1);
                 }
                 else {
-                    if (g2 == 3 && g3 == 3) // IN
+                    if (g2 == 0 && g3 == 3) // JMP
+                    {
+                        this.regarray.pc.setValue(this.fetchNextWord());
+                    }
+                    else if (g2 == 2 && g3 == 2) // JNZ
+                    {
+                        if (!this.flags.z) this.regarray.pc.setValue(this.fetchNextWord());
+                        else {
+                            this.regarray.pc.Increment();
+                            this.regarray.pc.Increment();
+                        }
+                    }
+                    else if (g2 == 3 && g3 == 3) // IN
                     {
                         var port = this.fetchNextByte();
                         var r = virtualMachine.io.in(port);
@@ -288,14 +332,14 @@
                         var v = this.getRegister(7);
                         virtualMachine.io.out(port, v);
                     }
+                    else if (g2 == 7 && g3 == 6) // CPI
+                    {
+                        this.cmp(this.accumulator.getValue(), this.fetchNextByte());
+                    }
                     else
                     {
-                        // TBW
+                        this.notImplemented(machinCode1);
                     }
-
-
-
-                    // TBW
                 }
             }
         }

@@ -125,12 +125,20 @@ var miniAssembler;
             out(6 | myParseDDD(opr1));
             out(myParseNumber(opr2));
         });
+        mnemonicTable["CPI"] = new mnemonicUnit(1, 2, function (opr1, opr2, out) {
+            out(0xfe);
+            out(myParseNumber(opr1));
+        });
         mnemonicTable["HLT"] = new mnemonicUnit(0, 1, function (opr1, opr2, out) {
             out(0x76);
         });
         mnemonicTable["LXI"] = new mnemonicUnit(2, 3, function (opr1, opr2, out) {
             out(1 | myParseBDH(opr1));
             out16(myParseNumber(opr2), out);
+        });
+        mnemonicTable["JNZ"] = new mnemonicUnit(2, 3, function (opr1, opr2, out) {
+            out(0xd2);
+            out16(myParseNumber(opr1), out);
         });
         mnemonicTable["IN"] = new mnemonicUnit(1, 2, function (opr1, opr2, out) {
             out(0xdb);

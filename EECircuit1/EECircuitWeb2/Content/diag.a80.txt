@@ -2,12 +2,15 @@
 ; If all test was passed, all virtual LEDs in port 0FFH are on.
 	org	0h
 	mvi	a,12h
+	cpi	12h
+	jnz	fail
 	lxi	h,3456h
 	jmp	success
 
 fail:
 	mvi	a,080h
 	out	0ffh
+	hlt
 success:
 	mvi	a,0ffh
 	out	0ffh

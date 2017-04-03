@@ -172,6 +172,11 @@ var emu;
     }());
     var FlagFlipFlop = (function () {
         function FlagFlipFlop() {
+            this.z = false;
+            this.s = false;
+            this.p = false;
+            this.cy = false;
+            this.ac = false;
         }
         return FlagFlipFlop;
     }());
@@ -218,6 +223,7 @@ var emu;
             this.accumulatorLatch = new AccumulatorLatch();
             this.tempReg = new TempReg();
             this.regarray = new RegisterArray();
+            this.flags = new FlagFlipFlop();
         }
         i8080.prototype.update = function () {
             $("#regA").text(dec2hex(this.accumulator.getValue(), 2));
@@ -277,6 +283,12 @@ var emu;
             this.regarray.pc.Increment();
             return m;
         };
+        i8080.prototype.fetchNextWord = function () {
+            var l = this.fetchNextByte();
+            var h = this.fetchNextByte();
+            var hl = h * 256 + l;
+            return hl;
+        };
         i8080.prototype.setRuning = function () {
             $("#runStopStatus").removeClass("stop");
             $("#runStopStatus").removeClass("run");
@@ -288,6 +300,26 @@ var emu;
             $("#runStopStatus").removeClass("run");
             $("#runStopStatus").addClass("stop");
             $("#runStopStatus").text("STOP");
+        };
+        i8080.prototype.undefinedInstuction = function (n) {
+            alert(n.toString(16) + " is not undefined machine code");
+        };
+        i8080.prototype.notImplemented = function (n) {
+            alert(n.toString(16) + " is not implemented");
+        };
+        i8080.prototype.cmp = function (a, b) {
+            this.flags.z = (a == b);
+            this.flags.cy = (a < b);
+            this.flags.s = ((a & 0x80) != 0);
+            var p = 0;
+            var x = a;
+            for (var i = 0; i < 8; i++) {
+                if (x & 1)
+                    p++;
+                x >>= 1;
+            }
+            this.flags.s = ((p & 1) == 0);
+            this.flags.ac = false;
         };
         i8080.prototype.runMain = function () {
             for (;;) {
@@ -304,12 +336,14 @@ var emu;
                             this.setRegister(g2, this.fetchNextByte());
                         }
                         else {
+                            this.notImplemented(machinCode1);
                         }
                     }
                     else if (g3 == 6) {
                         this.setRegister(g2, this.fetchNextByte());
                     }
                     else {
+                        this.notImplemented(machinCode1);
                     }
                 }
                 else if (g1 == 1) {
@@ -322,12 +356,25 @@ var emu;
                         }
                     }
                     else {
+                        this.notImplemented(machinCode1);
                     }
                 }
                 else if (g1 == 2) {
+                    this.notImplemented(machinCode1);
                 }
                 else {
-                    if (g2 == 3 && g3 == 3) {
+                    if (g2 == 0 && g3 == 3) {
+                        this.regarray.pc.setValue(this.fetchNextWord());
+                    }
+                    else if (g2 == 2 && g3 == 2) {
+                        if (!this.flags.z)
+                            this.regarray.pc.setValue(this.fetchNextWord());
+                        else {
+                            this.regarray.pc.Increment();
+                            this.regarray.pc.Increment();
+                        }
+                    }
+                    else if (g2 == 3 && g3 == 3) {
                         var port = this.fetchNextByte();
                         var r = emu.virtualMachine.io.in(port);
                         this.setRegister(7, r);
@@ -337,7 +384,11 @@ var emu;
                         var v = this.getRegister(7);
                         emu.virtualMachine.io.out(port, v);
                     }
+                    else if (g2 == 7 && g3 == 6) {
+                        this.cmp(this.accumulator.getValue(), this.fetchNextByte());
+                    }
                     else {
+                        this.notImplemented(machinCode1);
                     }
                 }
             }
