@@ -238,10 +238,10 @@
             alert(n.toString(16) + " is not implemented");
         }
 
-        private cmp(a: number, b: number) {
-            this.flags.z = (a == b);
-            this.flags.cy = (a < b);
-            this.flags.s = ((a & 0x80) != 0);
+        private setps()
+        {
+            var a = this.accumulator.getValue();
+            this.flags.p = ((a & 0x80) != 0);
             var p = 0;
             var x = a;
             for (var i = 0; i < 8; i++) {
@@ -249,7 +249,24 @@
                 x >>= 1;
             }
             this.flags.s = ((p & 1) == 0);
+        }
+
+        private cmp(a: number, b: number) {
+            this.flags.z = (a == b);
+            this.flags.cy = (a < b);
+            this.setps();
             this.flags.ac = false;
+        }
+
+        private add(a: number, b: number) {
+            var r = a + b;
+            var r0 = r & 255;
+            var rc = (r >> 8) != 0;
+            this.accumulator.setValue(r0);
+            this.flags.z = (r0 == 0);
+            this.flags.cy = rc;
+            this.setps();
+            this.flags.ac = (((a & 15) + (b + 15)) >> 4) != 0;
         }
 
         public runMain()
@@ -301,7 +318,11 @@
                     }
                 }
                 else if (g1 == 2) {
-                    if (g2 == 7)    // CMP
+                    if (g2 == 0)    // ADD
+                    {
+                        this.add(this.accumulator.getValue(), this.getRegister(g3));
+                    }
+                    else if (g2 == 7)    // CMP
                     {
                         this.cmp(this.accumulator.getValue(), this.getRegister(g3));
                     }
@@ -313,6 +334,10 @@
                     if (g2 == 0 && g3 == 3) // JMP
                     {
                         this.regarray.pc.setValue(this.fetchNextWord());
+                    }
+                    else if (g2 == 0 && g3 == 6) // ADI
+                    {
+                        this.add(this.accumulator.getValue(), this.fetchNextByte());
                     }
                     else if (g2 == 2 && g3 == 2) // JNZ
                     {

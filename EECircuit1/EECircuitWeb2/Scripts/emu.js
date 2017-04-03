@@ -307,10 +307,9 @@ var emu;
         i8080.prototype.notImplemented = function (n) {
             alert(n.toString(16) + " is not implemented");
         };
-        i8080.prototype.cmp = function (a, b) {
-            this.flags.z = (a == b);
-            this.flags.cy = (a < b);
-            this.flags.s = ((a & 0x80) != 0);
+        i8080.prototype.setps = function () {
+            var a = this.accumulator.getValue();
+            this.flags.p = ((a & 0x80) != 0);
             var p = 0;
             var x = a;
             for (var i = 0; i < 8; i++) {
@@ -319,7 +318,22 @@ var emu;
                 x >>= 1;
             }
             this.flags.s = ((p & 1) == 0);
+        };
+        i8080.prototype.cmp = function (a, b) {
+            this.flags.z = (a == b);
+            this.flags.cy = (a < b);
+            this.setps();
             this.flags.ac = false;
+        };
+        i8080.prototype.add = function (a, b) {
+            var r = a + b;
+            var r0 = r & 255;
+            var rc = (r >> 8) != 0;
+            this.accumulator.setValue(r0);
+            this.flags.z = (r0 == 0);
+            this.flags.cy = rc;
+            this.setps();
+            this.flags.ac = (((a & 15) + (b + 15)) >> 4) != 0;
         };
         i8080.prototype.runMain = function () {
             for (;;) {
@@ -358,7 +372,10 @@ var emu;
                     }
                 }
                 else if (g1 == 2) {
-                    if (g2 == 7) {
+                    if (g2 == 0) {
+                        this.add(this.accumulator.getValue(), this.getRegister(g3));
+                    }
+                    else if (g2 == 7) {
                         this.cmp(this.accumulator.getValue(), this.getRegister(g3));
                     }
                     else {
@@ -368,6 +385,9 @@ var emu;
                 else {
                     if (g2 == 0 && g3 == 3) {
                         this.regarray.pc.setValue(this.fetchNextWord());
+                    }
+                    else if (g2 == 0 && g3 == 6) {
+                        this.add(this.accumulator.getValue(), this.fetchNextByte());
                     }
                     else if (g2 == 2 && g3 == 2) {
                         if (!this.flags.z)

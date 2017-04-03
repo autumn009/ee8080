@@ -55,11 +55,11 @@ var miniAssembler;
         var opr = oprorg;
         var hex = false;
         var dec = false;
-        if (opr.length > 1 && opr.substring(0, 1) == "$") {
+        if (opr.length > 0 && opr.substring(0, 1) == "$") {
             hex = true;
             opr = opr.substring(1);
         }
-        else if (opr.length > 1 && (opr.substring(0, 1) >= "0" && opr.substring(0, 1) <= "9")) {
+        else if (opr.length > 0 && (opr.substring(0, 1) >= "0" && opr.substring(0, 1) <= "9")) {
             if (opr.substring(opr.length - 1, opr.length) == "H") {
                 hex = true;
                 opr = opr.substring(0, opr.length - 1);
@@ -127,6 +127,13 @@ var miniAssembler;
         mnemonicTable["MVI"] = new mnemonicUnit(2, 2, function (opr1, opr2, out) {
             out(6 | myParseDDD(opr1));
             out(myParseNumber(opr2));
+        });
+        mnemonicTable["ADD"] = new mnemonicUnit(1, 1, function (opr1, opr2, out) {
+            out(0x80 | myParseSSS(opr1));
+        });
+        mnemonicTable["ADI"] = new mnemonicUnit(1, 2, function (opr1, opr2, out) {
+            out(0xc6);
+            out(myParseNumber(opr1));
         });
         mnemonicTable["CMP"] = new mnemonicUnit(1, 1, function (opr1, opr2, out) {
             out(0xb8 | myParseSSS(opr1));
