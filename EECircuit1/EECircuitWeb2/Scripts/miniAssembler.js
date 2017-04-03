@@ -128,6 +128,9 @@ var miniAssembler;
             out(6 | myParseDDD(opr1));
             out(myParseNumber(opr2));
         });
+        mnemonicTable["CMP"] = new mnemonicUnit(1, 1, function (opr1, opr2, out) {
+            out(0xb8 | myParseSSS(opr1));
+        });
         mnemonicTable["CPI"] = new mnemonicUnit(1, 2, function (opr1, opr2, out) {
             out(0xfe);
             out(myParseNumber(opr1));

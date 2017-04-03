@@ -9,6 +9,13 @@
 	cpi	12h
 	jnz	fail
 	lxi	h,3456h
+	mvi	a,34h
+	cmp	h
+	jnz	fail
+	mvi	a,56h
+	cmp	l
+	jnz	fail
+
 	jmp	success
 
 fail:

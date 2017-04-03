@@ -301,7 +301,13 @@
                     }
                 }
                 else if (g1 == 2) {
-                    this.notImplemented(machinCode1);
+                    if (g2 == 7)    // CMP
+                    {
+                        this.cmp(this.accumulator.getValue(), this.getRegister(g3));
+                    }
+                    else {
+                        this.notImplemented(machinCode1);
+                    }
                 }
                 else {
                     if (g2 == 0 && g3 == 3) // JMP
