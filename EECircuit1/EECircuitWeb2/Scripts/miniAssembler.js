@@ -129,6 +129,14 @@ var miniAssembler;
             out(6 | myParseDDD(opr1));
             out(myParseNumber(opr2));
         });
+        mnemonicTable["STA"] = new mnemonicUnit(1, 3, function (opr1, opr2, out) {
+            out(0x32);
+            out16(myParseNumber(opr1), out);
+        });
+        mnemonicTable["LDA"] = new mnemonicUnit(1, 3, function (opr1, opr2, out) {
+            out(0x3A);
+            out16(myParseNumber(opr1), out);
+        });
         mnemonicTable["ADD"] = new mnemonicUnit(1, 1, function (opr1, opr2, out) {
             out(0x80 | myParseSSS(opr1));
         });
@@ -218,6 +226,8 @@ var miniAssembler;
             }
         }
         if (tokens[1]) {
+            if (tokens[1] == "EQU")
+                return;
             var mnem = mnemonicTable[tokens[1]];
             if (mnem)
                 mnem.generate(tokens[2], tokens[3], out);

@@ -344,7 +344,18 @@ var emu;
                 if (g1 == 0) {
                     if (g2 == 0 && g3 == 0) {
                     }
-                    if (g3 == 1) {
+                    if (g3 == 2) {
+                        if (g2 == 6) {
+                            emu.virtualMachine.memory.Bytes.write(this.fetchNextWord(), this.accumulator.getValue());
+                        }
+                        else if (g2 == 7) {
+                            this.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(this.fetchNextWord()));
+                        }
+                        else {
+                            this.notImplemented(machinCode1);
+                        }
+                    }
+                    else if (g3 == 1) {
                         if ((g2 & 1) == 0) {
                             this.setRegister(g2 + 1, this.fetchNextByte());
                             this.setRegister(g2, this.fetchNextByte());

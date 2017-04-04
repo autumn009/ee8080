@@ -283,7 +283,21 @@
                     {
                         // NO OPETATION
                     }
-                    if (g3 == 1) // LXI or DAD
+                    if (g3 == 2)
+                    {
+                        if (g2 == 6) // STA
+                        {
+                            virtualMachine.memory.Bytes.write(this.fetchNextWord(), this.accumulator.getValue());
+                        }
+                        else if (g2 == 7) { // LDA
+                            this.accumulator.setValue(virtualMachine.memory.Bytes.read(this.fetchNextWord()));
+                        }
+                        else
+                        {
+                            this.notImplemented(machinCode1);
+                        }
+                    }
+                    else if (g3 == 1) // LXI or DAD
                     {
                         if( (g2 & 1) == 0) // LXI
                         {
