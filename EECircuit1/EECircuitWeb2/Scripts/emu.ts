@@ -382,46 +382,65 @@
                     }
                 }
                 else {
-                    if (g2 == 0 && g3 == 3) // JMP
+                    if (g3 == 2)
                     {
-                        this.regarray.pc.setValue(this.fetchNextWord());
-                    }
-                    else if (g2 == 0 && g3 == 6) // ADI
-                    {
-                        this.add(this.accumulator.getValue(), this.fetchNextByte());
-                    }
-                    else if (g2 == 2 && g3 == 2) // JNZ
-                    {
-                        if (!this.flags.z) this.regarray.pc.setValue(this.fetchNextWord());
+                        if (g2 == 2) // JNZ
+                        {
+                            if (!this.flags.z) this.regarray.pc.setValue(this.fetchNextWord());
+                            else {
+                                this.regarray.pc.Increment();
+                                this.regarray.pc.Increment();
+                            }
+                        }
                         else {
-                            this.regarray.pc.Increment();
-                            this.regarray.pc.Increment();
+                            this.notImplemented(machinCode1);
                         }
                     }
-                    else if (g2 == 3 && g3 == 3) // IN
+                    else if (g3 == 3)
                     {
-                        var port = this.fetchNextByte();
-                        var r = virtualMachine.io.in(port);
-                        this.setRegister(7, r);
+                        if (g2 == 0) // JMP
+                        {
+                            this.regarray.pc.setValue(this.fetchNextWord());
+                        }
+                        else if (g2 == 3) // IN
+                        {
+                            var port = this.fetchNextByte();
+                            var r = virtualMachine.io.in(port);
+                            this.setRegister(7, r);
+                        }
+                        else if (g2 == 2) // OUT
+                        {
+                            var port = this.fetchNextByte();
+                            var v = this.getRegister(7);
+                            virtualMachine.io.out(port, v);
+                        }
+                        else if (g2 == 5) // XCHG
+                        {
+                            var t1 = this.regarray.l.getValue();
+                            var t2 = this.regarray.h.getValue();
+                            this.regarray.l.setValue(this.regarray.e.getValue());
+                            this.regarray.h.setValue(this.regarray.d.getValue());
+                            this.regarray.e.setValue(t1);
+                            this.regarray.d.setValue(t2);
+                        }
+                        else
+                        {
+                            this.notImplemented(machinCode1);
+                        }
                     }
-                    else if (g2 == 2 && g3 == 3) // OUT
+                    else if (g3 == 6)
                     {
-                        var port = this.fetchNextByte();
-                        var v = this.getRegister(7);
-                        virtualMachine.io.out(port, v);
-                    }
-                    else if (g2 == 5 && g3 == 3) // XCHG
-                    {
-                        var t1 = this.regarray.l.getValue();
-                        var t2 = this.regarray.h.getValue();
-                        this.regarray.l.setValue(this.regarray.e.getValue());
-                        this.regarray.h.setValue(this.regarray.d.getValue());
-                        this.regarray.e.setValue(t1);
-                        this.regarray.d.setValue(t2);
-                    }
-                    else if (g2 == 7 && g3 == 6) // CPI
-                    {
-                        this.cmp(this.accumulator.getValue(), this.fetchNextByte());
+                        if (g2 == 0) // ADI
+                        {
+                            this.add(this.accumulator.getValue(), this.fetchNextByte());
+                        }
+                        else if (g2 == 7) // CPI
+                        {
+                            this.cmp(this.accumulator.getValue(), this.fetchNextByte());
+                        }
+                        else {
+                            this.notImplemented(machinCode1);
+                        }
                     }
                     else
                     {

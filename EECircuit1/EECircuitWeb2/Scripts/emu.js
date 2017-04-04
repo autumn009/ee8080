@@ -425,40 +425,55 @@ var emu;
                     }
                 }
                 else {
-                    if (g2 == 0 && g3 == 3) {
-                        this.regarray.pc.setValue(this.fetchNextWord());
-                    }
-                    else if (g2 == 0 && g3 == 6) {
-                        this.add(this.accumulator.getValue(), this.fetchNextByte());
-                    }
-                    else if (g2 == 2 && g3 == 2) {
-                        if (!this.flags.z)
-                            this.regarray.pc.setValue(this.fetchNextWord());
+                    if (g3 == 2) {
+                        if (g2 == 2) {
+                            if (!this.flags.z)
+                                this.regarray.pc.setValue(this.fetchNextWord());
+                            else {
+                                this.regarray.pc.Increment();
+                                this.regarray.pc.Increment();
+                            }
+                        }
                         else {
-                            this.regarray.pc.Increment();
-                            this.regarray.pc.Increment();
+                            this.notImplemented(machinCode1);
                         }
                     }
-                    else if (g2 == 3 && g3 == 3) {
-                        var port = this.fetchNextByte();
-                        var r = emu.virtualMachine.io.in(port);
-                        this.setRegister(7, r);
+                    else if (g3 == 3) {
+                        if (g2 == 0) {
+                            this.regarray.pc.setValue(this.fetchNextWord());
+                        }
+                        else if (g2 == 3) {
+                            var port = this.fetchNextByte();
+                            var r = emu.virtualMachine.io.in(port);
+                            this.setRegister(7, r);
+                        }
+                        else if (g2 == 2) {
+                            var port = this.fetchNextByte();
+                            var v = this.getRegister(7);
+                            emu.virtualMachine.io.out(port, v);
+                        }
+                        else if (g2 == 5) {
+                            var t1 = this.regarray.l.getValue();
+                            var t2 = this.regarray.h.getValue();
+                            this.regarray.l.setValue(this.regarray.e.getValue());
+                            this.regarray.h.setValue(this.regarray.d.getValue());
+                            this.regarray.e.setValue(t1);
+                            this.regarray.d.setValue(t2);
+                        }
+                        else {
+                            this.notImplemented(machinCode1);
+                        }
                     }
-                    else if (g2 == 2 && g3 == 3) {
-                        var port = this.fetchNextByte();
-                        var v = this.getRegister(7);
-                        emu.virtualMachine.io.out(port, v);
-                    }
-                    else if (g2 == 5 && g3 == 3) {
-                        var t1 = this.regarray.l.getValue();
-                        var t2 = this.regarray.h.getValue();
-                        this.regarray.l.setValue(this.regarray.e.getValue());
-                        this.regarray.h.setValue(this.regarray.d.getValue());
-                        this.regarray.e.setValue(t1);
-                        this.regarray.d.setValue(t2);
-                    }
-                    else if (g2 == 7 && g3 == 6) {
-                        this.cmp(this.accumulator.getValue(), this.fetchNextByte());
+                    else if (g3 == 6) {
+                        if (g2 == 0) {
+                            this.add(this.accumulator.getValue(), this.fetchNextByte());
+                        }
+                        else if (g2 == 7) {
+                            this.cmp(this.accumulator.getValue(), this.fetchNextByte());
+                        }
+                        else {
+                            this.notImplemented(machinCode1);
+                        }
                     }
                     else {
                         this.notImplemented(machinCode1);
