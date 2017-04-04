@@ -308,6 +308,20 @@
                                 this.regarray.getRegisterPairValue(g2 >> 1)
                             ));
                         }
+                        else if (g2 == 4)  // SHLD
+                        {
+                            var addr = this.fetchNextWord();
+                            virtualMachine.memory.Bytes.write(addr, this.regarray.l.getValue());
+                            addr = incrementAddress(addr);
+                            virtualMachine.memory.Bytes.write(addr, this.regarray.h.getValue());
+                        }
+                        else if (g2==5)  // LHLD
+                        {
+                            var addr = this.fetchNextWord();
+                            this.regarray.l.setValue(virtualMachine.memory.Bytes.read(addr));
+                            addr = incrementAddress(addr);
+                            this.regarray.h.setValue(virtualMachine.memory.Bytes.read(addr));
+                        }
                         else if (g2 == 6) // STA
                         {
                             virtualMachine.memory.Bytes.write(this.fetchNextWord(), this.accumulator.getValue());

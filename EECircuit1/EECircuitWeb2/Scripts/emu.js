@@ -364,6 +364,18 @@ var emu;
                         else if ((g2 & 0x5) == 0x1) {
                             this.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(this.regarray.getRegisterPairValue(g2 >> 1)));
                         }
+                        else if (g2 == 4) {
+                            var addr = this.fetchNextWord();
+                            emu.virtualMachine.memory.Bytes.write(addr, this.regarray.l.getValue());
+                            addr = incrementAddress(addr);
+                            emu.virtualMachine.memory.Bytes.write(addr, this.regarray.h.getValue());
+                        }
+                        else if (g2 == 5) {
+                            var addr = this.fetchNextWord();
+                            this.regarray.l.setValue(emu.virtualMachine.memory.Bytes.read(addr));
+                            addr = incrementAddress(addr);
+                            this.regarray.h.setValue(emu.virtualMachine.memory.Bytes.read(addr));
+                        }
                         else if (g2 == 6) {
                             emu.virtualMachine.memory.Bytes.write(this.fetchNextWord(), this.accumulator.getValue());
                         }

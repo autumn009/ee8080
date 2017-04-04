@@ -2,6 +2,7 @@
 ; If all test was passed, all virtual LEDs in port 0FFH are on.
 	org	0h
 work	equ	8000h
+work2	equ	8001h
 	mvi b,78h
 	mov a,b
 	cpi	78h
@@ -46,7 +47,26 @@ work	equ	8000h
 	cpi	56h
 	jnz	fail
 
+	mvi	a,11h
+	sta	work
+	mvi	a,22h
+	sta	work2
+	lhld	work
+	mov	a,l
+	cpi	11h
+	jnz	fail
+	mov	a,h
+	cpi	22h
+	jnz	fail
 
+	lxi	h,4433h
+	shld	work
+	lda	work
+	cpi	33h
+	jnz	fail
+	lda	work2
+	cpi	44h
+	jnz	fail
 
 
 	jmp	success

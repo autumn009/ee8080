@@ -138,14 +138,20 @@
         mnemonicTable["LDAX"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
             out(0x0a | myParseBD(opr1));
         });
-
-
         mnemonicTable["STA"] = new mnemonicUnit(1, 3, (opr1, opr2, out) => {
             out(0x32);
             out16(myParseNumber(opr1), out);
         });
         mnemonicTable["LDA"] = new mnemonicUnit(1, 3, (opr1, opr2, out) => {
             out(0x3A);
+            out16(myParseNumber(opr1), out);
+        });
+        mnemonicTable["SHLD"] = new mnemonicUnit(1, 3, (opr1, opr2, out) => {
+            out(0x22);
+            out16(myParseNumber(opr1), out);
+        });
+        mnemonicTable["LHLD"] = new mnemonicUnit(1, 3, (opr1, opr2, out) => {
+            out(0x2A);
             out16(myParseNumber(opr1), out);
         });
 

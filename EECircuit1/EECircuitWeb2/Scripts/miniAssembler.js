@@ -151,6 +151,14 @@ var miniAssembler;
             out(0x3A);
             out16(myParseNumber(opr1), out);
         });
+        mnemonicTable["SHLD"] = new mnemonicUnit(1, 3, function (opr1, opr2, out) {
+            out(0x22);
+            out16(myParseNumber(opr1), out);
+        });
+        mnemonicTable["LHLD"] = new mnemonicUnit(1, 3, function (opr1, opr2, out) {
+            out(0x2A);
+            out16(myParseNumber(opr1), out);
+        });
         mnemonicTable["ADD"] = new mnemonicUnit(1, 1, function (opr1, opr2, out) {
             out(0x80 | myParseSSS(opr1));
         });

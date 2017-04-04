@@ -78,3 +78,8 @@ function lowByte( v : number) :number
 function highByte(v: number): number {
     return (v >> 8) & 255;
 }
+function incrementAddress(a: number): number {
+    var a = a + 1;
+    if (a >= 0x10000) return 0;
+    return a;
+}

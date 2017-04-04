@@ -77,4 +77,10 @@ function lowByte(v) {
 function highByte(v) {
     return (v >> 8) & 255;
 }
+function incrementAddress(a) {
+    var a = a + 1;
+    if (a >= 0x10000)
+        return 0;
+    return a;
+}
 //# sourceMappingURL=common.js.map
