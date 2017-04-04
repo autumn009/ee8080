@@ -159,6 +159,9 @@ var miniAssembler;
             out(0x2A);
             out16(myParseNumber(opr1), out);
         });
+        mnemonicTable["XCHG"] = new mnemonicUnit(0, 1, function (opr1, opr2, out) {
+            out(0xeb);
+        });
         mnemonicTable["ADD"] = new mnemonicUnit(1, 1, function (opr1, opr2, out) {
             out(0x80 | myParseSSS(opr1));
         });

@@ -68,6 +68,23 @@ work2	equ	8001h
 	cpi	44h
 	jnz	fail
 
+	lxi	d,4321h
+	lxi	h,8765h
+	xchg
+	mov	a,l
+	cpi	21h
+	jnz	fail
+	mov	a,h
+	cpi	43h
+	jnz	fail
+	mov	a,e
+	cpi	65h
+	jnz	fail
+	mov	a,d
+	cpi	87h
+	jnz	fail
+
+
 
 	jmp	success
 

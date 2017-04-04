@@ -449,6 +449,14 @@ var emu;
                         var v = this.getRegister(7);
                         emu.virtualMachine.io.out(port, v);
                     }
+                    else if (g2 == 5 && g3 == 3) {
+                        var t1 = this.regarray.l.getValue();
+                        var t2 = this.regarray.h.getValue();
+                        this.regarray.l.setValue(this.regarray.e.getValue());
+                        this.regarray.h.setValue(this.regarray.d.getValue());
+                        this.regarray.e.setValue(t1);
+                        this.regarray.d.setValue(t2);
+                    }
                     else if (g2 == 7 && g3 == 6) {
                         this.cmp(this.accumulator.getValue(), this.fetchNextByte());
                     }

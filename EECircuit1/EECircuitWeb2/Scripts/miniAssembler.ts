@@ -154,6 +154,9 @@
             out(0x2A);
             out16(myParseNumber(opr1), out);
         });
+        mnemonicTable["XCHG"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+            out(0xeb);
+        });
 
 
 
