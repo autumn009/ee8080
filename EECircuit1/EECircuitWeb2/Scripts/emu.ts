@@ -116,6 +116,22 @@
         public p: boolean = false;
         public cy: boolean = false;
         public ac: boolean = false;
+        public getPacked(): number {
+            var n = 2;
+            if (this.cy) n |= 1;
+            if (this.p) n |= 4;
+            if (this.ac) n |= 16;
+            if (this.z) n |= 64;
+            if (this.s) n |= 128;
+            return n;
+        }
+        public setPacked(n: number) {
+            this.cy = (n & 1) != 0;
+            this.p = (n & 4) != 0;
+            this.ac = (n & 16) != 0;
+            this.z = (n & 64) != 0;
+            this.s = (n & 128) != 0;
+        }
     }
     class DecimalAdjust {
 
@@ -215,6 +231,43 @@
             else
                 return r.getValue();
         }
+
+        public getRegisterPairBDHPSW(n: number): number {
+            switch (n) {
+                case 0:
+                    return this.regarray.b.getValue() * 256 + this.regarray.c.getValue();
+                case 2:
+                    return this.regarray.d.getValue() * 256 + this.regarray.e.getValue();
+                case 6:
+                    return this.regarray.h.getValue() * 256 + this.regarray.l.getValue();
+                case 8:
+                    return this.accumulator.getValue() * 256 + this.flags.getPacked();
+            }
+        }
+
+        public setRegisterPairBDHPSW(n: number, v: number) {
+            var l = v & 255;
+            var h = v >> 8;
+            switch (n) {
+                case 0:
+                    this.regarray.b.setValue(h);
+                    this.regarray.c.setValue(l);
+                    break;
+                case 2:
+                    this.regarray.d.setValue(h);
+                    this.regarray.e.setValue(l);
+                    break;
+                case 6:
+                    this.regarray.h.setValue(h);
+                    this.regarray.l.setValue(l);
+                    break;
+                case 8:
+                    this.accumulator.setValue(h);
+                    this.flags.setPacked(l);
+                    break;
+            }
+        }
+
         public fetchNextByte()
         {
             var pc = this.regarray.pc.getValue();
@@ -296,7 +349,7 @@
                     {
                         // NO OPETATION
                     }
-                    if (g3 == 2)
+                    else if (g3 == 2)
                     {
                         if ((g2 & 0x5) == 0x0)  // STAX
                         {
@@ -387,7 +440,21 @@
                     }
                 }
                 else {
-                    if (g3 == 2)
+                    if (g3 == 1)
+                    {
+                        if ((g2 & 1) == 0) // POP
+                        {
+                            var l = virtualMachine.memory.Bytes[this.regarray.sp.getValue()];
+                            this.regarray.sp.Increment();
+                            var h = virtualMachine.memory.Bytes[this.regarray.sp.getValue()];
+                            this.regarray.sp.Increment();
+                            this.setRegisterPairBDHPSW(g2 & 6, h * 256 + l);
+                        }
+                        else {
+                            this.notImplemented(machinCode1);
+                        }
+                    }
+                    else if (g3 == 2)
                     {
                         if (g2 == 2) // JNZ
                         {
@@ -430,6 +497,20 @@
                         }
                         else
                         {
+                            this.notImplemented(machinCode1);
+                        }
+                    }
+                    else if (g3 == 5)
+                    {
+                        if ((g2&1) == 0) // PUSH
+                        {
+                            var val = this.getRegisterPairBDHPSW(g2 & 6);
+                            this.regarray.sp.Decrement();
+                            virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val >> 8;
+                            this.regarray.sp.Decrement();
+                            virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val & 255;
+                        }
+                        else {
                             this.notImplemented(machinCode1);
                         }
                     }

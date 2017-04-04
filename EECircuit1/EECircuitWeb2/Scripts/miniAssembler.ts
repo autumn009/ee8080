@@ -50,6 +50,15 @@
         return 0;
     }
 
+    function myParseBDHPSW(opr: string): number {
+        if (opr == "B") return 0;
+        if (opr == "D") return 0x10;
+        if (opr == "H") return 0x20;
+        if (opr == "PSW") return 0x30;
+        writeError(opr + " is not a register pair name. Assumed that it's for BC");
+        return 0;
+    }
+
     function myParseNumber(oprorg: string, equMode: boolean = false): number {
         var opr = oprorg;
         var hex = false;
@@ -124,14 +133,17 @@
             out16(myParseNumber(opr1), out);
         });
 
-
-
+        // TRANSFER GROUP
         mnemonicTable["MOV"] = new mnemonicUnit(3, 1, (opr1, opr2, out) => {
             out(0x40 | myParseDDD(opr1) | myParseSSS(opr2));
         });
         mnemonicTable["MVI"] = new mnemonicUnit(2, 2, (opr1, opr2, out) => {
             out(6 | myParseDDD(opr1));
             out(myParseNumber(opr2));
+        });
+        mnemonicTable["LXI"] = new mnemonicUnit(2, 3, (opr1, opr2, out) => {
+            out(1 | myParseBDHSP(opr1));
+            out16(myParseNumber(opr2), out);
         });
         mnemonicTable["STAX"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
             out(0x02 | myParseBD(opr1));
@@ -159,6 +171,16 @@
             out(0xeb);
         });
 
+        // STACK GROUP
+        mnemonicTable["PUSH"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+            out(0xc5 | myParseBDHPSW(opr1));
+        });
+        mnemonicTable["POP"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+            out(0xc1 | myParseBDHPSW(opr1));
+        });
+
+
+
 
 
         mnemonicTable["ADD"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
@@ -179,10 +201,6 @@
         });
         mnemonicTable["HLT"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
             out(0x76);
-        });
-        mnemonicTable["LXI"] = new mnemonicUnit(2, 3, (opr1, opr2, out) => {
-            out(1 | myParseBDHSP(opr1));
-            out16(myParseNumber(opr2), out);
         });
         mnemonicTable["JNZ"] = new mnemonicUnit(2, 3, (opr1, opr2, out) => {
             out(0xd2);

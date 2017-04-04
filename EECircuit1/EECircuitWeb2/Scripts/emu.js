@@ -178,6 +178,27 @@ var emu;
             this.cy = false;
             this.ac = false;
         }
+        FlagFlipFlop.prototype.getPacked = function () {
+            var n = 2;
+            if (this.cy)
+                n |= 1;
+            if (this.p)
+                n |= 4;
+            if (this.ac)
+                n |= 16;
+            if (this.z)
+                n |= 64;
+            if (this.s)
+                n |= 128;
+            return n;
+        };
+        FlagFlipFlop.prototype.setPacked = function (n) {
+            this.cy = (n & 1) != 0;
+            this.p = (n & 4) != 0;
+            this.ac = (n & 16) != 0;
+            this.z = (n & 64) != 0;
+            this.s = (n & 128) != 0;
+        };
         return FlagFlipFlop;
     }());
     var DecimalAdjust = (function () {
@@ -290,6 +311,40 @@ var emu;
             else
                 return r.getValue();
         };
+        i8080.prototype.getRegisterPairBDHPSW = function (n) {
+            switch (n) {
+                case 0:
+                    return this.regarray.b.getValue() * 256 + this.regarray.c.getValue();
+                case 2:
+                    return this.regarray.d.getValue() * 256 + this.regarray.e.getValue();
+                case 6:
+                    return this.regarray.h.getValue() * 256 + this.regarray.l.getValue();
+                case 8:
+                    return this.accumulator.getValue() * 256 + this.flags.getPacked();
+            }
+        };
+        i8080.prototype.setRegisterPairBDHPSW = function (n, v) {
+            var l = v & 255;
+            var h = v >> 8;
+            switch (n) {
+                case 0:
+                    this.regarray.b.setValue(h);
+                    this.regarray.c.setValue(l);
+                    break;
+                case 2:
+                    this.regarray.d.setValue(h);
+                    this.regarray.e.setValue(l);
+                    break;
+                case 6:
+                    this.regarray.h.setValue(h);
+                    this.regarray.l.setValue(l);
+                    break;
+                case 8:
+                    this.accumulator.setValue(h);
+                    this.flags.setPacked(l);
+                    break;
+            }
+        };
         i8080.prototype.fetchNextByte = function () {
             var pc = this.regarray.pc.getValue();
             var m = emu.virtualMachine.memory.Bytes.read(Math.floor(pc));
@@ -357,7 +412,7 @@ var emu;
                 if (g1 == 0) {
                     if (g2 == 0 && g3 == 0) {
                     }
-                    if (g3 == 2) {
+                    else if (g3 == 2) {
                         if ((g2 & 0x5) == 0x0) {
                             emu.virtualMachine.memory.Bytes.write(this.regarray.getRegisterPairValue(g2 >> 1), this.accumulator.getValue());
                         }
@@ -430,7 +485,19 @@ var emu;
                     }
                 }
                 else {
-                    if (g3 == 2) {
+                    if (g3 == 1) {
+                        if ((g2 & 1) == 0) {
+                            var l = emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()];
+                            this.regarray.sp.Increment();
+                            var h = emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()];
+                            this.regarray.sp.Increment();
+                            this.setRegisterPairBDHPSW(g2 & 6, h * 256 + l);
+                        }
+                        else {
+                            this.notImplemented(machinCode1);
+                        }
+                    }
+                    else if (g3 == 2) {
                         if (g2 == 2) {
                             if (!this.flags.z)
                                 this.regarray.pc.setValue(this.fetchNextWord());
@@ -464,6 +531,18 @@ var emu;
                             this.regarray.h.setValue(this.regarray.d.getValue());
                             this.regarray.e.setValue(t1);
                             this.regarray.d.setValue(t2);
+                        }
+                        else {
+                            this.notImplemented(machinCode1);
+                        }
+                    }
+                    else if (g3 == 5) {
+                        if ((g2 & 1) == 0) {
+                            var val = this.getRegisterPairBDHPSW(g2 & 6);
+                            this.regarray.sp.Decrement();
+                            emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val >> 8;
+                            this.regarray.sp.Decrement();
+                            emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val & 255;
                         }
                         else {
                             this.notImplemented(machinCode1);
