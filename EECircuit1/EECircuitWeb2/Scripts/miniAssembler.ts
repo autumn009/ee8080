@@ -42,7 +42,7 @@
         return 0;
     }
 
-    function myParseNumber(oprorg: string): number {
+    function myParseNumber(oprorg: string, equMode: boolean = false): number {
         var opr = oprorg;
         var hex = false;
         var dec = false;
@@ -85,7 +85,7 @@
             }
         }
         else {
-            if (pass == 2) {
+            if ((!equMode && pass == 2) || (equMode && pass == 1)) {
                 n = symbolTable[opr];
                 if (n == undefined) {
                     writeError("Symbol " + opr + " was not a found, assumed that it's 0.");
@@ -207,7 +207,13 @@
             if (n.substring(n.length - 1, n.length) == ":") {
                 n = n.substring(0, n.length - 1).trim();
             }
-            symbolTable[n] = pc;
+            if (tokens[1] == "EQU") {
+                symbolTable[n] = myParseNumber(tokens[2], true);
+                return;
+            }
+            else {
+                symbolTable[n] = pc;
+            }
         }
         if (tokens[1]) {
             var mnem: mnemonicUnit = mnemonicTable[tokens[1]];

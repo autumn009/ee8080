@@ -51,7 +51,8 @@ var miniAssembler;
         writeError(opr + " is not a register pair name. Assumed that it's for BC");
         return 0;
     }
-    function myParseNumber(oprorg) {
+    function myParseNumber(oprorg, equMode) {
+        if (equMode === void 0) { equMode = false; }
         var opr = oprorg;
         var hex = false;
         var dec = false;
@@ -94,7 +95,7 @@ var miniAssembler;
             }
         }
         else {
-            if (pass == 2) {
+            if ((!equMode && pass == 2) || (equMode && pass == 1)) {
                 n = symbolTable[opr];
                 if (n == undefined) {
                     writeError("Symbol " + opr + " was not a found, assumed that it's 0.");
@@ -208,7 +209,13 @@ var miniAssembler;
             if (n.substring(n.length - 1, n.length) == ":") {
                 n = n.substring(0, n.length - 1).trim();
             }
-            symbolTable[n] = pc;
+            if (tokens[1] == "EQU") {
+                symbolTable[n] = myParseNumber(tokens[2], true);
+                return;
+            }
+            else {
+                symbolTable[n] = pc;
+            }
         }
         if (tokens[1]) {
             var mnem = mnemonicTable[tokens[1]];

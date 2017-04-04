@@ -1,6 +1,7 @@
 ﻿; This is a diagnostic for ee8080 CPU
 ; If all test was passed, all virtual LEDs in port 0FFH are on.
 	org	0h
+work	equ	8000h
 	mvi b,78h
 	mov a,b
 	cpi	78h
@@ -23,6 +24,13 @@
 	adi	3
 	cpi	6
 	jnz	fail
+	mvi	a,55h
+	sta	work
+	mvi	a,0aah
+	lda	work
+	cpi	55h
+	jnz	fail
+
 
 	jmp	success
 
