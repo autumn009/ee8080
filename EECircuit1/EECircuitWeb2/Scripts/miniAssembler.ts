@@ -41,10 +41,11 @@
         return 0;
     }
 
-    function myParseBDH(opr: string): number {
+    function myParseBDHSP(opr: string): number {
         if (opr == "B") return 0;
         if (opr == "D") return 0x10;
         if (opr == "H") return 0x20;
+        if (opr == "SP") return 0x30;
         writeError(opr + " is not a register pair name. Assumed that it's for BC");
         return 0;
     }
@@ -180,7 +181,7 @@
             out(0x76);
         });
         mnemonicTable["LXI"] = new mnemonicUnit(2, 3, (opr1, opr2, out) => {
-            out(1 | myParseBDH(opr1));
+            out(1 | myParseBDHSP(opr1));
             out16(myParseNumber(opr2), out);
         });
         mnemonicTable["JNZ"] = new mnemonicUnit(2, 3, (opr1, opr2, out) => {

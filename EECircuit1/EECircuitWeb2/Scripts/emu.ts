@@ -336,10 +336,15 @@
                     }
                     else if (g3 == 1) // LXI or DAD
                     {
-                        if( (g2 & 1) == 0) // LXI
+                        if ((g2 & 1) == 0) // LXI
                         {
-                            this.setRegister(g2 + 1, this.fetchNextByte());
-                            this.setRegister(g2, this.fetchNextByte());
+                            if (g2 == 0x6) {    // LXI SP,
+                                this.regarray.sp.setValue(this.fetchNextWord());
+                            }
+                            else {  // LXI B/D/H,
+                                this.setRegister(g2 + 1, this.fetchNextByte());
+                                this.setRegister(g2, this.fetchNextByte());
+                            }
                         }
                         else // DAD
                         {

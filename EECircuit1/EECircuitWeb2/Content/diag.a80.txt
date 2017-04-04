@@ -3,6 +3,8 @@
 	org	0h
 work	equ	8000h
 work2	equ	8001h
+stack	equ	0f000h
+	lxi	sp,stack
 	mvi b,78h
 	mov a,b
 	cpi	78h

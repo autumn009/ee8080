@@ -388,8 +388,13 @@ var emu;
                     }
                     else if (g3 == 1) {
                         if ((g2 & 1) == 0) {
-                            this.setRegister(g2 + 1, this.fetchNextByte());
-                            this.setRegister(g2, this.fetchNextByte());
+                            if (g2 == 0x6) {
+                                this.regarray.sp.setValue(this.fetchNextWord());
+                            }
+                            else {
+                                this.setRegister(g2 + 1, this.fetchNextByte());
+                                this.setRegister(g2, this.fetchNextByte());
+                            }
                         }
                         else {
                             this.notImplemented(machinCode1);
