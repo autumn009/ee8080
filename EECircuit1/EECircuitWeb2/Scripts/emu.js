@@ -209,6 +209,19 @@ var emu;
             this.pc = new Register16();
             this.incrementerDecrementerAddressLatch = new Register16();
         }
+        // n: 0=BC, 1=DE, 2=HL
+        RegisterArray.prototype.getRegisterPairValue = function (n) {
+            switch (n) {
+                case 0:
+                    return this.b.getValue() * 256 + this.c.getValue();
+                case 1:
+                    return this.d.getValue() * 256 + this.e.getValue();
+                case 2:
+                    return this.h.getValue() * 256 + this.l.getValue();
+                default:
+                    alert(n + " is not a regiser pair number in getRegisterPairValue.");
+            }
+        };
         return RegisterArray;
     }());
     var TimingAndControl = (function () {
@@ -345,7 +358,13 @@ var emu;
                     if (g2 == 0 && g3 == 0) {
                     }
                     if (g3 == 2) {
-                        if (g2 == 6) {
+                        if ((g2 & 0x5) == 0x0) {
+                            emu.virtualMachine.memory.Bytes.write(this.regarray.getRegisterPairValue(g2 >> 1), this.accumulator.getValue());
+                        }
+                        else if ((g2 & 0x5) == 0x1) {
+                            this.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(this.regarray.getRegisterPairValue(g2 >> 1)));
+                        }
+                        else if (g2 == 6) {
                             emu.virtualMachine.memory.Bytes.write(this.fetchNextWord(), this.accumulator.getValue());
                         }
                         else if (g2 == 7) {

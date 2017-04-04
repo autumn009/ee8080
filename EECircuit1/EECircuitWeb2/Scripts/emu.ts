@@ -138,6 +138,19 @@
         public sp = new Register16();
         public pc = new Register16();
         public incrementerDecrementerAddressLatch = new Register16();
+        // n: 0=BC, 1=DE, 2=HL
+        public getRegisterPairValue(n: number) {
+            switch (n) {
+                case 0:
+                    return this.b.getValue() * 256 + this.c.getValue();
+                case 1:
+                    return this.d.getValue() * 256 + this.e.getValue();
+                case 2:
+                    return this.h.getValue() * 256 + this.l.getValue();
+                default:
+                    alert(n + " is not a regiser pair number in getRegisterPairValue.");
+            }
+        }
     }
     class TimingAndControl {
 
@@ -285,7 +298,17 @@
                     }
                     if (g3 == 2)
                     {
-                        if (g2 == 6) // STA
+                        if ((g2 & 0x5) == 0x0)  // STAX
+                        {
+                            virtualMachine.memory.Bytes.write(this.regarray.getRegisterPairValue(g2 >> 1), this.accumulator.getValue());
+                        }
+                        else if ((g2 & 0x5) == 0x1)  // LDAX
+                        {
+                            this.accumulator.setValue(virtualMachine.memory.Bytes.read(
+                                this.regarray.getRegisterPairValue(g2 >> 1)
+                            ));
+                        }
+                        else if (g2 == 6) // STA
                         {
                             virtualMachine.memory.Bytes.write(this.fetchNextWord(), this.accumulator.getValue());
                         }

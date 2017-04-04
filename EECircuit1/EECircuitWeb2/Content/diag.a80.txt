@@ -30,6 +30,23 @@ work	equ	8000h
 	lda	work
 	cpi	55h
 	jnz	fail
+	mvi	a,56h
+	lxi	d,0
+	lxi	b,work
+	stax	b
+	mvi	a,0aah
+	ldax	b
+	cpi	56h
+	jnz	fail
+	lxi	b,0
+	lxi	d,work
+	stax	d
+	mvi	a,0aah
+	ldax	d
+	cpi	56h
+	jnz	fail
+
+
 
 
 	jmp	success

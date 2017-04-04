@@ -41,6 +41,14 @@ var miniAssembler;
     function myParseDDD(opr) {
         return myParseSSS(opr) << 3;
     }
+    function myParseBD(opr) {
+        if (opr == "B")
+            return 0;
+        if (opr == "D")
+            return 0x10;
+        writeError(opr + " is not a register pair name. Assumed that it's for BC");
+        return 0;
+    }
     function myParseBDH(opr) {
         if (opr == "B")
             return 0;
@@ -128,6 +136,12 @@ var miniAssembler;
         mnemonicTable["MVI"] = new mnemonicUnit(2, 2, function (opr1, opr2, out) {
             out(6 | myParseDDD(opr1));
             out(myParseNumber(opr2));
+        });
+        mnemonicTable["STAX"] = new mnemonicUnit(1, 1, function (opr1, opr2, out) {
+            out(0x02 | myParseBD(opr1));
+        });
+        mnemonicTable["LDAX"] = new mnemonicUnit(1, 1, function (opr1, opr2, out) {
+            out(0x0a | myParseBD(opr1));
         });
         mnemonicTable["STA"] = new mnemonicUnit(1, 3, function (opr1, opr2, out) {
             out(0x32);
