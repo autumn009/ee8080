@@ -317,9 +317,9 @@ var emu;
                     return this.regarray.b.getValue() * 256 + this.regarray.c.getValue();
                 case 2:
                     return this.regarray.d.getValue() * 256 + this.regarray.e.getValue();
-                case 6:
+                case 4:
                     return this.regarray.h.getValue() * 256 + this.regarray.l.getValue();
-                case 8:
+                case 6:
                     return this.accumulator.getValue() * 256 + this.flags.getPacked();
             }
         };
@@ -335,11 +335,11 @@ var emu;
                     this.regarray.d.setValue(h);
                     this.regarray.e.setValue(l);
                     break;
-                case 6:
+                case 4:
                     this.regarray.h.setValue(h);
                     this.regarray.l.setValue(l);
                     break;
-                case 8:
+                case 6:
                     this.accumulator.setValue(h);
                     this.flags.setPacked(l);
                     break;
@@ -402,6 +402,14 @@ var emu;
             this.flags.cy = rc;
             this.setps();
             this.flags.ac = (((a & 15) + (b + 15)) >> 4) != 0;
+        };
+        i8080.prototype.condJump = function (cond) {
+            if (cond)
+                this.regarray.pc.setValue(this.fetchNextWord());
+            else {
+                this.regarray.pc.Increment();
+                this.regarray.pc.Increment();
+            }
         };
         i8080.prototype.runMain = function () {
             for (;;) {
@@ -498,13 +506,14 @@ var emu;
                         }
                     }
                     else if (g3 == 2) {
-                        if (g2 == 2) {
-                            if (!this.flags.z)
-                                this.regarray.pc.setValue(this.fetchNextWord());
-                            else {
-                                this.regarray.pc.Increment();
-                                this.regarray.pc.Increment();
-                            }
+                        if (g2 == 0) {
+                            this.condJump(!this.flags.z);
+                        }
+                        else if (g2 == 2) {
+                            this.condJump(!this.flags.cy);
+                        }
+                        else if (g2 == 3) {
+                            this.condJump(this.flags.cy);
                         }
                         else {
                             this.notImplemented(machinCode1);

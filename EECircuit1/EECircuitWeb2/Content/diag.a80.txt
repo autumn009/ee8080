@@ -97,6 +97,15 @@ stack	equ	0f000h
 	cpi	11h
 	jnz	fail
 
+	mvi	a,0ffh
+	adi	0ffh
+	jnc	fail
+	push	psw
+	mvi	a,0
+	adi	0
+	jc	fail
+	pop	psw
+	jnc	fail
 
 
 

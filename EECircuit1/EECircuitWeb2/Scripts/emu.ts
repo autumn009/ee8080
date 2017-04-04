@@ -238,9 +238,9 @@
                     return this.regarray.b.getValue() * 256 + this.regarray.c.getValue();
                 case 2:
                     return this.regarray.d.getValue() * 256 + this.regarray.e.getValue();
-                case 6:
+                case 4:
                     return this.regarray.h.getValue() * 256 + this.regarray.l.getValue();
-                case 8:
+                case 6:
                     return this.accumulator.getValue() * 256 + this.flags.getPacked();
             }
         }
@@ -257,11 +257,11 @@
                     this.regarray.d.setValue(h);
                     this.regarray.e.setValue(l);
                     break;
-                case 6:
+                case 4:
                     this.regarray.h.setValue(h);
                     this.regarray.l.setValue(l);
                     break;
-                case 8:
+                case 6:
                     this.accumulator.setValue(h);
                     this.flags.setPacked(l);
                     break;
@@ -333,6 +333,14 @@
             this.flags.cy = rc;
             this.setps();
             this.flags.ac = (((a & 15) + (b + 15)) >> 4) != 0;
+        }
+
+        private condJump(cond: boolean) {
+            if (cond) this.regarray.pc.setValue(this.fetchNextWord());
+            else {
+                this.regarray.pc.Increment();
+                this.regarray.pc.Increment();
+            }
         }
 
         public runMain()
@@ -456,13 +464,17 @@
                     }
                     else if (g3 == 2)
                     {
-                        if (g2 == 2) // JNZ
+                        if (g2 == 0) // JNZ
                         {
-                            if (!this.flags.z) this.regarray.pc.setValue(this.fetchNextWord());
-                            else {
-                                this.regarray.pc.Increment();
-                                this.regarray.pc.Increment();
-                            }
+                            this.condJump(!this.flags.z);
+                        }
+                        else if (g2 == 2) // JNC
+                        {
+                            this.condJump(!this.flags.cy);
+                        }
+                        else if (g2 == 3) // JC
+                        {
+                            this.condJump(this.flags.cy);
                         }
                         else {
                             this.notImplemented(machinCode1);

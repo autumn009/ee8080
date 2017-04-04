@@ -195,6 +195,18 @@ var miniAssembler;
             out(0xc6);
             out(myParseNumber(opr1));
         });
+        mnemonicTable["JNZ"] = new mnemonicUnit(2, 3, function (opr1, opr2, out) {
+            out(0xc2);
+            out16(myParseNumber(opr1), out);
+        });
+        mnemonicTable["JC"] = new mnemonicUnit(2, 3, function (opr1, opr2, out) {
+            out(0xda);
+            out16(myParseNumber(opr1), out);
+        });
+        mnemonicTable["JNC"] = new mnemonicUnit(2, 3, function (opr1, opr2, out) {
+            out(0xd2);
+            out16(myParseNumber(opr1), out);
+        });
         mnemonicTable["CMP"] = new mnemonicUnit(1, 1, function (opr1, opr2, out) {
             out(0xb8 | myParseSSS(opr1));
         });
@@ -204,10 +216,6 @@ var miniAssembler;
         });
         mnemonicTable["HLT"] = new mnemonicUnit(0, 1, function (opr1, opr2, out) {
             out(0x76);
-        });
-        mnemonicTable["JNZ"] = new mnemonicUnit(2, 3, function (opr1, opr2, out) {
-            out(0xd2);
-            out16(myParseNumber(opr1), out);
         });
         mnemonicTable["IN"] = new mnemonicUnit(1, 2, function (opr1, opr2, out) {
             out(0xdb);
