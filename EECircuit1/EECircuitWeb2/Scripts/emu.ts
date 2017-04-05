@@ -1,4 +1,9 @@
 ﻿namespace emu {
+    export var virtualMachine: ee8080;
+    function getVirtualMachine() {
+        return virtualMachine;
+    }
+
     export class NumberArray {
         private buffer = new ArrayBuffer(65536);
         private view = new Uint8ClampedArray(this.buffer);
@@ -25,10 +30,11 @@
 
         // load image
         // save image
-    }
+}
 
     class MemoryUnit {
         public Bytes = new NumberArray();
+    
     }
     class IOUnit {
         private getBitsPortFF(): number {
@@ -393,18 +399,18 @@
         }
 
         private popCommon(): number {
-            var l = virtualMachine.memory.Bytes[this.regarray.sp.getValue()];
+            var l = virtualMachine.memory.Bytes.read(this.regarray.sp.getValue());
             this.regarray.sp.Increment();
-            var h = virtualMachine.memory.Bytes[this.regarray.sp.getValue()];
+            var h = virtualMachine.memory.Bytes.read(this.regarray.sp.getValue());
             this.regarray.sp.Increment();
             return h * 256 + l;
         }
 
         private pushCommon(val: number) {
             this.regarray.sp.Decrement();
-            virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val >> 8;
+            virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val >> 8);
             this.regarray.sp.Decrement();
-            virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val & 255;
+            virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val & 255);
         }
 
         public runMain()
@@ -555,6 +561,10 @@
                         {
                             this.regarray.pc.setValue(this.regarray.getRegisterPairValue(2));
                         }
+                        else if (g2 == 7) // SPHL
+                        {
+                            this.regarray.sp.setValue(this.regarray.getRegisterPairValue(2));
+                        }
                         else {
                             this.notImplemented(machinCode1);
                         }
@@ -611,10 +621,7 @@
                         if ((g2&1) == 0) // PUSH
                         {
                             var val = this.getRegisterPairBDHPSW(g2 & 6);
-                            this.regarray.sp.Decrement();
-                            virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val >> 8;
-                            this.regarray.sp.Decrement();
-                            virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val & 255;
+                            this.pushCommon(val);
                         }
                         else if (g2 == 1)   // CALL
                         {
@@ -679,12 +686,7 @@
             this.update();
         }
     }
-
-    export var virtualMachine = new ee8080();
-
-    function getVirtualMachine() {
-        return virtualMachine;
-    }
+    virtualMachine = new ee8080();
 
     function updateMonitorMemoryView() {
         var s = $("#memoryAddress").val();

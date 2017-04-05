@@ -5,6 +5,9 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var emu;
 (function (emu) {
+    function getVirtualMachine() {
+        return emu.virtualMachine;
+    }
     var NumberArray = (function () {
         function NumberArray() {
             this.buffer = new ArrayBuffer(65536);
@@ -461,17 +464,17 @@ var emu;
             }
         };
         i8080.prototype.popCommon = function () {
-            var l = emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()];
+            var l = emu.virtualMachine.memory.Bytes.read(this.regarray.sp.getValue());
             this.regarray.sp.Increment();
-            var h = emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()];
+            var h = emu.virtualMachine.memory.Bytes.read(this.regarray.sp.getValue());
             this.regarray.sp.Increment();
             return h * 256 + l;
         };
         i8080.prototype.pushCommon = function (val) {
             this.regarray.sp.Decrement();
-            emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val >> 8;
+            emu.virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val >> 8);
             this.regarray.sp.Decrement();
-            emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val & 255;
+            emu.virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val & 255);
         };
         i8080.prototype.runMain = function () {
             for (;;) {
@@ -593,6 +596,9 @@ var emu;
                         else if (g2 == 5) {
                             this.regarray.pc.setValue(this.regarray.getRegisterPairValue(2));
                         }
+                        else if (g2 == 7) {
+                            this.regarray.sp.setValue(this.regarray.getRegisterPairValue(2));
+                        }
                         else {
                             this.notImplemented(machinCode1);
                         }
@@ -639,10 +645,7 @@ var emu;
                     else if (g3 == 5) {
                         if ((g2 & 1) == 0) {
                             var val = this.getRegisterPairBDHPSW(g2 & 6);
-                            this.regarray.sp.Decrement();
-                            emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val >> 8;
-                            this.regarray.sp.Decrement();
-                            emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val & 255;
+                            this.pushCommon(val);
                         }
                         else if (g2 == 1) {
                             var oldpc = this.condJump(true);
@@ -705,9 +708,6 @@ var emu;
         return ee8080;
     }());
     emu.virtualMachine = new ee8080();
-    function getVirtualMachine() {
-        return emu.virtualMachine;
-    }
     function updateMonitorMemoryView() {
         var s = $("#memoryAddress").val();
         var addr = parseInt(s, 16);

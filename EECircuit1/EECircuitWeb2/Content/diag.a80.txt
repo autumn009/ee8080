@@ -3,6 +3,7 @@
 work	equ	8000h
 work2	equ	8001h
 stack	equ	0f000h
+stack2	equ	0e000h
 
 	org	0h
 	jmp	start
@@ -216,7 +217,15 @@ next:
 	jnz	fail
 
 ; test SPHL
-
+	lxi	h,stack2
+	sphl
+	lxi	b,1234h
+	push	b
+	lxi	h,stack2
+	dcx	h
+	mov	a,m
+	cpi	12h
+	jnz	fail
 
 
 
