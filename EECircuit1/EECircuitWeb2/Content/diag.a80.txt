@@ -113,9 +113,16 @@ stack	equ	0f000h
 	jmp	fail;
 next:
 
-; test all cond
-
 ; test call
+	mvi	a,0cdh
+	call	sub
+	cpi	0c9h
+	jhz	fail
+
+; test all cond
+	
+
+
 
 
 ; test c-cond
@@ -123,7 +130,10 @@ next:
 
 	jmp	success
 
+sub:
+	mvi	a,0c9h
 ; test ret
+	ret
 
 ; test ret-cond
 
