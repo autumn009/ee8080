@@ -307,14 +307,14 @@
         private setps()
         {
             var a = this.accumulator.getValue();
-            this.flags.p = ((a & 0x80) != 0);
+            this.flags.s = ((a & 0x80) != 0);
             var p = 0;
             var x = a;
             for (var i = 0; i < 8; i++) {
                 if (x & 1) p++;
                 x >>= 1;
             }
-            this.flags.s = ((p & 1) == 0);
+            this.flags.p = ((p & 1) == 0);
         }
 
         private cmp(a: number, b: number) {

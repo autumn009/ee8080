@@ -120,8 +120,28 @@ next:
 	jnz	fail
 
 ; test all cond
-
-
+	mvi	a,0
+	adi	0
+	jnz	fail
+	jc	fail
+	mvi	a,0
+	adi	1
+	jz	fail
+	mvi	a,0ffh
+	adi	1
+	jnc	fail
+	mvi	a,0feh
+	adi	1
+	jpo	fail
+	mvi	a,0fdh
+	adi	1
+	jpe	fail
+	mvi	a,7fh
+	adi	1
+	jp	fail
+	mvi	a,7eh
+	adi	1
+	jm	fail
 
 ; test c-cond
 

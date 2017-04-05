@@ -377,7 +377,7 @@ var emu;
         };
         i8080.prototype.setps = function () {
             var a = this.accumulator.getValue();
-            this.flags.p = ((a & 0x80) != 0);
+            this.flags.s = ((a & 0x80) != 0);
             var p = 0;
             var x = a;
             for (var i = 0; i < 8; i++) {
@@ -385,7 +385,7 @@ var emu;
                     p++;
                 x >>= 1;
             }
-            this.flags.s = ((p & 1) == 0);
+            this.flags.p = ((p & 1) == 0);
         };
         i8080.prototype.cmp = function (a, b) {
             this.flags.z = (a == b);
