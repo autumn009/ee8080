@@ -230,7 +230,7 @@ var emu;
             this.pc = new Register16();
             this.incrementerDecrementerAddressLatch = new Register16();
         }
-        // n: 0=BC, 1=DE, 2=HL
+        // n: 0=BC, 1=DE, 2=HL, 3=SP
         RegisterArray.prototype.getRegisterPairValue = function (n) {
             switch (n) {
                 case 0:
@@ -239,8 +239,34 @@ var emu;
                     return this.d.getValue() * 256 + this.e.getValue();
                 case 2:
                     return this.h.getValue() * 256 + this.l.getValue();
+                case 3:
+                    return this.sp.getValue();
                 default:
-                    alert(n + " is not a regiser pair number in getRegisterPairValue.");
+                    alert(n + " is not a register pair number in setRegisterPairValue.");
+            }
+        };
+        RegisterArray.prototype.setRegisterPairValue = function (n, v) {
+            var l = v & 255;
+            var h = v >> 8;
+            switch (n) {
+                case 0:
+                    this.b.setValue(h);
+                    this.c.setValue(l);
+                    break;
+                case 1:
+                    this.d.setValue(h);
+                    this.e.setValue(l);
+                    break;
+                case 2:
+                    this.h.setValue(h);
+                    this.l.setValue(l);
+                    break;
+                case 3:
+                    this.sp.setValue(v);
+                    break;
+                default:
+                    alert(n + " is not a register pair number in setRegisterPairValue.");
+                    break;
             }
         };
         return RegisterArray;
@@ -461,6 +487,20 @@ var emu;
                             this.notImplemented(machinCode1);
                         }
                     }
+                    else if (g3 == 1) {
+                        if ((g2 & 1) == 0) {
+                            if (g2 == 0x6) {
+                                this.regarray.sp.setValue(this.fetchNextWord());
+                            }
+                            else {
+                                this.setRegister(g2 + 1, this.fetchNextByte());
+                                this.setRegister(g2, this.fetchNextByte());
+                            }
+                        }
+                        else {
+                            this.notImplemented(machinCode1);
+                        }
+                    }
                     else if (g3 == 2) {
                         if ((g2 & 0x5) == 0x0) {
                             emu.virtualMachine.memory.Bytes.write(this.regarray.getRegisterPairValue(g2 >> 1), this.accumulator.getValue());
@@ -490,19 +530,13 @@ var emu;
                             this.notImplemented(machinCode1);
                         }
                     }
-                    else if (g3 == 1) {
-                        if ((g2 & 1) == 0) {
-                            if (g2 == 0x6) {
-                                this.regarray.sp.setValue(this.fetchNextWord());
-                            }
-                            else {
-                                this.setRegister(g2 + 1, this.fetchNextByte());
-                                this.setRegister(g2, this.fetchNextByte());
-                            }
-                        }
-                        else {
-                            this.notImplemented(machinCode1);
-                        }
+                    else if (g3 == 3) {
+                        var hl = this.regarray.getRegisterPairValue(g2 >> 1);
+                        if ((g2 & 1) == 0)
+                            hl++;
+                        else
+                            hl--;
+                        this.regarray.setRegisterPairValue(g2 >> 1, hl & 0xffff);
                     }
                     else if (g3 == 4) {
                         var val = this.getRegister(g2);

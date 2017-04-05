@@ -191,6 +191,18 @@ next:
 	jc	fail
 
 ; test inx dcx
+	lxi	b,0ffffh
+	inx	b
+	mov	a,b
+	cmp	c
+	jnz	fail
+	lxi	h,1
+	dcx	h
+	mov	a,h
+	cmp	l
+	jnz	fail
+
+
 
 ; test XTHL
 

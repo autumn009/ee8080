@@ -154,7 +154,7 @@
         public sp = new Register16();
         public pc = new Register16();
         public incrementerDecrementerAddressLatch = new Register16();
-        // n: 0=BC, 1=DE, 2=HL
+        // n: 0=BC, 1=DE, 2=HL, 3=SP
         public getRegisterPairValue(n: number) {
             switch (n) {
                 case 0:
@@ -163,8 +163,34 @@
                     return this.d.getValue() * 256 + this.e.getValue();
                 case 2:
                     return this.h.getValue() * 256 + this.l.getValue();
+                case 3:
+                    return this.sp.getValue();
                 default:
-                    alert(n + " is not a regiser pair number in getRegisterPairValue.");
+                    alert(n + " is not a register pair number in setRegisterPairValue.");
+            }
+        }
+        public setRegisterPairValue(n: number, v: number) {
+            var l = v & 255;
+            var h = v >> 8;
+            switch (n) {
+                case 0:
+                    this.b.setValue(h);
+                    this.c.setValue(l);
+                    break;
+                case 1:
+                    this.d.setValue(h);
+                    this.e.setValue(l);
+                    break;
+                case 2:
+                    this.h.setValue(h);
+                    this.l.setValue(l);
+                    break;
+                case 3:
+                    this.sp.setValue(v);
+                    break;
+                default:
+                    alert(n + " is not a register pair number in setRegisterPairValue.");
+                    break;
             }
         }
     }
@@ -400,6 +426,23 @@
                             this.notImplemented(machinCode1);
                         }
                     }
+                    else if (g3 == 1) // LXI or DAD
+                    {
+                        if ((g2 & 1) == 0) // LXI
+                        {
+                            if (g2 == 0x6) {    // LXI SP,
+                                this.regarray.sp.setValue(this.fetchNextWord());
+                            }
+                            else {  // LXI B/D/H,
+                                this.setRegister(g2 + 1, this.fetchNextByte());
+                                this.setRegister(g2, this.fetchNextByte());
+                            }
+                        }
+                        else // DAD
+                        {
+                            this.notImplemented(machinCode1);
+                        }
+                    }
                     else if (g3 == 2)
                     {
                         if ((g2 & 0x5) == 0x0)  // STAX
@@ -438,22 +481,14 @@
                             this.notImplemented(machinCode1);
                         }
                     }
-                    else if (g3 == 1) // LXI or DAD
+                    else if (g3 == 3)
                     {
-                        if ((g2 & 1) == 0) // LXI
-                        {
-                            if (g2 == 0x6) {    // LXI SP,
-                                this.regarray.sp.setValue(this.fetchNextWord());
-                            }
-                            else {  // LXI B/D/H,
-                                this.setRegister(g2 + 1, this.fetchNextByte());
-                                this.setRegister(g2, this.fetchNextByte());
-                            }
-                        }
-                        else // DAD
-                        {
-                            this.notImplemented(machinCode1);
-                        }
+                        var hl = this.regarray.getRegisterPairValue(g2>>1);
+                        if ((g2 & 1) == 0) // INX
+                            hl++;
+                        else // DEX
+                            hl--;
+                        this.regarray.setRegisterPairValue(g2 >> 1, hl & 0xffff);
                     }
                     else if (g3 == 4) { // INR
                         var val = this.getRegister(g2);
