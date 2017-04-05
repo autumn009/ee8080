@@ -137,7 +137,7 @@
 
     function fillMnemonicTable() {
         mnemonicTable["ORG"] = new mnemonicUnit(1, 0, (opr1, opr2, out) => {
-            this.pc = myParseNumber(opr1);
+            compilePointer = myParseNumber(opr1);
         });
         mnemonicTable["END"] = new mnemonicUnit(0, 0, (opr1, opr2, out) => {
             endRequest = true;
@@ -194,6 +194,11 @@
         });
         mnemonicTable["RET"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
             out(0xc9);
+        });
+        mnemonicTable["RST"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+            var n = myParseNumber(opr1);
+            if (n < 0 || n > 7) writeError(n + "is out of range. RST requires 0 to 7.");
+            else out(0xc7 + (n << 3));
         });
 
         // NON-CONDITIONAL JUMP GROUP
@@ -306,9 +311,9 @@
     }
 
     var endRequest = false;
+    var compilePointer = 0;
 
     function passX(sourceCode: string, outputMemory: emu.NumberArray) {
-        var pc = 0;
         var start = 0;
         endRequest = false;
         lineNumber = 1;
@@ -329,9 +334,9 @@
                 end++;
             }
             var tokens = lineParser(line.toUpperCase());
-            compileLine(pc, tokens, (byte: number) => {
-                if (pass == 2) outputMemory.write(pc, byte);
-                pc++;
+            compileLine(compilePointer, tokens, (byte: number) => {
+                if (pass == 2) outputMemory.write(compilePointer, byte);
+                compilePointer++;
             });
             if (endRequest) return;
             if (ch == "\r" && sourceCode[end + 1] == "\n")

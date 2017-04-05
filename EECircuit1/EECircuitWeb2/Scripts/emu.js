@@ -608,6 +608,11 @@ var emu;
                             this.notImplemented(machinCode1);
                         }
                     }
+                    else if (g3 == 7) {
+                        var oldpc = this.regarray.pc.getValue();
+                        this.regarray.pc.setValue(g2 << 3);
+                        this.pushCommon(oldpc);
+                    }
                     else {
                         this.notImplemented(machinCode1);
                     }
