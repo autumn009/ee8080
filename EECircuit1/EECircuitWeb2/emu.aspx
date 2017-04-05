@@ -114,7 +114,7 @@
             <label for="result">Compiler Results:</label>
             <textarea name="result" id="result" readonly="readonly"></textarea>
             <label for="sourceCode">Source Code:</label>
-            <textarea name="sourceCode" id="sourceCode"></textarea>
+            <textarea name="sourceCode" id="sourceCode" data-autogrow="false" style="margin: 0px 0px 0px 0px"></textarea>
         </div>
     </div>
 

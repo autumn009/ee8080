@@ -714,9 +714,44 @@
         $("#collapsibleIdeCommands").collapsible("collapse");
     });
 
+    function getAbsoluteHeiht(id: string): number {
+        var element = document.getElementById(id);
+        var rect = element.getBoundingClientRect();
+        return rect.top + window.pageYOffset;
+    }
+
+    function ideResiezer() {
+        //$("#sourceCode").height($(window).height());
+        var rect1 = document.getElementById("sourceCode").getBoundingClientRect();
+        var rect2 = document.getElementById("myhooter").getBoundingClientRect();
+        if (rect2.top == 0 || rect1.top == 0) {
+            setTimeout(() => {
+                ideResiezer();
+            }, 1000);
+        }
+        else
+            //$("#sourceCode").height(rect2.top - rect1.top - 20);
+            setTimeout(() => {
+                var rect1 = document.getElementById("sourceCode").getBoundingClientRect();
+                var rect2 = document.getElementById("myhooter").getBoundingClientRect();
+                $("#sourceCode").height(rect2.top - rect1.top - 20);
+            }, 1000);
+    }
+
+    $(window).resize(() => {
+        ideResiezer();
+    });
+
+    $(document).on('pagecontainershow', function (e) {
+        ideResiezer();
+    });
+    $(document).on('updatelayout', function (e) {
+        ideResiezer();
+    });
     $(document).on("pagecreate", function () {
         virtualMachine.reset();
         setIde();
+        //ideResiezer();
         loadTest1();
     });
 }
