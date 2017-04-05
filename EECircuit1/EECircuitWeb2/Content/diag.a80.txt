@@ -144,17 +144,35 @@ next:
 	jm	fail
 
 ; test c-cond
+	mvi	a,0
+	adi	0
+	cz	sub2
+	cpi	2
+	jnz	fail
+	mvi	a,80h
+	adi	80h
+	cnz	sub
+	cpi	0
+	jnz	fail
+
 
 
 	jmp	success
 
+; test ret
 sub:
 	mvi	a,0c9h
-; test ret
 	ret
 
 ; test ret-cond
-
+sub2:
+	mvi	a,1
+	adi	1
+	ret	z
+	mvi	a,2
+	ret nc
+	mvi	a,3
+	ret
 
 fail:
 	mvi	a,080h
