@@ -375,8 +375,7 @@ var emu;
         i8080.prototype.notImplemented = function (n) {
             alert(n.toString(16) + " is not implemented");
         };
-        i8080.prototype.setps = function () {
-            var a = this.accumulator.getValue();
+        i8080.prototype.setps = function (a) {
             this.flags.s = ((a & 0x80) != 0);
             var p = 0;
             var x = a;
@@ -390,18 +389,20 @@ var emu;
         i8080.prototype.cmp = function (a, b) {
             this.flags.z = (a == b);
             this.flags.cy = (a < b);
-            this.setps();
+            this.setps(this.accumulator.getValue());
             this.flags.ac = false;
         };
-        i8080.prototype.add = function (a, b) {
+        i8080.prototype.add = function (a, b, cyUnchange) {
+            if (cyUnchange === void 0) { cyUnchange = false; }
             var r = a + b;
             var r0 = r & 255;
             var rc = (r >> 8) != 0;
-            this.accumulator.setValue(r0);
             this.flags.z = (r0 == 0);
-            this.flags.cy = rc;
-            this.setps();
+            if (!cyUnchange)
+                this.flags.cy = rc;
+            this.setps(r0);
             this.flags.ac = (((a & 15) + (b + 15)) >> 4) != 0;
+            return r0;
         };
         i8080.prototype.condJump = function (cond) {
             var tgt = this.fetchNextWord();
@@ -453,7 +454,12 @@ var emu;
                 var g2 = (machinCode1 >> 3) & 0x7;
                 var g3 = machinCode1 & 0x7;
                 if (g1 == 0) {
-                    if (g2 == 0 && g3 == 0) {
+                    if (g3 == 0) {
+                        if (g2 == 0) {
+                        }
+                        else {
+                            this.notImplemented(machinCode1);
+                        }
                     }
                     else if (g3 == 2) {
                         if ((g2 & 0x5) == 0x0) {
@@ -498,6 +504,16 @@ var emu;
                             this.notImplemented(machinCode1);
                         }
                     }
+                    else if (g3 == 4) {
+                        var val = this.getRegister(g2);
+                        val = this.add(val, 1, true);
+                        this.setRegister(g2, val);
+                    }
+                    else if (g3 == 5) {
+                        var val = this.getRegister(g2);
+                        val = this.add(val, 0xff, true);
+                        this.setRegister(g2, val);
+                    }
                     else if (g3 == 6) {
                         this.setRegister(g2, this.fetchNextByte());
                     }
@@ -518,7 +534,7 @@ var emu;
                 }
                 else if (g1 == 2) {
                     if (g2 == 0) {
-                        this.add(this.accumulator.getValue(), this.getRegister(g3));
+                        this.accumulator.setValue(this.add(this.accumulator.getValue(), this.getRegister(g3)));
                     }
                     else if (g2 == 7) {
                         this.cmp(this.accumulator.getValue(), this.getRegister(g3));
@@ -599,7 +615,7 @@ var emu;
                     }
                     else if (g3 == 6) {
                         if (g2 == 0) {
-                            this.add(this.accumulator.getValue(), this.fetchNextByte());
+                            this.accumulator.setValue(this.add(this.accumulator.getValue(), this.fetchNextByte()));
                         }
                         else if (g2 == 7) {
                             this.cmp(this.accumulator.getValue(), this.fetchNextByte());

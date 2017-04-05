@@ -304,9 +304,8 @@
             alert(n.toString(16) + " is not implemented");
         }
 
-        private setps()
+        private setps(a:number)
         {
-            var a = this.accumulator.getValue();
             this.flags.s = ((a & 0x80) != 0);
             var p = 0;
             var x = a;
@@ -320,19 +319,19 @@
         private cmp(a: number, b: number) {
             this.flags.z = (a == b);
             this.flags.cy = (a < b);
-            this.setps();
+            this.setps(this.accumulator.getValue());
             this.flags.ac = false;
         }
 
-        private add(a: number, b: number) {
+        private add(a: number, b: number, cyUnchange: boolean = false): number {
             var r = a + b;
             var r0 = r & 255;
             var rc = (r >> 8) != 0;
-            this.accumulator.setValue(r0);
             this.flags.z = (r0 == 0);
-            this.flags.cy = rc;
-            this.setps();
+            if (!cyUnchange) this.flags.cy = rc;
+            this.setps(r0);
             this.flags.ac = (((a & 15) + (b + 15)) >> 4) != 0;
+            return r0;
         }
 
         private condJump(cond: boolean): number {
@@ -392,9 +391,14 @@
                 var g3 = machinCode1 & 0x7;
                 if (g1 == 0)
                 {
-                    if (g2 == 0 && g3 == 0) // NOP
+                    if ( g3 == 0)
                     {
-                        // NO OPETATION
+                        if (g2 == 0) { // NOP
+                            // NO OPETATION
+                        }
+                        else {
+                            this.notImplemented(machinCode1);
+                        }
                     }
                     else if (g3 == 2)
                     {
@@ -451,6 +455,16 @@
                             this.notImplemented(machinCode1);
                         }
                     }
+                    else if (g3 == 4) { // INR
+                        var val = this.getRegister(g2);
+                        val = this.add(val, 1, true);
+                        this.setRegister(g2, val);
+                    }
+                    else if (g3 == 5) { // DCR
+                        var val = this.getRegister(g2);
+                        val = this.add(val, 0xff, true);
+                        this.setRegister(g2, val);
+                    }
                     else if (g3 == 6)    // MVI r,x
                     {
                         this.setRegister(g2, this.fetchNextByte());
@@ -476,7 +490,7 @@
                 else if (g1 == 2) {
                     if (g2 == 0)    // ADD
                     {
-                        this.add(this.accumulator.getValue(), this.getRegister(g3));
+                        this.accumulator.setValue(this.add(this.accumulator.getValue(), this.getRegister(g3)));
                     }
                     else if (g2 == 7)    // CMP
                     {
@@ -574,7 +588,7 @@
                     {
                         if (g2 == 0) // ADI
                         {
-                            this.add(this.accumulator.getValue(), this.fetchNextByte());
+                            this.accumulator.setValue(this.add(this.accumulator.getValue(), this.fetchNextByte()));
                         }
                         else if (g2 == 7) // CPI
                         {

@@ -200,6 +200,12 @@
             if (n < 0 || n > 7) writeError(n + "is out of range. RST requires 0 to 7.");
             else out(0xc7 + (n << 3));
         });
+        mnemonicTable["XTHL"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+            out(0xe3);
+        });
+        mnemonicTable["SPHL"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+            out(0xf9);
+        });
 
         // NON-CONDITIONAL JUMP GROUP
         mnemonicTable["JMP"] = new mnemonicUnit(1, 3, (opr1, opr2, out) => {
@@ -215,8 +221,21 @@
         fillCond("C", 0xc4, false);
         fillCond("R", 0xc8, true);
 
+        // INCREMENT DECREMENT GROUP
+        mnemonicTable["INR"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+            out(0x04 | myParseDDD(opr1));
+        });
+        mnemonicTable["DCR"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+            out(0x05 | myParseDDD(opr1));
+        });
+        mnemonicTable["INX"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+            out(0x03 | myParseBDHSP(opr1));
+        });
+        mnemonicTable["DCX"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+            out(0x0b | myParseBDHSP(opr1));
+        });
 
-
+        // ARITHMETIC GROUP
 
 
         mnemonicTable["ADD"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {

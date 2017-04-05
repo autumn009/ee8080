@@ -177,6 +177,28 @@ next:
 	cpi	70h
 	jnz	fail
 
+; test inr dcr
+	mvi	a,0ffh
+	mvi	b,01h
+	inr	a
+	jnz	fail
+	dcr	b
+	jnz	fail
+
+	mvi	a,7eh
+	adi	1
+	inr	a
+	jc	fail
+
+; test inx dcx
+
+; test XTHL
+
+; test SPHL
+
+
+
+
 
 
 	jmp	success
