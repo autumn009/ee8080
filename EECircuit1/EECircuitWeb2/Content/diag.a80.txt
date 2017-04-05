@@ -107,9 +107,26 @@ stack	equ	0f000h
 	pop	psw
 	jnc	fail
 
+; test pchl
+	lxi	h,next
+	pchl
+	jmp	fail;
+next:
+
+; test all cond
+
+; test call
+
+
+; test c-cond
 
 
 	jmp	success
+
+; test ret
+
+; test ret-cond
+
 
 fail:
 	mvi	a,080h
