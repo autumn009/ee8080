@@ -499,6 +499,13 @@
                         {
                             this.setRegisterPairBDHPSW(g2 & 6, this.popCommon());
                         }
+                        else if (g2 == 1) { // RET
+                            this.regarray.pc.setValue(this.popCommon());
+                        }
+                        else if (g2 == 5) // PCHL
+                        {
+                            this.regarray.pc.setValue(this.regarray.getRegisterPairValue(2));
+                        }
                         else {
                             this.notImplemented(machinCode1);
                         }
@@ -556,7 +563,7 @@
                         }
                         else if (g2 == 1)   // CALL
                         {
-                            var oldpc = this.condJump(this.condCommon(g2));
+                            var oldpc = this.condJump(true);
                             this.pushCommon(oldpc);
                         }
                         else {
@@ -572,15 +579,6 @@
                         else if (g2 == 7) // CPI
                         {
                             this.cmp(this.accumulator.getValue(), this.fetchNextByte());
-                        }
-                        else {
-                            this.notImplemented(machinCode1);
-                        }
-                    }
-                    else if (g3 == 1) {
-                        if (g2 == 5) // PCHL
-                        {
-                            this.regarray.pc.setValue(this.regarray.getRegisterPairValue(2));
                         }
                         else {
                             this.notImplemented(machinCode1);

@@ -537,6 +537,12 @@ var emu;
                         if ((g2 & 1) == 0) {
                             this.setRegisterPairBDHPSW(g2 & 6, this.popCommon());
                         }
+                        else if (g2 == 1) {
+                            this.regarray.pc.setValue(this.popCommon());
+                        }
+                        else if (g2 == 5) {
+                            this.regarray.pc.setValue(this.regarray.getRegisterPairValue(2));
+                        }
                         else {
                             this.notImplemented(machinCode1);
                         }
@@ -584,7 +590,7 @@ var emu;
                             emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val & 255;
                         }
                         else if (g2 == 1) {
-                            var oldpc = this.condJump(this.condCommon(g2));
+                            var oldpc = this.condJump(true);
                             this.pushCommon(oldpc);
                         }
                         else {
@@ -597,14 +603,6 @@ var emu;
                         }
                         else if (g2 == 7) {
                             this.cmp(this.accumulator.getValue(), this.fetchNextByte());
-                        }
-                        else {
-                            this.notImplemented(machinCode1);
-                        }
-                    }
-                    else if (g3 == 1) {
-                        if (g2 == 5) {
-                            this.regarray.pc.setValue(this.regarray.getRegisterPairValue(2));
                         }
                         else {
                             this.notImplemented(machinCode1);

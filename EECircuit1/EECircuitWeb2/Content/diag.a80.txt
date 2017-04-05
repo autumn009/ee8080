@@ -117,11 +117,9 @@ next:
 	mvi	a,0cdh
 	call	sub
 	cpi	0c9h
-	jhz	fail
+	jnz	fail
 
 ; test all cond
-	
-
 
 
 
