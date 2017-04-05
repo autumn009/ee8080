@@ -335,12 +335,51 @@
             this.flags.ac = (((a & 15) + (b + 15)) >> 4) != 0;
         }
 
-        private condJump(cond: boolean) {
-            if (cond) this.regarray.pc.setValue(this.fetchNextWord());
-            else {
-                this.regarray.pc.Increment();
-                this.regarray.pc.Increment();
+        private condJump(cond: boolean): number {
+            var tgt = this.fetchNextWord();
+            if (cond) {
+                var oldpc = this.regarray.pc.getValue();
+                this.regarray.pc.setValue(tgt);
+                return oldpc;
             }
+            else
+                return null;
+        }
+
+        private condCommon(g2: number): boolean {
+            switch (g2) {
+                case 0: // NZ
+                    return !this.flags.z;
+                case 1: // Z
+                    return this.flags.z;
+                case 2: // NC
+                    return !this.flags.cy;
+                case 3: // C
+                    return this.flags.cy;
+                case 4: // PO
+                    return !this.flags.p;
+                case 5: // PE
+                    return this.flags.p;
+                case 6: // P
+                    return !this.flags.s;
+                case 7: // M
+                    return this.flags.s;
+            }
+        }
+
+        private popCommon(): number {
+            var l = virtualMachine.memory.Bytes[this.regarray.sp.getValue()];
+            this.regarray.sp.Increment();
+            var h = virtualMachine.memory.Bytes[this.regarray.sp.getValue()];
+            this.regarray.sp.Increment();
+            return h * 256 + l;
+        }
+
+        private pushCommon(val: number) {
+            this.regarray.sp.Decrement();
+            virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val >> 8;
+            this.regarray.sp.Decrement();
+            virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val & 255;
         }
 
         public runMain()
@@ -448,37 +487,25 @@
                     }
                 }
                 else {
-                    if (g3 == 1)
+                    if (g3 == 0) {  // Rxx
+                        if (this.condCommon(g2))
+                        {
+                            this.regarray.pc.setValue(this.popCommon());
+                        }
+                    }
+                    else if (g3 == 1)
                     {
                         if ((g2 & 1) == 0) // POP
                         {
-                            var l = virtualMachine.memory.Bytes[this.regarray.sp.getValue()];
-                            this.regarray.sp.Increment();
-                            var h = virtualMachine.memory.Bytes[this.regarray.sp.getValue()];
-                            this.regarray.sp.Increment();
-                            this.setRegisterPairBDHPSW(g2 & 6, h * 256 + l);
+                            this.setRegisterPairBDHPSW(g2 & 6, this.popCommon());
                         }
                         else {
                             this.notImplemented(machinCode1);
                         }
                     }
-                    else if (g3 == 2)
+                    else if (g3 == 2)   // Jxx
                     {
-                        if (g2 == 0) // JNZ
-                        {
-                            this.condJump(!this.flags.z);
-                        }
-                        else if (g2 == 2) // JNC
-                        {
-                            this.condJump(!this.flags.cy);
-                        }
-                        else if (g2 == 3) // JC
-                        {
-                            this.condJump(this.flags.cy);
-                        }
-                        else {
-                            this.notImplemented(machinCode1);
-                        }
+                        this.condJump(this.condCommon(g2));
                     }
                     else if (g3 == 3)
                     {
@@ -512,6 +539,11 @@
                             this.notImplemented(machinCode1);
                         }
                     }
+                    else if (g3 == 4)   // Cxx
+                    {
+                        var oldpc = this.condJump(this.condCommon(g2));
+                        if (oldpc != null) this.pushCommon(oldpc);
+                    }
                     else if (g3 == 5)
                     {
                         if ((g2&1) == 0) // PUSH
@@ -521,6 +553,11 @@
                             virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val >> 8;
                             this.regarray.sp.Decrement();
                             virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val & 255;
+                        }
+                        else if (g2 == 1)   // CALL
+                        {
+                            var oldpc = this.condJump(this.condCommon(g2));
+                            this.pushCommon(oldpc);
                         }
                         else {
                             this.notImplemented(machinCode1);
@@ -535,6 +572,15 @@
                         else if (g2 == 7) // CPI
                         {
                             this.cmp(this.accumulator.getValue(), this.fetchNextByte());
+                        }
+                        else {
+                            this.notImplemented(machinCode1);
+                        }
+                    }
+                    else if (g3 == 1) {
+                        if (g2 == 5) // PCHL
+                        {
+                            this.regarray.pc.setValue(this.regarray.getRegisterPairValue(2));
                         }
                         else {
                             this.notImplemented(machinCode1);

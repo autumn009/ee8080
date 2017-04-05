@@ -404,12 +404,47 @@ var emu;
             this.flags.ac = (((a & 15) + (b + 15)) >> 4) != 0;
         };
         i8080.prototype.condJump = function (cond) {
-            if (cond)
-                this.regarray.pc.setValue(this.fetchNextWord());
-            else {
-                this.regarray.pc.Increment();
-                this.regarray.pc.Increment();
+            var tgt = this.fetchNextWord();
+            if (cond) {
+                var oldpc = this.regarray.pc.getValue();
+                this.regarray.pc.setValue(tgt);
+                return oldpc;
             }
+            else
+                return null;
+        };
+        i8080.prototype.condCommon = function (g2) {
+            switch (g2) {
+                case 0:
+                    return !this.flags.z;
+                case 1:
+                    return this.flags.z;
+                case 2:
+                    return !this.flags.cy;
+                case 3:
+                    return this.flags.cy;
+                case 4:
+                    return !this.flags.p;
+                case 5:
+                    return this.flags.p;
+                case 6:
+                    return !this.flags.s;
+                case 7:
+                    return this.flags.s;
+            }
+        };
+        i8080.prototype.popCommon = function () {
+            var l = emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()];
+            this.regarray.sp.Increment();
+            var h = emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()];
+            this.regarray.sp.Increment();
+            return h * 256 + l;
+        };
+        i8080.prototype.pushCommon = function (val) {
+            this.regarray.sp.Decrement();
+            emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val >> 8;
+            this.regarray.sp.Decrement();
+            emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val & 255;
         };
         i8080.prototype.runMain = function () {
             for (;;) {
@@ -493,31 +528,21 @@ var emu;
                     }
                 }
                 else {
-                    if (g3 == 1) {
+                    if (g3 == 0) {
+                        if (this.condCommon(g2)) {
+                            this.regarray.pc.setValue(this.popCommon());
+                        }
+                    }
+                    else if (g3 == 1) {
                         if ((g2 & 1) == 0) {
-                            var l = emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()];
-                            this.regarray.sp.Increment();
-                            var h = emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()];
-                            this.regarray.sp.Increment();
-                            this.setRegisterPairBDHPSW(g2 & 6, h * 256 + l);
+                            this.setRegisterPairBDHPSW(g2 & 6, this.popCommon());
                         }
                         else {
                             this.notImplemented(machinCode1);
                         }
                     }
                     else if (g3 == 2) {
-                        if (g2 == 0) {
-                            this.condJump(!this.flags.z);
-                        }
-                        else if (g2 == 2) {
-                            this.condJump(!this.flags.cy);
-                        }
-                        else if (g2 == 3) {
-                            this.condJump(this.flags.cy);
-                        }
-                        else {
-                            this.notImplemented(machinCode1);
-                        }
+                        this.condJump(this.condCommon(g2));
                     }
                     else if (g3 == 3) {
                         if (g2 == 0) {
@@ -545,6 +570,11 @@ var emu;
                             this.notImplemented(machinCode1);
                         }
                     }
+                    else if (g3 == 4) {
+                        var oldpc = this.condJump(this.condCommon(g2));
+                        if (oldpc != null)
+                            this.pushCommon(oldpc);
+                    }
                     else if (g3 == 5) {
                         if ((g2 & 1) == 0) {
                             var val = this.getRegisterPairBDHPSW(g2 & 6);
@@ -552,6 +582,10 @@ var emu;
                             emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val >> 8;
                             this.regarray.sp.Decrement();
                             emu.virtualMachine.memory.Bytes[this.regarray.sp.getValue()] = val & 255;
+                        }
+                        else if (g2 == 1) {
+                            var oldpc = this.condJump(this.condCommon(g2));
+                            this.pushCommon(oldpc);
                         }
                         else {
                             this.notImplemented(machinCode1);
@@ -563,6 +597,14 @@ var emu;
                         }
                         else if (g2 == 7) {
                             this.cmp(this.accumulator.getValue(), this.fetchNextByte());
+                        }
+                        else {
+                            this.notImplemented(machinCode1);
+                        }
+                    }
+                    else if (g3 == 1) {
+                        if (g2 == 5) {
+                            this.regarray.pc.setValue(this.regarray.getRegisterPairValue(2));
                         }
                         else {
                             this.notImplemented(machinCode1);

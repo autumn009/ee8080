@@ -121,16 +121,26 @@
 
     var mnemonicTable = new Object();
 
+    var conditions: string[] = ["NZ","Z","NC","C","PO","PE","P","M"];
+
+    function fillCondSub(opcode: number, isRet: boolean) {
+        return new mnemonicUnit(1, isRet ? 1 : 3, (opr1, opr2, out) => {
+            out(opcode);
+            if (!isRet) out16(myParseNumber(opr1), out);
+        });
+    }
+    function fillCond(prefix: string, basecode: number, isRet: boolean) {
+        for (var i = 0; i < conditions.length; i++) {
+            mnemonicTable[prefix + conditions[i]] = fillCondSub(basecode + (i << 3), isRet)
+        }
+    }
+
     function fillMnemonicTable() {
         mnemonicTable["ORG"] = new mnemonicUnit(1, 0, (opr1, opr2, out) => {
             this.pc = myParseNumber(opr1);
         });
         mnemonicTable["END"] = new mnemonicUnit(0, 0, (opr1, opr2, out) => {
             endRequest = true;
-        });
-        mnemonicTable["JMP"] = new mnemonicUnit(1, 3, (opr1, opr2, out) => {
-            out(0xc3);
-            out16(myParseNumber(opr1), out);
         });
 
         // TRANSFER GROUP
@@ -178,6 +188,27 @@
         mnemonicTable["POP"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
             out(0xc1 | myParseBDHPSW(opr1));
         });
+        mnemonicTable["CALL"] = new mnemonicUnit(1, 3, (opr1, opr2, out) => {
+            out(0xcd);
+            out16(myParseNumber(opr1), out);
+        });
+        mnemonicTable["RET"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+            out(0xc9);
+        });
+
+        // NON-CONDITIONAL JUMP GROUP
+        mnemonicTable["JMP"] = new mnemonicUnit(1, 3, (opr1, opr2, out) => {
+            out(0xc3);
+            out16(myParseNumber(opr1), out);
+        });
+        mnemonicTable["PCHL"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+            out(0xe9);
+        });
+
+        // CONDITIONAL JUMP/CALL GROUP
+        fillCond("J", 0xc2, false);
+        fillCond("C", 0xc4, false);
+        fillCond("R", 0xc8, true);
 
 
 
@@ -190,21 +221,6 @@
             out(0xc6);
             out(myParseNumber(opr1));
         });
-
-        mnemonicTable["JNZ"] = new mnemonicUnit(2, 3, (opr1, opr2, out) => {
-            out(0xc2);
-            out16(myParseNumber(opr1), out);
-        });
-        mnemonicTable["JC"] = new mnemonicUnit(2, 3, (opr1, opr2, out) => {
-            out(0xda);
-            out16(myParseNumber(opr1), out);
-        });
-        mnemonicTable["JNC"] = new mnemonicUnit(2, 3, (opr1, opr2, out) => {
-            out(0xd2);
-            out16(myParseNumber(opr1), out);
-        });
-
-
 
         mnemonicTable["CMP"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
             out(0xb8 | myParseSSS(opr1));
