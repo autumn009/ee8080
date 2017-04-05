@@ -581,6 +581,12 @@
                             var v = this.getRegister(7);
                             virtualMachine.io.out(port, v);
                         }
+                        else if (g2 == 4)   // XTHL
+                        {
+                            var t = this.popCommon();
+                            this.pushCommon(this.regarray.getRegisterPairValue(2));
+                            this.regarray.setRegisterPairValue(2, t);
+                        }
                         else if (g2 == 5) // XCHG
                         {
                             var t1 = this.regarray.l.getValue();

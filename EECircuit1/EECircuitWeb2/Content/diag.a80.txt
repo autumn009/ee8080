@@ -202,9 +202,18 @@ next:
 	cmp	l
 	jnz	fail
 
-
-
 ; test XTHL
+	lxi	h,1234h
+	push	h
+	lxi	h,5678h
+	xthl
+	mov	a,h
+	cpi	12h
+	jnz	fail
+	pop	h
+	mov	a,h
+	cpi	56h
+	jnz	fail
 
 ; test SPHL
 
