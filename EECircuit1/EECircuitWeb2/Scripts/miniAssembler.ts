@@ -236,10 +236,11 @@
         });
 
         // ARITHMETIC GROUP
-
-
         mnemonicTable["ADD"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
             out(0x80 | myParseSSS(opr1));
+        });
+        mnemonicTable["ADC"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+            out(0x88 | myParseSSS(opr1));
         });
         mnemonicTable["ADI"] = new mnemonicUnit(1, 2, (opr1, opr2, out) => {
             out(0xc6);

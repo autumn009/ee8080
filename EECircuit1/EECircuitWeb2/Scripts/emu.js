@@ -421,9 +421,10 @@ var emu;
             this.setps(this.accumulator.getValue());
             this.flags.ac = false;
         };
-        i8080.prototype.add = function (a, b, cyUnchange) {
+        i8080.prototype.add = function (a, b, cyUnchange, c) {
             if (cyUnchange === void 0) { cyUnchange = false; }
-            var r = a + b;
+            if (c === void 0) { c = false; }
+            var r = a + b + (c ? 1 : 0);
             var r0 = r & 255;
             var rc = (r >> 8) != 0;
             this.flags.z = (r0 == 0);
@@ -583,6 +584,9 @@ var emu;
                 else if (g1 == 2) {
                     if (g2 == 0) {
                         this.accumulator.setValue(this.add(this.accumulator.getValue(), this.getRegister(g3)));
+                    }
+                    else if (g2 == 1) {
+                        this.accumulator.setValue(this.add(this.accumulator.getValue(), this.getRegister(g3), false, true));
                     }
                     else if (g2 == 7) {
                         this.cmp(this.accumulator.getValue(), this.getRegister(g3));

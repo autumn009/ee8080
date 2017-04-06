@@ -233,6 +233,13 @@ next:
 	cmc
 	jc	fail
 
+; test adc
+	stc
+	mvi	a,1
+	mvi	b,2
+	adc	b
+	cpi	4
+	jnz	fail
 
 
 

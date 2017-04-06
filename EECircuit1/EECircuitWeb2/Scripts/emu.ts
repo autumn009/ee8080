@@ -355,8 +355,8 @@
             this.flags.ac = false;
         }
 
-        private add(a: number, b: number, cyUnchange: boolean = false): number {
-            var r = a + b;
+        private add(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
+            var r = a + b + (c ? 1 : 0);
             var r0 = r & 255;
             var rc = (r >> 8) != 0;
             this.flags.z = (r0 == 0);
@@ -546,6 +546,10 @@
                     if (g2 == 0)    // ADD
                     {
                         this.accumulator.setValue(this.add(this.accumulator.getValue(), this.getRegister(g3)));
+                    }
+                    else if (g2 == 1)    // ADC
+                    {
+                        this.accumulator.setValue(this.add(this.accumulator.getValue(), this.getRegister(g3), false, true));
                     }
                     else if (g2 == 7)    // CMP
                     {
