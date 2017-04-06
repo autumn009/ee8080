@@ -502,7 +502,11 @@ var emu;
                             }
                         }
                         else {
-                            this.notImplemented(machinCode1);
+                            var t1 = this.regarray.getRegisterPairValue(2);
+                            var t2 = this.regarray.getRegisterPairValue(g2 >> 1);
+                            var s = t1 + t2;
+                            this.flags.cy = (s >= 0x10000) ? true : false;
+                            this.regarray.setRegisterPairValue(2, s & 0xffff);
                         }
                     }
                     else if (g3 == 2) {

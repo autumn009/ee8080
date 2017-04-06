@@ -248,6 +248,25 @@ next:
 	cpi	6
 	jnz	fail
 
+; test dad
+	lxi	h,8081h
+	lxi	d,0082h
+	dad	d
+	mov	a,h
+	cpi	81h
+	jnz	fail
+	mov	a,l
+	cpi	03h
+	jnz	fail
+	lxi	h,8000h
+	lxi	b,8000h
+	stc
+	cmc
+	dad	b
+	jnc	fail
+
+
+
 
 	jmp	success
 

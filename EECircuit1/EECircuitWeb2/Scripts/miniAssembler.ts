@@ -250,6 +250,9 @@
             out(0xce);
             out(myParseNumber(opr1));
         });
+        mnemonicTable["DAD"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+            out(0x09 | myParseBDHSP(opr1));
+        });
 
         mnemonicTable["CMP"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
             out(0xb8 | myParseSSS(opr1));
