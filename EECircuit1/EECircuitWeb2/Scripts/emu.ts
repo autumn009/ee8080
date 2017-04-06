@@ -557,6 +557,14 @@
                             this.accumulator.setValue((r & 255) + (over ? 1 : 0));
                             this.flags.cy = over;
                         }
+                       else if (g2 == 1)    // RRC
+                        {
+                            var r = this.accumulator.getValue();
+                            var over = (r & 1) != 0;
+                            r >>= 1;
+                            this.accumulator.setValue((r & 255) + (over ? 0x80 : 0));
+                            this.flags.cy = over;
+                        }
                         else if (g2 == 6)    // STC
                         {
                             this.flags.cy = true;

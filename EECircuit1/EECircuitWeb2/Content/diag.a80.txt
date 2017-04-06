@@ -337,6 +337,15 @@ next:
 	jnz	fail
 
 ; test rrc
+	mvi	a,055h
+	rrc
+	jnc	fail
+	mvi	a,0aah
+	rrc
+	jc	fail
+	cpi	55h
+	jnz	fail
+
 ; test ral
 ; test rar
 
