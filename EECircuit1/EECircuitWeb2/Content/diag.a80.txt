@@ -241,6 +241,12 @@ next:
 	cpi	4
 	jnz	fail
 
+; test aci
+	stc
+	mvi	a,2
+	aci	3
+	cpi	6
+	jnz	fail
 
 
 	jmp	success

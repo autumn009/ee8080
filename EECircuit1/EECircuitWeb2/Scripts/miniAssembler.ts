@@ -246,6 +246,10 @@
             out(0xc6);
             out(myParseNumber(opr1));
         });
+        mnemonicTable["ACI"] = new mnemonicUnit(1, 2, (opr1, opr2, out) => {
+            out(0xce);
+            out(myParseNumber(opr1));
+        });
 
         mnemonicTable["CMP"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
             out(0xb8 | myParseSSS(opr1));

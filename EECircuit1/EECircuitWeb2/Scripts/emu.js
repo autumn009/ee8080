@@ -674,6 +674,9 @@ var emu;
                         if (g2 == 0) {
                             this.accumulator.setValue(this.add(this.accumulator.getValue(), this.fetchNextByte()));
                         }
+                        else if (g2 == 1) {
+                            this.accumulator.setValue(this.add(this.accumulator.getValue(), this.fetchNextByte(), false, true));
+                        }
                         else if (g2 == 7) {
                             this.cmp(this.accumulator.getValue(), this.fetchNextByte());
                         }
