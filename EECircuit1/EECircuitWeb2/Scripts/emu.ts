@@ -362,7 +362,17 @@
             this.flags.z = (r0 == 0);
             if (!cyUnchange) this.flags.cy = rc;
             this.setps(r0);
-            this.flags.ac = (((a & 15) + (b + 15)) >> 4) != 0;
+            this.flags.ac = (((a & 15) + (b & 15)) >> 4) != 0;
+            return r0;
+        }
+        private sub(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
+            var r = a - b - (c ? 1 : 0);
+            var r0 = r & 255;
+            var rc = (r >> 8) != 0;
+            this.flags.z = (r0 == 0);
+            if (!cyUnchange) this.flags.cy = rc;
+            this.setps(r0);
+            this.flags.ac = (((a & 15) + (b & 15)) >> 4) != 0;
             return r0;
         }
 
@@ -555,6 +565,14 @@
                     {
                         this.accumulator.setValue(this.add(this.accumulator.getValue(), this.getRegister(g3), false, true));
                     }
+                    else if (g2 == 2)    // SUB
+                    {
+                        this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.getRegister(g3)));
+                    }
+                    else if (g2 == 3)    // SBB
+                    {
+                        this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.getRegister(g3), false, true));
+                    }
                     else if (g2 == 7)    // CMP
                     {
                         this.cmp(this.accumulator.getValue(), this.getRegister(g3));
@@ -664,6 +682,17 @@
                         {
                             this.accumulator.setValue(this.add(this.accumulator.getValue(), this.fetchNextByte(), false, true));
                         }
+                        else if (g2 == 2) // SUI
+                        {
+                            this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.fetchNextByte()));
+                        }
+                        else if (g2 == 3) // SBI
+                        {
+                            this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.fetchNextByte(), false, true));
+                        }
+
+
+
                         else if (g2 == 7) // CPI
                         {
                             this.cmp(this.accumulator.getValue(), this.fetchNextByte());

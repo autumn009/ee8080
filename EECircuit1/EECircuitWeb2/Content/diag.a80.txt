@@ -265,6 +265,31 @@ next:
 	dad	b
 	jnc	fail
 
+; test sub, sui
+	mvi	a,3
+	mvi	b,1
+	sub	b
+	cpi	2
+	jnz	fail
+	
+	mvi	a,4
+	sui	3
+	cpi	1
+	jnz	fail
+
+; test sbb, sbi
+	stc
+	mvi	a,3
+	mvi	b,1
+	sbb	b
+	cpi	1
+	jnz	fail
+	
+	stc
+	mvi	a,4
+	sbi	3
+	cpi	0
+	jnz	fail
 
 
 

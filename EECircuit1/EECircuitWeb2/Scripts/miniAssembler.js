@@ -259,6 +259,20 @@ var miniAssembler;
         mnemonicTable["DAD"] = new mnemonicUnit(1, 1, function (opr1, opr2, out) {
             out(0x09 | myParseBDHSP(opr1));
         });
+        mnemonicTable["SUB"] = new mnemonicUnit(1, 1, function (opr1, opr2, out) {
+            out(0x90 | myParseSSS(opr1));
+        });
+        mnemonicTable["SBB"] = new mnemonicUnit(1, 1, function (opr1, opr2, out) {
+            out(0x98 | myParseSSS(opr1));
+        });
+        mnemonicTable["SUI"] = new mnemonicUnit(1, 1, function (opr1, opr2, out) {
+            out(0xd6);
+            out(myParseNumber(opr1));
+        });
+        mnemonicTable["SBI"] = new mnemonicUnit(1, 1, function (opr1, opr2, out) {
+            out(0xde);
+            out(myParseNumber(opr1));
+        });
         mnemonicTable["CMP"] = new mnemonicUnit(1, 1, function (opr1, opr2, out) {
             out(0xb8 | myParseSSS(opr1));
         });

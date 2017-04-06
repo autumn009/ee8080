@@ -431,7 +431,20 @@ var emu;
             if (!cyUnchange)
                 this.flags.cy = rc;
             this.setps(r0);
-            this.flags.ac = (((a & 15) + (b + 15)) >> 4) != 0;
+            this.flags.ac = (((a & 15) + (b & 15)) >> 4) != 0;
+            return r0;
+        };
+        i8080.prototype.sub = function (a, b, cyUnchange, c) {
+            if (cyUnchange === void 0) { cyUnchange = false; }
+            if (c === void 0) { c = false; }
+            var r = a - b - (c ? 1 : 0);
+            var r0 = r & 255;
+            var rc = (r >> 8) != 0;
+            this.flags.z = (r0 == 0);
+            if (!cyUnchange)
+                this.flags.cy = rc;
+            this.setps(r0);
+            this.flags.ac = (((a & 15) + (b & 15)) >> 4) != 0;
             return r0;
         };
         i8080.prototype.condJump = function (cond) {
@@ -592,6 +605,12 @@ var emu;
                     else if (g2 == 1) {
                         this.accumulator.setValue(this.add(this.accumulator.getValue(), this.getRegister(g3), false, true));
                     }
+                    else if (g2 == 2) {
+                        this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.getRegister(g3)));
+                    }
+                    else if (g2 == 3) {
+                        this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.getRegister(g3), false, true));
+                    }
                     else if (g2 == 7) {
                         this.cmp(this.accumulator.getValue(), this.getRegister(g3));
                     }
@@ -680,6 +699,12 @@ var emu;
                         }
                         else if (g2 == 1) {
                             this.accumulator.setValue(this.add(this.accumulator.getValue(), this.fetchNextByte(), false, true));
+                        }
+                        else if (g2 == 2) {
+                            this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.fetchNextByte()));
+                        }
+                        else if (g2 == 3) {
+                            this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.fetchNextByte(), false, true));
                         }
                         else if (g2 == 7) {
                             this.cmp(this.accumulator.getValue(), this.fetchNextByte());
