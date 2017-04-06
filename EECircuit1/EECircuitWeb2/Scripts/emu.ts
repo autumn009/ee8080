@@ -376,6 +376,29 @@
             return r0;
         }
 
+        private setlogicFlags(v: number, ac: boolean) {
+            this.flags.z = (v == 0);
+            this.flags.cy = false;
+            this.setps(v);
+            this.flags.ac = ac;
+        }
+
+        private and(a: number, b: number): number {
+            var r = a & b;
+            this.setlogicFlags(r, true);
+            return r;
+        }
+        private or(a: number, b: number): number {
+            var r = a | b;
+            this.setlogicFlags(r, false);
+            return r;
+        }
+        private xor(a: number, b: number): number {
+            var r = a ^ b;
+            this.setlogicFlags(r, false);
+            return r;
+        }
+
         private condJump(cond: boolean): number {
             var tgt = this.fetchNextWord();
             if (cond) {
@@ -573,6 +596,18 @@
                     {
                         this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.getRegister(g3), false, true));
                     }
+                    else if (g2 == 4)    // AND
+                    {
+                        this.accumulator.setValue(this.and(this.accumulator.getValue(), this.getRegister(g3)));
+                    }
+                    else if (g2 == 5)    // XRA
+                    {
+                        this.accumulator.setValue(this.xor(this.accumulator.getValue(), this.getRegister(g3)));
+                    }
+                    else if (g2 == 6)    // ORA
+                    {
+                        this.accumulator.setValue(this.or(this.accumulator.getValue(), this.getRegister(g3)));
+                    }
                     else if (g2 == 7)    // CMP
                     {
                         this.cmp(this.accumulator.getValue(), this.getRegister(g3));
@@ -690,9 +725,18 @@
                         {
                             this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.fetchNextByte(), false, true));
                         }
-
-
-
+                        else if (g2 == 4) // ANI
+                        {
+                            this.accumulator.setValue(this.and(this.accumulator.getValue(), this.fetchNextByte()));
+                        }
+                        else if (g2 == 5) // XRI
+                        {
+                            this.accumulator.setValue(this.xor(this.accumulator.getValue(), this.fetchNextByte()));
+                        }
+                        else if (g2 == 6) // ORI
+                        {
+                            this.accumulator.setValue(this.or(this.accumulator.getValue(), this.fetchNextByte()));
+                        }
                         else if (g2 == 7) // CPI
                         {
                             this.cmp(this.accumulator.getValue(), this.fetchNextByte());

@@ -291,6 +291,40 @@ next:
 	cpi	0
 	jnz	fail
 
+; test and, ani
+	mvi	a,55h
+	mvi	b,0aah
+	and	b
+	jnz	fail
+
+	mvi	a,0fh
+	ani	3
+	cpi	3
+	jnz	fail
+
+; test ora, ori
+	mvi	a,55h
+	mvi	b,0aah
+	ora	b
+	cpi	0ffh
+	jnz	fail
+
+	mvi	a,0ch
+	ori	3
+	cpi	0fh
+	jnz	fail
+
+; test xra, xri
+	mvi	a,55h
+	mvi	b,0aah
+	xra	b
+	cpi	0ffh
+	jnz	fail
+
+	mvi	a,0fh
+	xri	3
+	cpi	00ch
+	jnz	fail
 
 
 	jmp	success

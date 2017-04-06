@@ -447,6 +447,27 @@ var emu;
             this.flags.ac = (((a & 15) + (b & 15)) >> 4) != 0;
             return r0;
         };
+        i8080.prototype.setlogicFlags = function (v, ac) {
+            this.flags.z = (v == 0);
+            this.flags.cy = false;
+            this.setps(v);
+            this.flags.ac = ac;
+        };
+        i8080.prototype.and = function (a, b) {
+            var r = a & b;
+            this.setlogicFlags(r, true);
+            return r;
+        };
+        i8080.prototype.or = function (a, b) {
+            var r = a | b;
+            this.setlogicFlags(r, false);
+            return r;
+        };
+        i8080.prototype.xor = function (a, b) {
+            var r = a ^ b;
+            this.setlogicFlags(r, false);
+            return r;
+        };
         i8080.prototype.condJump = function (cond) {
             var tgt = this.fetchNextWord();
             if (cond) {
@@ -611,6 +632,15 @@ var emu;
                     else if (g2 == 3) {
                         this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.getRegister(g3), false, true));
                     }
+                    else if (g2 == 4) {
+                        this.accumulator.setValue(this.and(this.accumulator.getValue(), this.getRegister(g3)));
+                    }
+                    else if (g2 == 5) {
+                        this.accumulator.setValue(this.xor(this.accumulator.getValue(), this.getRegister(g3)));
+                    }
+                    else if (g2 == 6) {
+                        this.accumulator.setValue(this.or(this.accumulator.getValue(), this.getRegister(g3)));
+                    }
                     else if (g2 == 7) {
                         this.cmp(this.accumulator.getValue(), this.getRegister(g3));
                     }
@@ -705,6 +735,15 @@ var emu;
                         }
                         else if (g2 == 3) {
                             this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.fetchNextByte(), false, true));
+                        }
+                        else if (g2 == 4) {
+                            this.accumulator.setValue(this.and(this.accumulator.getValue(), this.fetchNextByte()));
+                        }
+                        else if (g2 == 5) {
+                            this.accumulator.setValue(this.xor(this.accumulator.getValue(), this.fetchNextByte()));
+                        }
+                        else if (g2 == 6) {
+                            this.accumulator.setValue(this.or(this.accumulator.getValue(), this.fetchNextByte()));
                         }
                         else if (g2 == 7) {
                             this.cmp(this.accumulator.getValue(), this.fetchNextByte());

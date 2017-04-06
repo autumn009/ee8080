@@ -267,6 +267,29 @@
             out(0xde);
             out(myParseNumber(opr1));
         });
+        mnemonicTable["AND"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+            out(0xa0 | myParseSSS(opr1));
+        });
+        mnemonicTable["ORA"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+            out(0xb0 | myParseSSS(opr1));
+        });
+        mnemonicTable["XRA"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+            out(0xa8 | myParseSSS(opr1));
+        });
+        mnemonicTable["ANI"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+            out(0xe6);
+            out(myParseNumber(opr1));
+        });
+        mnemonicTable["ORI"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+            out(0xf6);
+            out(myParseNumber(opr1));
+        });
+        mnemonicTable["XRI"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+            out(0xee);
+            out(myParseNumber(opr1));
+        });
+
+
 
         mnemonicTable["CMP"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
             out(0xb8 | myParseSSS(opr1));
