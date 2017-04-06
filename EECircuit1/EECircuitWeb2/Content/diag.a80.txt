@@ -360,6 +360,29 @@ next:
 	jnz	fail
 
 ; test rar
+	stc
+	mvi	a,055h
+	rar
+	jnc	fail
+	cpi	0aah
+	jnz	fail
+	mvi	a,1
+	rar
+	jnc	fail
+	cpi	0
+	jnz	fail
+
+; test
+
+
+
+
+
+
+
+
+
+
 
 	jmp	success
 
