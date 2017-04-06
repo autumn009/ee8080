@@ -549,7 +549,15 @@
                     }
                     else if (g3 == 7)
                     {
-                        if (g2 == 6)    // STC
+                        if (g2 == 0)    // RLC
+                        {
+                            var r = this.accumulator.getValue();
+                            r <<= 1;
+                            var over = (r & 0x100) != 0;
+                            this.accumulator.setValue((r & 255) + (over ? 1 : 0));
+                            this.flags.cy = over;
+                        }
+                        else if (g2 == 6)    // STC
                         {
                             this.flags.cy = true;
                         }

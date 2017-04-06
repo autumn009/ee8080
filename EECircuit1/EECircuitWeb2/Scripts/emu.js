@@ -594,7 +594,14 @@ var emu;
                         this.setRegister(g2, this.fetchNextByte());
                     }
                     else if (g3 == 7) {
-                        if (g2 == 6) {
+                        if (g2 == 0) {
+                            var r = this.accumulator.getValue();
+                            r <<= 1;
+                            var over = (r & 0x100) != 0;
+                            this.accumulator.setValue((r & 255) + (over ? 1 : 0));
+                            this.flags.cy = over;
+                        }
+                        else if (g2 == 6) {
                             this.flags.cy = true;
                         }
                         else if (g2 == 7) {

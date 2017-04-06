@@ -288,9 +288,6 @@
             out(0xee);
             out(myParseNumber(opr1));
         });
-
-
-
         mnemonicTable["CMP"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
             out(0xb8 | myParseSSS(opr1));
         });
@@ -298,6 +295,20 @@
             out(0xfe);
             out(myParseNumber(opr1));
         });
+        // ROTATE GROUP
+        mnemonicTable["RLC"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+            out(0x07);
+        });
+        mnemonicTable["RRC"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+            out(0x0f);
+        });
+        mnemonicTable["RAL"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+            out(0x17);
+        });
+        mnemonicTable["RAR"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+            out(0x1f);
+        });
+
         mnemonicTable["HLT"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
             out(0x76);
         });

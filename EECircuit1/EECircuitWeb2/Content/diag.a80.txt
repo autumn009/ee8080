@@ -326,6 +326,19 @@ next:
 	cpi	00ch
 	jnz	fail
 
+; test rlc
+	mvi	a,055h
+	rlc
+	jc	fail
+	mvi	a,0aah
+	rlc
+	jnc	fail
+	cpi	55h
+	jnz	fail
+
+; test rrc
+; test ral
+; test rar
 
 	jmp	success
 
@@ -345,12 +358,16 @@ sub2:
 	ret
 
 fail:
+	push	psw
 	mvi	a,080h
 	out	0ffh
+	pop	psw
 	hlt
 success:
+	push	psw
 	mvi	a,0ffh
 	out	0ffh
+	pop	psw
 	hlt
 
 	end
