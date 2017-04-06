@@ -267,6 +267,13 @@ var miniAssembler;
             out(0xd3);
             out(myParseNumber(opr1));
         });
+        // SPECIALS GROUP
+        mnemonicTable["STC"] = new mnemonicUnit(0, 1, function (opr1, opr2, out) {
+            out(0x37);
+        });
+        mnemonicTable["CMC"] = new mnemonicUnit(0, 1, function (opr1, opr2, out) {
+            out(0x3f);
+        });
     }
     fillMnemonicTable();
     function lineParser(line) {

@@ -227,6 +227,11 @@ next:
 	cpi	12h
 	jnz	fail
 
+; test stc, cmc
+	stc
+	jnc	fail
+	cmc
+	jc	fail
 
 
 

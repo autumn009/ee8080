@@ -510,6 +510,20 @@
                     {
                         this.setRegister(g2, this.fetchNextByte());
                     }
+                    else if (g3 == 7)
+                    {
+                        if (g2 == 6)    // STC
+                        {
+                            this.flags.cy = true;
+                        }
+                        else if (g2 == 7)    // CMC
+                        {
+                            this.flags.cy = !this.flags.cy;
+                        }
+                        else {
+                            this.notImplemented(machinCode1);
+                        }
+                    }
                     else
                     {
                         this.notImplemented(machinCode1);
