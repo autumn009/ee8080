@@ -314,9 +314,6 @@ var miniAssembler;
         mnemonicTable["RAR"] = new mnemonicUnit(0, 1, function (opr1, opr2, out) {
             out(0x1f);
         });
-        mnemonicTable["HLT"] = new mnemonicUnit(0, 1, function (opr1, opr2, out) {
-            out(0x76);
-        });
         mnemonicTable["IN"] = new mnemonicUnit(1, 2, function (opr1, opr2, out) {
             out(0xdb);
             out(myParseNumber(opr1));
@@ -337,6 +334,19 @@ var miniAssembler;
         });
         mnemonicTable["DAA"] = new mnemonicUnit(0, 1, function (opr1, opr2, out) {
             out(0x27);
+        });
+        //CONTROL GROUP
+        mnemonicTable["HLT"] = new mnemonicUnit(0, 1, function (opr1, opr2, out) {
+            out(0x76);
+        });
+        mnemonicTable["NOP"] = new mnemonicUnit(0, 1, function (opr1, opr2, out) {
+            out(0x00);
+        });
+        mnemonicTable["EI"] = new mnemonicUnit(0, 1, function (opr1, opr2, out) {
+            out(0xfb);
+        });
+        mnemonicTable["DI"] = new mnemonicUnit(0, 1, function (opr1, opr2, out) {
+            out(0xf3);
         });
     }
     fillMnemonicTable();

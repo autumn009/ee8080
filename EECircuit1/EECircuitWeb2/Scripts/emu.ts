@@ -731,6 +731,14 @@
                             this.regarray.e.setValue(t1);
                             this.regarray.d.setValue(t2);
                         }
+                        else if (g2 == 6) // DI
+                        {
+                            // ASSUMED AS NOP
+                        }
+                        else if (g2 == 7) // EI
+                        {
+                            // ASSUMED AS NOP
+                        }
                         else
                         {
                             this.notImplemented(machinCode1);

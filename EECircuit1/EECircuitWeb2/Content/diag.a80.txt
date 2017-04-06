@@ -397,14 +397,24 @@ next:
 	cpi	18h
 	jnz	fail
 
-
-
-
-
-
-
-
-
+; test nop,ei,di
+	xra	a
+	mov	b,a
+	mov	c,a
+	mov	d,a
+	mov	e,a
+	mov	h,a
+	mov	l,a
+	nop
+	di
+	ei
+	ora	b
+	ora	c
+	ora	d
+	ora	e
+	ora	h
+	ora	l
+	jnz	fail
 
 	jmp	success
 

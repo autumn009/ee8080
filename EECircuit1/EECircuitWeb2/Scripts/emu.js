@@ -747,6 +747,10 @@ var emu;
                             this.regarray.e.setValue(t1);
                             this.regarray.d.setValue(t2);
                         }
+                        else if (g2 == 6) {
+                        }
+                        else if (g2 == 7) {
+                        }
                         else {
                             this.notImplemented(machinCode1);
                         }
