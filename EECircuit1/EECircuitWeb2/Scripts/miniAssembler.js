@@ -335,6 +335,9 @@ var miniAssembler;
         mnemonicTable["CMA"] = new mnemonicUnit(0, 1, function (opr1, opr2, out) {
             out(0x2f);
         });
+        mnemonicTable["DAA"] = new mnemonicUnit(0, 1, function (opr1, opr2, out) {
+            out(0x27);
+        });
     }
     fillMnemonicTable();
     function lineParser(line) {

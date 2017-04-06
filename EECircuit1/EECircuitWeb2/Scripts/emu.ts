@@ -362,7 +362,7 @@
             this.flags.z = (r0 == 0);
             if (!cyUnchange) this.flags.cy = rc;
             this.setps(r0);
-            this.flags.ac = (((a & 15) + (b & 15)) >> 4) != 0;
+            this.flags.ac = ((a & 0x8) & (b & 0x8)) != 0;
             return r0;
         }
         private sub(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
@@ -372,7 +372,7 @@
             this.flags.z = (r0 == 0);
             if (!cyUnchange) this.flags.cy = rc;
             this.setps(r0);
-            this.flags.ac = (((a & 15) + (b & 15)) >> 4) != 0;
+            this.flags.ac = false;
             return r0;
         }
 
@@ -580,8 +580,21 @@
                             this.accumulator.setValue((r & 255) + (this.flags.cy ? 0x80 : 0));
                             this.flags.cy = over;
                         }
-
-
+                        else if (g2 == 4)    // DAA
+                        {
+                            var a = this.accumulator.getValue();
+                            var al4 = a & 15;
+                            if (al4 > 9 || this.flags.ac) a+= 6;
+                            var ah4 = (a>>4) & 15;
+                            if (ah4 > 9 || this.flags.cy) a += 0x60;
+                            var r0 = a & 255;
+                            this.accumulator.setValue(r0);
+                            var rc = (a >> 8) != 0;
+                            this.flags.z = (a == 0);
+                            this.flags.cy = rc;
+                            this.setps(r0);
+                            this.flags.ac = false;
+                        }
                         else if (g2 == 5)    // CMA
                         {
                             this.accumulator.setValue((~this.accumulator.getValue()) & 255);

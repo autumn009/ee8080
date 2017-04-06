@@ -378,7 +378,24 @@ next:
 	cpi	0a5h
 	jnz	fail
 
+; test daa
+	mvi	a,1
+	adi	2
+	daa
+	cpi	3
+	jnz	fail
 
+	mvi	a,9
+	adi	3
+	daa
+	cpi	12h
+	jnz	fail
+
+	mvi	a,9
+	adi	9
+	daa
+	cpi	18h
+	jnz	fail
 
 
 
