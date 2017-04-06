@@ -347,6 +347,18 @@ next:
 	jnz	fail
 
 ; test ral
+	stc
+	mvi	a,055h
+	ral
+	jc	fail
+	cpi	0abh
+	jnz	fail
+	mvi	a,80h
+	ral
+	jnc	fail
+	cpi	0
+	jnz	fail
+
 ; test rar
 
 	jmp	success
