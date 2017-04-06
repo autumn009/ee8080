@@ -419,6 +419,7 @@ var miniAssembler;
         var start = 0;
         endRequest = false;
         lineNumber = 1;
+        compilePointer = 0;
         for (;;) {
             var end = start;
             var line;

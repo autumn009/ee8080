@@ -882,7 +882,6 @@
 
     function loadTest2() {
         var s = "";
-        s += " lxi h,1234h\r\n"
         s += " in 0ffh\r\n";
         s += " out 0ffh\r\n";
         s += " hlt\r\n"
