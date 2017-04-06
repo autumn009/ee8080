@@ -621,6 +621,9 @@ var emu;
                             this.accumulator.setValue((r & 255) + (this.flags.cy ? 0x80 : 0));
                             this.flags.cy = over;
                         }
+                        else if (g2 == 5) {
+                            this.accumulator.setValue((~this.accumulator.getValue()) & 255);
+                        }
                         else if (g2 == 6) {
                             this.flags.cy = true;
                         }

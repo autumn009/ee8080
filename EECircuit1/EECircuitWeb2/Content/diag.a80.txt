@@ -372,7 +372,12 @@ next:
 	cpi	0
 	jnz	fail
 
-; test
+; test cma
+	mvi	a,5ah
+	cma
+	cpi	0a5h
+	jnz	fail
+
 
 
 

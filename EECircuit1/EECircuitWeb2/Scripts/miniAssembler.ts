@@ -328,6 +328,9 @@
         mnemonicTable["CMC"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
             out(0x3f);
         });
+        mnemonicTable["CMA"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+            out(0x2f);
+        });
 
 
     }
