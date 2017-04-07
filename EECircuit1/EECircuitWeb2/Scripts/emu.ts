@@ -888,12 +888,44 @@
         $("#sourceCode").val(s);
     }
 
+    function loadCpm() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', "/Content/CPM.bin", true);
+        xhr.responseType = 'blob';
+        xhr.onload = function (e) {
+            if (xhr.status == 200) {
+                // get binary data as a response
+                var blob = xhr.response;
+
+                var arrayBuffer;
+                var fileReader = new FileReader();
+                fileReader.onload = function () {
+                    arrayBuffer = this.result;
+                    var ary = new Uint8Array(arrayBuffer);
+                    for (var i = 0; i < ary.length; i++) {
+                        virtualMachine.memory.Bytes.write(0xdc00 + i, ary[i]);
+                    }
+                };
+                fileReader.onerror = () => { alert("Error"); };
+                fileReader.readAsArrayBuffer(blob);
+            }
+            else {
+                alert("load error");
+            }
+        };
+        xhr.send();
+    }
+
     $("#navtest2").click(() => {
         loadTest2();
     });
 
     $("#navtest1").click(() => {
         loadTest1();
+    });
+
+    $("#navcpm").click(() => {
+        loadCpm();
     });
 
     function setConsole() {
