@@ -156,3 +156,15 @@ p.run {
     text-align: center;
     color: darkred;
 }
+
+div.vdt {
+    background-color: black;
+    color: white;
+    font-family: monospace;
+    padding: 5px;
+}
+p.vdtline {
+    width: 80em;
+    height: 1em;
+    margin:0px;
+}

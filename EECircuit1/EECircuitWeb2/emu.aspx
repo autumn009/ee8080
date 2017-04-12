@@ -92,6 +92,34 @@
         </div>
 
         <div id="con" class="mypane">
+            <div id="vscreen" class="vdt">
+                <p class="vdtline" id="vline0">This is Sample Line1</p>
+                <p class="vdtline" id="vline1">abc</p>
+                <p class="vdtline" id="vline2">The quick brown fox jumps over the lazy dog</p>
+                <p class="vdtline" id="vline3"></p>
+                <p class="vdtline" id="vline4"></p>
+                <p class="vdtline" id="vline5"></p>
+                <p class="vdtline" id="vline6"></p>
+                <p class="vdtline" id="vline7"></p>
+                <p class="vdtline" id="vline8"></p>
+                <p class="vdtline" id="vline9"></p>
+                <p class="vdtline" id="vline10"></p>
+                <p class="vdtline" id="vline11"></p>
+                <p class="vdtline" id="vline12"></p>
+                <p class="vdtline" id="vline13"></p>
+                <p class="vdtline" id="vline14"></p>
+                <p class="vdtline" id="vline15"></p>
+                <p class="vdtline" id="vline16"></p>
+                <p class="vdtline" id="vline17"></p>
+                <p class="vdtline" id="vline18"></p>
+                <p class="vdtline" id="vline19"></p>
+                <p class="vdtline" id="vline20"></p>
+                <p class="vdtline" id="vline21"></p>
+                <p class="vdtline" id="vline22"></p>
+                <p class="vdtline" id="vline23">Line24</p>
+            </div>
+
+
 <!-- TBW -->
 
 
@@ -130,6 +158,7 @@
         </ul>
         <p class="close-btn"><a href="#" data-rel="close" data-role="button" data-theme="c" data-icon="delete">Close</a></p>
     </div>
+    <script src="/Scripts/vdt.js"></script>
     <script src="/Scripts/emu.js"></script>
     <script src="/Scripts/miniAssembler.js"></script>
 </asp:Content>
