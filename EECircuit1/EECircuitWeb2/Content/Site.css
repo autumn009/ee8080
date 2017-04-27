@@ -171,3 +171,6 @@ p.vdtline {
 .kbdl {
     text-align: center;
 }
+span.blabel {
+    font-family: monospace;
+}

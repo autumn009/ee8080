@@ -13,7 +13,7 @@
             if (!keytop) {
                 keytop = $(this).attr("data-normal");
             }
-            $(this).text(keytop);
+            $(this).children().text(keytop);
         });
     }
 

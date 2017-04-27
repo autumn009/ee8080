@@ -120,67 +120,67 @@
             </div>
             <div id="vkeyboard">
                 <fieldset id="kbd1" class="kbdl" data-role="controlgroup" data-type="horizontal" data-mini="true">
-                    <button id="vk1" type="button" class="vkey" data-shift="!" data-normal="1">X</button>
-                    <button id="vk2" type="button" class="vkey" data-shift="&quot;" data-normal="2">X</button>
-                    <button id="vk3" type="button" class="vkey" data-shift="#" data-normal="3">X</button>
-                    <button id="vk4" type="button" class="vkey" data-shift="$" data-normal="4">X</button>
-                    <button id="vk5" type="button" class="vkey" data-shift="%" data-normal="5">X</button>
-                    <button id="vk6" type="button" class="vkey" data-shift="&amp;" data-normal="6">X</button>
-                    <button id="vk7" type="button" class="vkey" data-shift="'" data-normal="7">X</button>
-                    <button id="vk8" type="button" class="vkey" data-shift="(" data-normal="8">X</button>
-                    <button id="vk9" type="button" class="vkey" data-shift=")" data-normal="9">X</button>
-                    <button id="vk0" type="button" class="vkey" data-normal="0">X</button>
-                    <button id="vkcolon" type="button" class="vkey" data-shift="*" data-normal=":">X</button>
-                    <button id="vkminus" type="button" class="vkey" data-shift="=" data-normal="-">X</button>
-                    <button id="vkopen" type="button" class="vkey" data-shift="{" data-normal="[">X</button>
-                    <button id="vkclose" type="button" class="vkey" data-shift="}" data-normal="]">X</button>
-                    <button id="vkhome" type="button" class="vkey" data-shift="HOME" data-normal="~">X</button>
+                    <button id="vk1" type="button" class="vkey" data-shift="!" data-normal="1"><span class="blabel">X</span></button>
+                    <button id="vk2" type="button" class="vkey" data-shift="&quot;" data-normal="2"><span class="blabel">X</span></button>
+                    <button id="vk3" type="button" class="vkey" data-shift="#" data-normal="3"><span class="blabel">X</span></button>
+                    <button id="vk4" type="button" class="vkey" data-shift="$" data-normal="4"><span class="blabel">X</span></button>
+                    <button id="vk5" type="button" class="vkey" data-shift="%" data-normal="5"><span class="blabel">X</span></button>
+                    <button id="vk6" type="button" class="vkey" data-shift="&amp;" data-normal="6"><span class="blabel">X</span></button>
+                    <button id="vk7" type="button" class="vkey" data-shift="'" data-normal="7"><span class="blabel">X</span></button>
+                    <button id="vk8" type="button" class="vkey" data-shift="(" data-normal="8"><span class="blabel">X</span></button>
+                    <button id="vk9" type="button" class="vkey" data-shift=")" data-normal="9"><span class="blabel">X</span></button>
+                    <button id="vk0" type="button" class="vkey" data-normal="0"><span class="blabel">X</span></button>
+                    <button id="vkcolon" type="button" class="vkey" data-shift="*" data-normal=":"><span class="blabel">X</span></button>
+                    <button id="vkminus" type="button" class="vkey" data-shift="=" data-normal="-"><span class="blabel">X</span></button>
+                    <button id="vkopen" type="button" class="vkey" data-shift="{" data-normal="["><span class="blabel">X</span></button>
+                    <button id="vkclose" type="button" class="vkey" data-shift="}" data-normal="]"><span class="blabel">X</span></button>
+                    <button id="vkhome" type="button" class="vkey" data-shift="HOME" data-normal="~"><span class="blabel">X</span></button>
                 </fieldset>
                 <fieldset id="kbd2" class="kbdl" data-role="controlgroup" data-type="horizontal" data-mini="true">
-                    <button id="vkesc" type="button" class="vkey" data-normal="ESC">X</button>
-                    <button id="vkq" type="button" class="vkey" data-shift="Q" data-normal="q">X</button>
-                    <button id="vkw" type="button" class="vkey" data-shift="W" data-normal="w">X</button>
-                    <button id="vke" type="button" class="vkey" data-shift="E" data-normal="e">X</button>
-                    <button id="vkr" type="button" class="vkey" data-shift="R" data-normal="r">X</button>
-                    <button id="vkt" type="button" class="vkey" data-shift="T" data-normal="t">X</button>
-                    <button id="vky" type="button" class="vkey" data-shift="Y" data-normal="y">X</button>
-                    <button id="vku" type="button" class="vkey" data-shift="U" data-normal="u">X</button>
-                    <button id="vki" type="button" class="vkey" data-shift="I" data-normal="i">X</button>
-                    <button id="vko" type="button" class="vkey" data-shift="O" data-normal="o">X</button>
-                    <button id="vkp" type="button" class="vkey" data-shift="P" data-normal="p">X</button>
-                    <button id="vklf" type="button" class="vkey" data-normal="LF">X</button>
-                    <button id="vkenter" type="button" class="vkey" data-normal="Enter">X</button>
+                    <button id="vkesc" type="button" class="vkey" data-normal="ESC"><span class="blabel">X</span></button>
+                    <button id="vkq" type="button" class="vkey" data-shift="Q" data-normal="q"><span class="blabel">X</span></button>
+                    <button id="vkw" type="button" class="vkey" data-shift="W" data-normal="w"><span class="blabel">X</span></button>
+                    <button id="vke" type="button" class="vkey" data-shift="E" data-normal="e"><span class="blabel">X</span></button>
+                    <button id="vkr" type="button" class="vkey" data-shift="R" data-normal="r"><span class="blabel">X</span></button>
+                    <button id="vkt" type="button" class="vkey" data-shift="T" data-normal="t"><span class="blabel">X</span></button>
+                    <button id="vky" type="button" class="vkey" data-shift="Y" data-normal="y"><span class="blabel">X</span></button>
+                    <button id="vku" type="button" class="vkey" data-shift="U" data-normal="u"><span class="blabel">X</span></button>
+                    <button id="vki" type="button" class="vkey" data-shift="I" data-normal="i"><span class="blabel">X</span></button>
+                    <button id="vko" type="button" class="vkey" data-shift="O" data-normal="o"><span class="blabel">X</span></button>
+                    <button id="vkp" type="button" class="vkey" data-shift="P" data-normal="p"><span class="blabel">X</span></button>
+                    <button id="vklf" type="button" class="vkey" data-normal="LF"><span class="blabel">X</span></button>
+                    <button id="vkenter" type="button" class="vkey" data-normal="Enter"><span class="blabel">X</span></button>
                 </fieldset>
                 <fieldset id="kbd3" class="kbdl"  data-role="controlgroup" data-type="horizontal" data-mini="true">
-                    <button id="vkctrl" type="button" class="vkey" data-normal="Ctrl">X</button>
-                    <button id="vka" type="button" class="vkey" data-shift="A" data-normal="a">X</button>
-                    <button id="vks" type="button" class="vkey" data-shift="S" data-normal="s">X</button>
-                    <button id="vkd" type="button" class="vkey" data-shift="S" data-normal="s">X</button>
-                    <button id="vkf" type="button" class="vkey" data-shift="F" data-normal="f">X</button>
-                    <button id="vkg" type="button" class="vkey" data-shift="G" data-normal="g">X</button>
-                    <button id="vkh" type="button" class="vkey" data-shift="H" data-normal="h">X</button>
-                    <button id="vkj" type="button" class="vkey" data-shift="J" data-normal="j">X</button>
-                    <button id="vkk" type="button" class="vkey" data-shift="K" data-normal="k">X</button>
-                    <button id="vkl" type="button" class="vkey" data-shift="L" data-normal="l">X</button>
-                    <button id="vkplus" type="button" class="vkey" data-shift="+" data-normal=";">X</button>
-                    <button id="vkatmark" type="button" class="vkey" data-shift="`" data-normal="@">X</button>
-                    <button id="vkupline" type="button" class="vkey" data-shift="|" data-normal="\">X</button>
+                    <button id="vkctrl" type="button" class="vkey" data-normal="Ctrl"><span class="blabel">X</span></button>
+                    <button id="vka" type="button" class="vkey" data-shift="A" data-normal="a"><span class="blabel">X</span></button>
+                    <button id="vks" type="button" class="vkey" data-shift="S" data-normal="s"><span class="blabel">X</span></button>
+                    <button id="vkd" type="button" class="vkey" data-shift="S" data-normal="s"><span class="blabel">X</span></button>
+                    <button id="vkf" type="button" class="vkey" data-shift="F" data-normal="f"><span class="blabel">X</span></button>
+                    <button id="vkg" type="button" class="vkey" data-shift="G" data-normal="g"><span class="blabel">X</span></button>
+                    <button id="vkh" type="button" class="vkey" data-shift="H" data-normal="h"><span class="blabel">X</span></button>
+                    <button id="vkj" type="button" class="vkey" data-shift="J" data-normal="j"><span class="blabel">X</span></button>
+                    <button id="vkk" type="button" class="vkey" data-shift="K" data-normal="k"><span class="blabel">X</span></button>
+                    <button id="vkl" type="button" class="vkey" data-shift="L" data-normal="l"><span class="blabel">X</span></button>
+                    <button id="vkplus" type="button" class="vkey" data-shift="+" data-normal=";"><span class="blabel">X</span></button>
+                    <button id="vkatmark" type="button" class="vkey" data-shift="`" data-normal="@"><span class="blabel">X</span></button>
+                    <button id="vkupline" type="button" class="vkey" data-shift="|" data-normal="\"><span class="blabel">X</span></button>
                 </fieldset>
                 <fieldset id="kbd4"  class="kbdl" data-role="controlgroup" data-type="horizontal" data-mini="true">
-                    <button id="vklshift" type="button" class="vkey vkshifts" data-normal="Shift">X</button>
-                    <button id="vkz" type="button" class="vkey" data-shift="Z" data-normal="z">X</button>
-                    <button id="vkx" type="button" class="vkey" data-shift="X" data-normal="x">X</button>
-                    <button id="vkc" type="button" class="vkey" data-shift="C" data-normal="c">X</button>
-                    <button id="vkv" type="button" class="vkey" data-shift="V" data-normal="v">X</button>
-                    <button id="vkb" type="button" class="vkey" data-shift="B" data-normal="b">X</button>
-                    <button id="vkn" type="button" class="vkey" data-shift="N" data-normal="n">X</button>
-                    <button id="vklt" type="button" class="vkey" data-shift="&lt;" data-normal=",">X</button>
-                    <button id="vkgt" type="button" class="vkey" data-shift="&gt;" data-normal=".">X</button>
-                    <button id="vkquestion" type="button" class="vkey" data-shift="?" data-normal="/">X</button>
-                    <button id="vkrshift" type="button" class="vkey vkshifts" data-normal="Shift">X</button>
+                    <button id="vklshift" type="button" class="vkey vkshifts" data-normal="Shift"><span class="blabel">X</span></button>
+                    <button id="vkz" type="button" class="vkey" data-shift="Z" data-normal="z"><span class="blabel">X</span></button>
+                    <button id="vkx" type="button" class="vkey" data-shift="X" data-normal="x"><span class="blabel">X</span></button>
+                    <button id="vkc" type="button" class="vkey" data-shift="C" data-normal="c"><span class="blabel">X</span></button>
+                    <button id="vkv" type="button" class="vkey" data-shift="V" data-normal="v"><span class="blabel">X</span></button>
+                    <button id="vkb" type="button" class="vkey" data-shift="B" data-normal="b"><span class="blabel">X</span></button>
+                    <button id="vkn" type="button" class="vkey" data-shift="N" data-normal="n"><span class="blabel">X</span></button>
+                    <button id="vklt" type="button" class="vkey" data-shift="&lt;" data-normal=","><span class="blabel">X</span></button>
+                    <button id="vkgt" type="button" class="vkey" data-shift="&gt;" data-normal="."><span class="blabel">X</span></button>
+                    <button id="vkquestion" type="button" class="vkey" data-shift="?" data-normal="/"><span class="blabel">X</span></button>
+                    <button id="vkrshift" type="button" class="vkey vkshifts" data-normal="Shift"><span class="blabel">X</span></button>
                 </fieldset>
                 <fieldset id="kbd5" class="kbdl" data-role="controlgroup" data-type="horizontal" data-mini="true">
-                    <button id="vkspace" type="button" class="vkey" data-normal="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">X</button>
+                    <button id="vkspace" type="button" class="vkey" data-normal="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"><span class="blabel">X</span></button>
                 </fieldset>
             </div>
 
