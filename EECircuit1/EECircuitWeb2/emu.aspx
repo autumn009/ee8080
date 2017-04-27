@@ -119,7 +119,7 @@
                 <p class="vdtline" id="vline23">Line24</p>
             </div>
             <div id="vkeyboard">
-                <fieldset id="kbd1" data-role="controlgroup" data-type="horizontal" data-mini="true">
+                <fieldset id="kbd1" class="kbdl" data-role="controlgroup" data-type="horizontal" data-mini="true">
                     <button id="vk1" type="button" class="vkey" data-shift="!" data-normal="1">X</button>
                     <button id="vk2" type="button" class="vkey" data-shift="&quot;" data-normal="2">X</button>
                     <button id="vk3" type="button" class="vkey" data-shift="#" data-normal="3">X</button>
@@ -136,7 +136,7 @@
                     <button id="vkclose" type="button" class="vkey" data-shift="}" data-normal="]">X</button>
                     <button id="vkhome" type="button" class="vkey" data-shift="HOME" data-normal="~">X</button>
                 </fieldset>
-                <fieldset id="kbd2" data-role="controlgroup" data-type="horizontal" data-mini="true">
+                <fieldset id="kbd2" class="kbdl" data-role="controlgroup" data-type="horizontal" data-mini="true">
                     <button id="vkesc" type="button" class="vkey" data-normal="ESC">X</button>
                     <button id="vkq" type="button" class="vkey" data-shift="Q" data-normal="q">X</button>
                     <button id="vkw" type="button" class="vkey" data-shift="W" data-normal="w">X</button>
@@ -151,7 +151,7 @@
                     <button id="vklf" type="button" class="vkey" data-normal="LF">X</button>
                     <button id="vkenter" type="button" class="vkey" data-normal="Enter">X</button>
                 </fieldset>
-                <fieldset id="kbd3"  data-role="controlgroup" data-type="horizontal" data-mini="true">
+                <fieldset id="kbd3" class="kbdl"  data-role="controlgroup" data-type="horizontal" data-mini="true">
                     <button id="vkctrl" type="button" class="vkey" data-normal="Ctrl">X</button>
                     <button id="vka" type="button" class="vkey" data-shift="A" data-normal="a">X</button>
                     <button id="vks" type="button" class="vkey" data-shift="S" data-normal="s">X</button>
@@ -166,14 +166,20 @@
                     <button id="vkatmark" type="button" class="vkey" data-shift="`" data-normal="@">X</button>
                     <button id="vkupline" type="button" class="vkey" data-shift="|" data-normal="\">X</button>
                 </fieldset>
-                <fieldset id="kbd4"  data-role="controlgroup" data-type="horizontal" data-mini="true">
+                <fieldset id="kbd4"  class="kbdl" data-role="controlgroup" data-type="horizontal" data-mini="true">
                     <button id="vklshift" type="button" class="vkey vkshifts" data-normal="Shift">X</button>
                     <button id="vkz" type="button" class="vkey" data-shift="Z" data-normal="z">X</button>
-
-
+                    <button id="vkx" type="button" class="vkey" data-shift="X" data-normal="x">X</button>
+                    <button id="vkc" type="button" class="vkey" data-shift="C" data-normal="c">X</button>
+                    <button id="vkv" type="button" class="vkey" data-shift="V" data-normal="v">X</button>
+                    <button id="vkb" type="button" class="vkey" data-shift="B" data-normal="b">X</button>
+                    <button id="vkn" type="button" class="vkey" data-shift="N" data-normal="n">X</button>
+                    <button id="vklt" type="button" class="vkey" data-shift="&lt;" data-normal=",">X</button>
+                    <button id="vkgt" type="button" class="vkey" data-shift="&gt;" data-normal=".">X</button>
                     <button id="vkquestion" type="button" class="vkey" data-shift="?" data-normal="/">X</button>
+                    <button id="vkrshift" type="button" class="vkey vkshifts" data-normal="Shift">X</button>
                 </fieldset>
-                <fieldset id="kbd5" data-role="controlgroup" data-type="horizontal" data-mini="true">
+                <fieldset id="kbd5" class="kbdl" data-role="controlgroup" data-type="horizontal" data-mini="true">
                     <button id="vkspace" type="button" class="vkey" data-normal="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">X</button>
                 </fieldset>
             </div>
@@ -220,3 +226,6 @@
     <script src="/Scripts/emu.js"></script>
     <script src="/Scripts/miniAssembler.js"></script>
 </asp:Content>
+
+
+
