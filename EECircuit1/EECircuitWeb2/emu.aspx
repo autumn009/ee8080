@@ -165,7 +165,7 @@
                     <button id="vkquestion" type="button" class="vkey" data-shift="?" data-normal="/">X</button>
                 </fieldset>
                 <fieldset id="kbd5" data-role="controlgroup" data-type="horizontal" data-mini="true">
-                    <button id="vkspace" type="button" class="vkey" data-shift="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">X</button>
+                    <button id="vkspace" type="button" class="vkey" data-normal="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">X</button>
                 </fieldset>
             </div>
 
