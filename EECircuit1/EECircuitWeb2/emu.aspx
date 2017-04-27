@@ -146,15 +146,24 @@
                     <button id="vky" type="button" class="vkey" data-shift="Y" data-normal="y">X</button>
                     <button id="vku" type="button" class="vkey" data-shift="U" data-normal="u">X</button>
                     <button id="vki" type="button" class="vkey" data-shift="I" data-normal="i">X</button>
-                    <button id="vko" type="button" class="vkey" data-shift="O" data-normal="i">X</button>
+                    <button id="vko" type="button" class="vkey" data-shift="O" data-normal="o">X</button>
                     <button id="vkp" type="button" class="vkey" data-shift="P" data-normal="p">X</button>
                     <button id="vklf" type="button" class="vkey" data-normal="LF">X</button>
                     <button id="vkenter" type="button" class="vkey" data-normal="Enter">X</button>
                 </fieldset>
                 <fieldset id="kbd3"  data-role="controlgroup" data-type="horizontal" data-mini="true">
-                    <button id="vkctrl" type="button" class="vkey" data-shift="Ctrl" data-normal="_">X</button>
+                    <button id="vkctrl" type="button" class="vkey" data-normal="Ctrl">X</button>
                     <button id="vka" type="button" class="vkey" data-shift="A" data-normal="a">X</button>
-
+                    <button id="vks" type="button" class="vkey" data-shift="S" data-normal="s">X</button>
+                    <button id="vkd" type="button" class="vkey" data-shift="S" data-normal="s">X</button>
+                    <button id="vkf" type="button" class="vkey" data-shift="F" data-normal="f">X</button>
+                    <button id="vkg" type="button" class="vkey" data-shift="G" data-normal="g">X</button>
+                    <button id="vkh" type="button" class="vkey" data-shift="H" data-normal="h">X</button>
+                    <button id="vkj" type="button" class="vkey" data-shift="J" data-normal="j">X</button>
+                    <button id="vkk" type="button" class="vkey" data-shift="K" data-normal="k">X</button>
+                    <button id="vkl" type="button" class="vkey" data-shift="L" data-normal="l">X</button>
+                    <button id="vkplus" type="button" class="vkey" data-shift="+" data-normal=";">X</button>
+                    <button id="vkatmark" type="button" class="vkey" data-shift="`" data-normal="@">X</button>
                     <button id="vkupline" type="button" class="vkey" data-shift="|" data-normal="\">X</button>
                 </fieldset>
                 <fieldset id="kbd4"  data-role="controlgroup" data-type="horizontal" data-mini="true">
