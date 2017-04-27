@@ -981,7 +981,8 @@ var emu;
     });
     $(document).on("pagecreate", function () {
         emu.virtualMachine.reset();
-        setIde();
+        //setIde();
+        setConsole();
         //ideResiezer();
         loadTest1();
     });

@@ -1001,7 +1001,8 @@
     });
     $(document).on("pagecreate", function () {
         virtualMachine.reset();
-        setIde();
+        //setIde();
+        setConsole();
         //ideResiezer();
         loadTest1();
     });
