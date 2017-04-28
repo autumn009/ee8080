@@ -1,7 +1,9 @@
 ﻿namespace vdt {
     var shiftState = false;
-    function setKeyboardShiftState(isShift: boolean) {
+    var ctrlState = false;
+    function setKeyboardShiftState(isShift: boolean, isCtrl: boolean) {
         shiftState = isShift;
+        ctrlState = isCtrl;
         $(".ui-btn-a").removeClass("ui-btn-a");
         $(".ui-btn-b").removeClass("ui-btn-b");
         $(".vkshifts").addClass("ui-btn-" + (isShift ? "b" : "a"));
@@ -14,6 +16,12 @@
                 keytop = $(this).attr("data-normal");
             }
             $(this).children().text(keytop);
+        });
+        $("#vkctrl").addClass("ui-btn-" + (isCtrl ? "b" : "a"));
+        $(".vkey").each(function () {
+            var keytop: string = $(this).children().text();
+            var active = ctrlState && keytop.length == 1 && keytop.charCodeAt(0) >= 0x40 && keytop.charCodeAt(0) <= 0x7f;
+            $(this).addClass("ui-btn-" + (active ? "b" : "a"));
         });
     }
 
@@ -98,7 +106,7 @@
             }
             else if (evt.keyCode == 16)   // Shift
             {
-                setKeyboardShiftState(true);
+                setKeyboardShiftState(true, ctrlState);
                 return;
             }
 
@@ -113,7 +121,7 @@
         if (code == null) {
             if (evt.keyCode == 16)   // Shift
             {
-                setKeyboardShiftState(false);
+                setKeyboardShiftState(false, ctrlState);
             }
             else return;
         }
@@ -121,7 +129,7 @@
     }
 
     $(document).on("pagecreate", function () {
-        setKeyboardShiftState(false);
+        setKeyboardShiftState(false,false);
         $(document).keydown((evt) => {
             {
                 return commonInputRow(evt, null);
@@ -136,10 +144,20 @@
             return commonInputRow(evt, evt.keyCode);
         });
         $("#vklshift").click(() => {
-            setKeyboardShiftState(!shiftState);
+            setKeyboardShiftState(!shiftState, ctrlState);
         });
         $("#vkrshift").click(() => {
-            setKeyboardShiftState(!shiftState);
+            setKeyboardShiftState(!shiftState, ctrlState);
+        });
+        $(".vkey").click((evt) => {
+            var button = evt.target;
+            var keytop = $(button).text();
+            if (keytop.length == 1) {
+                if (inputFunc) inputFunc(keytop.charCodeAt(0));
+            }
+            else {
+                // TBW
+            }
         });
         $(".vdtline").text(space80);
         outputString("ADM-3A Emulation Ready\r\n");
