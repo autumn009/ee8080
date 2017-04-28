@@ -32,7 +32,21 @@ var vdt;
     }
     vdt.outputString = outputString;
     function outputChar(charCode) {
-        if (charCode < 0x20 || charCode > 0x7f) {
+        // todo: support escape sequence, BS, TAB
+        if (charCode == 0x0d) {
+            cursorX = 0;
+            return;
+        }
+        else if (charCode == 0x0a) {
+            lf();
+            return;
+        }
+        else if (charCode < 0x20) {
+            outputChar("^".charCodeAt(0));
+            outputChar(charCode + 0x40);
+            return;
+        }
+        else if (charCode > 0x7f) {
             charCode = "?".charCodeAt(0);
         }
         internalOutputChar(charCode);
@@ -47,20 +61,26 @@ var vdt;
         };
     }
     vdt.inputChar = inputChar;
+    function lf() {
+        cursorY++;
+        if (cursorY < 24)
+            return;
+        cursorY = 23;
+        scrollUp();
+    }
     function cursorNext() {
         cursorX++;
         if (cursorX < 80)
             return;
         cursorX = 0;
-        cursorY++;
-        if (cursorX < 24)
-            return;
-        cursorY = 23;
-        scrollUp();
+        lf();
     }
-    var space80 = "                                                                                ";
+    var space80 = "";
+    for (var i = 0; i < 80; i++) {
+        space80 += "\xa0";
+    }
     function scrollUp() {
-        for (var i = 0; i < 22; i++) {
+        for (var i = 0; i < 23; i++) {
             var s = $("#vline" + (i + 1).toString()).text();
             $("#vline" + i.toString()).text(s);
         }
