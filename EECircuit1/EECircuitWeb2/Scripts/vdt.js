@@ -69,6 +69,8 @@ var vdt;
     var cursorX = 0;
     var cursorY = 0;
     function internalOutputChar(charCode) {
+        if (charCode == 0x20)
+            charCode = 0xa0; // force space to nbsp
         var target = $("#vline" + cursorY);
         var s = target.text();
         s = s.substring(0, cursorX)
@@ -82,36 +84,24 @@ var vdt;
             echoback();
         });
     }
-    function commonInputRow(evt, code) {
-        if ($("#con").css("display") == "none")
-            return;
-        if (code == null) {
-            if (evt.ctrlKey) {
-                if (evt.keyCode >= 0x41 && evt.keyCode <= 0x5a) {
-                    code = evt.keyCode - 0x40;
-                }
-                else
-                    return;
-            }
-            else if (evt.keyCode == 8 // TAB
-                || evt.keyCode == 9 // BS
-            ) {
-                code = evt.keyCode;
-            }
-            else if (evt.keyCode == 16) {
-                setKeyboardShiftState(true, ctrlState);
-                return;
-            }
-            else if (evt.keyCode == 17) {
-                setKeyboardShiftState(shiftState, true);
-                return;
-            }
-            else
-                return;
-        }
+    function commonInputRowCode(code) {
         if (inputFunc)
             inputFunc(code);
-        return false;
+    }
+    function commonInputRow(evt) {
+        if ($("#con").css("display") == "none")
+            return;
+        var code = 0;
+        if (evt.keyCode == 16) {
+            setKeyboardShiftState(true, ctrlState);
+            return;
+        }
+        else if (evt.keyCode == 17) {
+            setKeyboardShiftState(shiftState, true);
+            return;
+        }
+        else
+            return;
     }
     function commonInputRowUp(evt, code) {
         if ($("#con").css("display") == "none")
@@ -132,7 +122,7 @@ var vdt;
         setKeyboardShiftState(false, false);
         $(document).keydown(function (evt) {
             {
-                return commonInputRow(evt, null);
+                return commonInputRow(evt);
             }
         });
         $(document).keyup(function (evt) {
@@ -141,7 +131,7 @@ var vdt;
             }
         });
         $("body").keypress(function (evt) {
-            return commonInputRow(evt, evt.keyCode);
+            return commonInputRowCode(evt.keyCode);
         });
         $("#vklshift").click(function () {
             setKeyboardShiftState(!shiftState, ctrlState);
@@ -156,11 +146,25 @@ var vdt;
             var button = evt.target;
             var keytop = $(button).text();
             if (keytop.length == 1) {
-                if (inputFunc)
-                    inputFunc(keytop.charCodeAt(0));
+                var code = keytop.charCodeAt(0);
+                if (ctrlState) {
+                    if (code >= 0x40 && code <= 0x5f)
+                        code -= -0x40;
+                    else if (code >= 0x60 && code <= 0x7f)
+                        code -= -0x60;
+                }
+                commonInputRowCode(code);
             }
-            else {
-            }
+            else if ($(button).attr("id") == "vkspace")
+                commonInputRowCode(0x20);
+            else if (keytop == "Enter")
+                commonInputRowCode(0x0d);
+            else if (keytop == "LF")
+                commonInputRowCode(0x0a);
+            else if (keytop == "ESC")
+                commonInputRowCode(0x1b);
+            else if (keytop == "HOME")
+                commonInputRowCode(0x0b);
         });
         $(".vdtline").text(space80);
         outputString("ADM-3A Emulation Ready\r\n");
