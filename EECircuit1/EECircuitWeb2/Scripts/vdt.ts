@@ -109,6 +109,11 @@
                 setKeyboardShiftState(true, ctrlState);
                 return;
             }
+            else if (evt.keyCode == 17)   // Ctrl
+            {
+                setKeyboardShiftState(shiftState, true);
+                return;
+            }
 
             else return;
         }
@@ -122,6 +127,10 @@
             if (evt.keyCode == 16)   // Shift
             {
                 setKeyboardShiftState(false, ctrlState);
+            }
+            else if (evt.keyCode == 17)   // Ctrl
+            {
+                setKeyboardShiftState(shiftState, false);
             }
             else return;
         }
@@ -148,6 +157,9 @@
         });
         $("#vkrshift").click(() => {
             setKeyboardShiftState(!shiftState, ctrlState);
+        });
+        $("#vkctrl").click(() => {
+            setKeyboardShiftState(shiftState, !ctrlState);
         });
         $(".vkey").click((evt) => {
             var button = evt.target;
