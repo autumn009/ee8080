@@ -142,16 +142,23 @@ var vdt;
         cursorX = 0;
         lf();
     }
-    var space80 = "";
+    var emptyLine = document.createElement("div");
+    $(emptyLine).addClass("vdtchars");
     for (var i = 0; i < 80; i++) {
-        space80 += "\xa0";
+        var span = document.createElement("span");
+        $(span).addClass("vdtchar");
+        $(span).addClass("vdtchar" + i.toString());
+        $(span).text("\xa0");
+        $(emptyLine).append(span);
     }
     function scrollUp() {
         for (var i = 0; i < 23; i++) {
-            var s = $("#vline" + (i + 1).toString()).text();
-            $("#vline" + i.toString()).text(s);
+            var ele = $("#vline" + (i + 1).toString()).children().first();
+            $("#vline" + i.toString()).empty();
+            $("#vline" + i.toString()).append(ele);
         }
-        $("#vline23").text(space80);
+        $("#vline23").empty();
+        $("#vline23").append(emptyLine.outerHTML);
     }
     var cursorX = 0;
     var cursorY = 0;
@@ -168,12 +175,8 @@ var vdt;
     function internalOutputChar(charCode) {
         if (charCode == 0x20)
             charCode = 0xa0; // force space to nbsp
-        var target = $("#vline" + cursorY);
-        var s = target.text();
-        s = s.substring(0, cursorX)
-            + String.fromCharCode(charCode)
-            + s.substring(cursorX + 1, 80);
-        target.text(s);
+        var target = $("#vline" + cursorY + " " + ".vdtchars .vdtchar" + cursorX.toString());
+        target.text(String.fromCharCode(charCode));
     }
     function echoback() {
         inputChar(function (code) {
@@ -227,7 +230,8 @@ var vdt;
     }
     function clearScreen() {
         homeScreen();
-        $(".vdtline").text(space80);
+        $(".vdtline").empty();
+        $(".vdtline").append(emptyLine.outerHTML);
     }
     $(document).on("pagecreate", function () {
         setKeyboardShiftState(false, false);
