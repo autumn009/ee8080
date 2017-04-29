@@ -94,6 +94,11 @@
                 homeScreen();
                 return;
             }
+            else if (charCode == 0x7f)  // RUB (del)
+            {
+                // do nothing
+                return;
+            }
             else if (charCode < 0x20)   // other control codes
             {
                 outputChar("^".charCodeAt(0));
@@ -289,6 +294,8 @@
                 commonInputRowCode(0x1b);
             else if (keytop == "HOME")
                 commonInputRowCode(0x1e);
+            else if (keytop == "RUB")
+                commonInputRowCode(0x7f);
         });
         clearScreen();
         outputString("ADM-3A Emulation Ready\r\n");

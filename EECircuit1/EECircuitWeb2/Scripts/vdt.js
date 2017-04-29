@@ -89,6 +89,10 @@ var vdt;
                 homeScreen();
                 return;
             }
+            else if (charCode == 0x7f) {
+                // do nothing
+                return;
+            }
             else if (charCode < 0x20) {
                 outputChar("^".charCodeAt(0));
                 outputChar(charCode + 0x40);
@@ -272,6 +276,8 @@ var vdt;
                 commonInputRowCode(0x1b);
             else if (keytop == "HOME")
                 commonInputRowCode(0x1e);
+            else if (keytop == "RUB")
+                commonInputRowCode(0x7f);
         });
         clearScreen();
         outputString("ADM-3A Emulation Ready\r\n");

@@ -165,6 +165,7 @@
                     <button id="vkplus" type="button" class="vkey" data-shift="+" data-normal=";"><span class="blabel">X</span></button>
                     <button id="vkatmark" type="button" class="vkey" data-shift="`" data-normal="@"><span class="blabel">X</span></button>
                     <button id="vkupline" type="button" class="vkey" data-shift="|" data-normal="\"><span class="blabel">X</span></button>
+                    <button id="vkrub" type="button" class="vkey" data-normal="RUB"><span class="blabel">X</span></button>
                 </fieldset>
                 <fieldset id="kbd4"  class="kbdl" data-role="controlgroup" data-type="horizontal" data-mini="true">
                     <button id="vklshift" type="button" class="vkey vkshifts" data-normal="Shift"><span class="blabel">X</span></button>
