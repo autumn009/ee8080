@@ -174,3 +174,7 @@ p.vdtline {
 span.blabel {
     font-family: monospace;
 }
+span.invert {
+    color: black;
+    background-color: white;
+}

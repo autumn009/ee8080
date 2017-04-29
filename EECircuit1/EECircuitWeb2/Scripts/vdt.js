@@ -116,31 +116,34 @@ var vdt;
     vdt.inputChar = inputChar;
     function lf() {
         cursorY++;
-        if (cursorY < 24)
-            return;
-        cursorY = 23;
-        scrollUp();
+        if (cursorY >= 24) {
+            cursorY = 23;
+            scrollUp();
+        }
+        setCursorClass();
     }
     function cursorUp() {
         cursorY--;
-        if (cursorY >= 0)
-            return;
-        cursorY = 0;
-        //scrollDown();
+        if (cursorY < 0) {
+            cursorY = 0;
+        }
+        setCursorClass();
     }
     function cursorBack() {
         cursorX--;
-        if (cursorX >= 0)
-            return;
-        cursorX = 79;
-        cursorUp();
+        if (cursorX < 0) {
+            cursorX = 79;
+            cursorUp();
+        }
+        setCursorClass();
     }
     function cursorNext() {
         cursorX++;
-        if (cursorX < 80)
-            return;
-        cursorX = 0;
-        lf();
+        if (cursorX >= 80) {
+            cursorX = 0;
+            lf();
+        }
+        setCursorClass();
     }
     var emptyLine = document.createElement("div");
     $(emptyLine).addClass("vdtchars");
@@ -218,11 +221,17 @@ var vdt;
         }
         return false;
     }
+    function setCursorClass() {
+        $(".vdtchar").removeClass("invert");
+        var target = $("#vline" + cursorY + " " + ".vdtchars .vdtchar" + cursorX.toString());
+        target.addClass("invert");
+    }
     function locate(x, y) {
         if (x < 0 || x > 79 || y < 0 || y > 24)
             return;
         cursorX = x;
         cursorY = y;
+        setCursorClass();
     }
     function homeScreen() {
         locate(0, 0);
