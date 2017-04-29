@@ -176,7 +176,7 @@
             $("#vline" + i.toString()).append(ele);
         }
         $("#vline23").empty();
-        $("#vline23").append(emptyLine.outerHTML);
+        $("#vline23").append($(emptyLine).clone());
     }
 
     var cursorX = 0;
@@ -263,7 +263,7 @@
     function clearScreen() {
         homeScreen();
         $(".vdtline").empty();
-        $(".vdtline").append(emptyLine.outerHTML);
+        $(".vdtline").append($(emptyLine).clone());
     }
 
     $(document).on("pagecreate", function () {
