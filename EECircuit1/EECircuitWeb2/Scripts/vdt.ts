@@ -196,10 +196,20 @@
         target.text(String.fromCharCode(charCode));
     }
 
-    function echoback() {
+    var requestToClear = false;
+    export function clear()
+    {
+        requestToClear = true;
+    }
+
+    export function echoback() {
+        requestToClear = false;
         inputChar((code) => {
+            if (requestToClear) return;
             outputChar(code);
+            if (requestToClear) return;
             echoback();
+            if (requestToClear) return;
         });
     }
 
@@ -316,6 +326,5 @@
         });
         clearScreen();
         outputString("ADM-3A Emulation Ready\r\n");
-        echoback();
     });
 }

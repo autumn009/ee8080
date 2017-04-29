@@ -181,12 +181,25 @@ var vdt;
         var target = $("#vline" + cursorY + " " + ".vdtchars .vdtchar" + cursorX.toString());
         target.text(String.fromCharCode(charCode));
     }
+    var requestToClear = false;
+    function clear() {
+        requestToClear = true;
+    }
+    vdt.clear = clear;
     function echoback() {
+        requestToClear = false;
         inputChar(function (code) {
+            if (requestToClear)
+                return;
             outputChar(code);
+            if (requestToClear)
+                return;
             echoback();
+            if (requestToClear)
+                return;
         });
     }
+    vdt.echoback = echoback;
     function commonInputRowCode(code) {
         if (inputFunc)
             inputFunc(code);
@@ -294,7 +307,6 @@ var vdt;
         });
         clearScreen();
         outputString("ADM-3A Emulation Ready\r\n");
-        echoback();
     });
 })(vdt || (vdt = {}));
 //# sourceMappingURL=vdt.js.map

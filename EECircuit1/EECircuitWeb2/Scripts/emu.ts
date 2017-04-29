@@ -928,6 +928,10 @@
         loadCpm();
     });
 
+    $(".modemenu").click(() => {
+        vdt.clear();
+    });
+
     function setConsole() {
         $(".mypane").css("display", "none");
         $("#con").css("display", "inherit");
@@ -959,6 +963,11 @@
 
     $("#navreset").click(() => {
         virtualMachine.reset();
+    });
+
+    $("#navecho").click(() => {
+        setConsole();
+        vdt.echoback();
     });
 
     $(".ideCommands").click(() => {

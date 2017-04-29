@@ -916,6 +916,9 @@ var emu;
     $("#navcpm").click(function () {
         loadCpm();
     });
+    $(".modemenu").click(function () {
+        vdt.clear();
+    });
     function setConsole() {
         $(".mypane").css("display", "none");
         $("#con").css("display", "inherit");
@@ -944,6 +947,10 @@ var emu;
     });
     $("#navreset").click(function () {
         emu.virtualMachine.reset();
+    });
+    $("#navecho").click(function () {
+        setConsole();
+        vdt.echoback();
     });
     $(".ideCommands").click(function () {
         $("#collapsibleIdeCommands").collapsible("collapse");

@@ -213,13 +213,14 @@
 
     <div data-role="panel" id="menu-left" data-theme="b" data-display="push" data-position="left">
         <ul data-role="listview">
-            <li><a data-rel="close" class="anchor" href="#" id="navcon">Console</a></li>
-            <li><a data-rel="close" class="anchor" href="#" id="navmon">Monitor</a></li>
-            <li><a data-rel="close" class="anchor" href="#" id="navide">Ide</a></li>
+            <li><a data-rel="close" class="anchor modemenu" href="#" id="navcon">Console</a></li>
+            <li><a data-rel="close" class="anchor modemenu" href="#" id="navmon">Monitor</a></li>
+            <li><a data-rel="close" class="anchor modemenu" href="#" id="navide">Ide</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navtest1">Load Test-1</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navtest2">Load Test-2</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navcpm">Load CPM to mem</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navreset">Reset System</a></li>
+            <li><a data-rel="close" class="anchor modemenu" href="#" id="navecho">Echo Back</a></li>
         </ul>
         <p class="close-btn"><a href="#" data-rel="close" data-role="button" data-theme="c" data-icon="delete">Close</a></p>
     </div>
