@@ -37,7 +37,9 @@ var vdt;
                 escapeMode = escapeModes.waitingRow;
                 return;
             }
-            // TBW
+            else {
+                alert("Unsupporet Escape Sequence ESC+\\" + charCode);
+            }
             escapeMode = escapeModes.notMode;
         }
         else if (escapeMode == escapeModes.waitingRow) {
