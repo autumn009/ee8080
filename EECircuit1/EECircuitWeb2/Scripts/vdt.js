@@ -58,6 +58,14 @@ var vdt;
             cursorX = 0;
             return;
         }
+        else if (charCode == 0x1a) {
+            clearScreen();
+            return;
+        }
+        else if (charCode == 0x1e) {
+            homeScreen();
+            return;
+        }
         else if (charCode < 0x20) {
             outputChar("^".charCodeAt(0));
             outputChar(charCode + 0x40);
@@ -169,6 +177,14 @@ var vdt;
         }
         return false;
     }
+    function homeScreen() {
+        cursorX = 0;
+        cursorY = 0;
+    }
+    function clearScreen() {
+        homeScreen();
+        $(".vdtline").text(space80);
+    }
     $(document).on("pagecreate", function () {
         setKeyboardShiftState(false, false);
         $(document).keydown(function (evt) {
@@ -215,9 +231,9 @@ var vdt;
             else if (keytop == "ESC")
                 commonInputRowCode(0x1b);
             else if (keytop == "HOME")
-                commonInputRowCode(0x0b);
+                commonInputRowCode(0x1e);
         });
-        $(".vdtline").text(space80);
+        clearScreen();
         outputString("ADM-3A Emulation Ready\r\n");
         echoback();
     });
