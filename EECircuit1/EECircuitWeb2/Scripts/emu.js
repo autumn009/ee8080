@@ -991,7 +991,8 @@ var emu;
         //setIde();
         setConsole();
         //ideResiezer();
-        loadTest1();
+        //loadTest1();
+        loadCpm();
     });
 })(emu || (emu = {}));
 //# sourceMappingURL=emu.js.map

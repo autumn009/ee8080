@@ -1013,6 +1013,8 @@
         //setIde();
         setConsole();
         //ideResiezer();
-        loadTest1();
+        //loadTest1();
+        loadCpm();
+
     });
 }
