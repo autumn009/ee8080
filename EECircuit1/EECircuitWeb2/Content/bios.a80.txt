@@ -70,24 +70,56 @@ CHK02:	DS	16	 	;CHECK VECTOR 2
 CHK03:	DS	16	 	;CHECK VECTOR 3
 
 boot:
+	mvi	a,0
+	rst	7
 wboot:
+	mvi	a,1
+	rst	7
 const:
+	mvi	a,2
+	rst	7
 conin:
+	mvi	a,3
+	rst	7
 conout:
+	mvi	a,4
+	rst	7
 list:
+	mvi	a,5
+	rst	7
 punch:
+	mvi	a,6
+	rst	7
 reader:
+	mvi	a,7
+	rst	7
 home:
+	mvi	a,8
+	rst	7
 seldsk:
+	mvi	a,9
+	rst	7
 settrk:
+	mvi	a,0ah
+	rst	7
 setsec:
+	mvi	a,0bh
+	rst	7
 setdma:
+	mvi	a,0ch
+	rst	7
 read:
+	mvi	a,0dh
+	rst	7
 write:
+	mvi	a,0eh
+	rst	7
 listst:	;list status
+	mvi	a,0fh
+	rst	7
 sectran:
- RST	7
-
+	mvi	a,010h
+	rst	7
 
 	end
 
