@@ -456,6 +456,19 @@
     var endRequest = false;
     var compilePointer = 0;
 
+    function myToUpperCase(s: string):string
+    {
+        var r = "";
+        var mode = true;
+        for (var i = 0; i < s.length; i++) {
+            var c = s.charAt(i);
+            if (c == "\"" || c == "'") mode = !mode;
+            if (mode) c = c.toUpperCase();
+            r = r + c;
+        }
+        return r;
+    }
+
     function passX(sourceCode: string, outputMemory: emu.NumberArray) {
         var start = 0;
         endRequest = false;
@@ -477,7 +490,7 @@
                 }
                 end++;
             }
-            var tokens = lineParser(line.toUpperCase());
+            var tokens = lineParser(myToUpperCase(line));
             compileLine(compilePointer, tokens, (byte: number) => {
                 if (pass == 2) outputMemory.write(compilePointer, byte);
                 compilePointer++;
