@@ -1,5 +1,6 @@
 ﻿namespace emu {
     export var virtualMachine: ee8080;
+    export var superTrap: boolean = false;
     function getVirtualMachine() {
         return virtualMachine;
     }
@@ -446,6 +447,13 @@
             virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val & 255);
         }
 
+        private hlt()
+        {
+            this.halt = true;
+            virtualMachine.update();
+            this.setStopped();
+        }
+
         public runMain()
         {
             for (; ;)
@@ -620,9 +628,7 @@
                 {
                     if (g2 == 6 && g3 == 6)    // HLT
                     {
-                        this.halt = true;
-                        virtualMachine.update();
-                        this.setStopped();
+                        this.hlt();
                         return;
                     }
                     else {  // MOV
@@ -702,7 +708,8 @@
                     {
                         if (g2 == 0) // JMP
                         {
-                            this.regarray.pc.setValue(this.fetchNextWord());
+                            var n = this.fetchNextWord();
+                            this.regarray.pc.setValue(n);
                         }
                         else if (g2 == 3) // IN
                         {
@@ -806,6 +813,11 @@
                     else if (g3 == 7)   // RST
                     {
                         var oldpc = this.regarray.pc.getValue();
+                        if (superTrap && g2 == 7) {
+                            this.hlt();
+                            setMonitor();
+                            return;
+                        }
                         this.regarray.pc.setValue(g2 << 3);
                         this.pushCommon(oldpc);
                     }
@@ -888,7 +900,7 @@
         $("#sourceCode").val(s);
     }
 
-    function loadCpm() {
+    function loadCpm(afterproc: () => void) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "/Content/CPM.bin", true);
         xhr.responseType = 'blob';
@@ -905,6 +917,7 @@
                     for (var i = 0; i < ary.length; i++) {
                         virtualMachine.memory.Bytes.write(0xdc00 + i, ary[i]);
                     }
+                    if (afterproc) afterproc();
                 };
                 fileReader.onerror = () => { alert("Error"); };
                 fileReader.readAsArrayBuffer(blob);
@@ -916,6 +929,21 @@
         xhr.send();
     }
 
+    function setupCpm() {
+        for (var i = 0x0; i < 0x10000; i++) {
+            virtualMachine.memory.Bytes.write(i, 0xff);
+        }
+        loadCpm(() => {
+            for (var i = 0xf200; i < 0x10000; i++) {
+                virtualMachine.memory.Bytes.write(i, 0xff);
+            }
+            virtualMachine.memory.Bytes.write(0, 0xc3);
+            virtualMachine.memory.Bytes.write(1, 0x00);
+            virtualMachine.memory.Bytes.write(2, 0xdc);
+            virtualMachine.cpu.reset();
+        });
+    }
+
     $("#navtest2").click(() => {
         loadTest2();
     });
@@ -925,7 +953,7 @@
     });
 
     $("#navcpm").click(() => {
-        loadCpm();
+        setupCpm();
     });
 
     $(".modemenu").click(() => {
@@ -968,6 +996,14 @@
     $("#navecho").click(() => {
         setConsole();
         vdt.echoback();
+    });
+
+    $("#naventrap").click(() => {
+        superTrap = true;
+    });
+
+    $("#navdistrap").click(() => {
+        superTrap = false;
     });
 
     $(".ideCommands").click(() => {
@@ -1014,7 +1050,7 @@
         setConsole();
         //ideResiezer();
         //loadTest1();
-        loadCpm();
-
+        superTrap = true;
+        setupCpm();
     });
 }

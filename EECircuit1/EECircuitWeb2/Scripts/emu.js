@@ -5,6 +5,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var emu;
 (function (emu) {
+    emu.superTrap = false;
     function getVirtualMachine() {
         return emu.virtualMachine;
     }
@@ -511,6 +512,11 @@ var emu;
             this.regarray.sp.Decrement();
             emu.virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val & 255);
         };
+        i8080.prototype.hlt = function () {
+            this.halt = true;
+            emu.virtualMachine.update();
+            this.setStopped();
+        };
         i8080.prototype.runMain = function () {
             for (;;) {
                 var machinCode1 = this.fetchNextByte();
@@ -656,9 +662,7 @@ var emu;
                 }
                 else if (g1 == 1) {
                     if (g2 == 6 && g3 == 6) {
-                        this.halt = true;
-                        emu.virtualMachine.update();
-                        this.setStopped();
+                        this.hlt();
                         return;
                     }
                     else {
@@ -722,7 +726,8 @@ var emu;
                     }
                     else if (g3 == 3) {
                         if (g2 == 0) {
-                            this.regarray.pc.setValue(this.fetchNextWord());
+                            var n = this.fetchNextWord();
+                            this.regarray.pc.setValue(n);
                         }
                         else if (g2 == 3) {
                             var port = this.fetchNextByte();
@@ -804,6 +809,11 @@ var emu;
                     }
                     else if (g3 == 7) {
                         var oldpc = this.regarray.pc.getValue();
+                        if (emu.superTrap && g2 == 7) {
+                            this.hlt();
+                            setMonitor();
+                            return;
+                        }
                         this.regarray.pc.setValue(g2 << 3);
                         this.pushCommon(oldpc);
                     }
@@ -881,7 +891,7 @@ var emu;
         s += " hlt\r\n";
         $("#sourceCode").val(s);
     }
-    function loadCpm() {
+    function loadCpm(afterproc) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "/Content/CPM.bin", true);
         xhr.responseType = 'blob';
@@ -897,6 +907,8 @@ var emu;
                     for (var i = 0; i < ary.length; i++) {
                         emu.virtualMachine.memory.Bytes.write(0xdc00 + i, ary[i]);
                     }
+                    if (afterproc)
+                        afterproc();
                 };
                 fileReader.onerror = function () { alert("Error"); };
                 fileReader.readAsArrayBuffer(blob);
@@ -907,6 +919,20 @@ var emu;
         };
         xhr.send();
     }
+    function setupCpm() {
+        for (var i = 0x0; i < 0x10000; i++) {
+            emu.virtualMachine.memory.Bytes.write(i, 0xff);
+        }
+        loadCpm(function () {
+            for (var i = 0xf200; i < 0x10000; i++) {
+                emu.virtualMachine.memory.Bytes.write(i, 0xff);
+            }
+            emu.virtualMachine.memory.Bytes.write(0, 0xc3);
+            emu.virtualMachine.memory.Bytes.write(1, 0x00);
+            emu.virtualMachine.memory.Bytes.write(2, 0xdc);
+            emu.virtualMachine.cpu.reset();
+        });
+    }
     $("#navtest2").click(function () {
         loadTest2();
     });
@@ -914,7 +940,7 @@ var emu;
         loadTest1();
     });
     $("#navcpm").click(function () {
-        loadCpm();
+        setupCpm();
     });
     $(".modemenu").click(function () {
         vdt.clear();
@@ -951,6 +977,12 @@ var emu;
     $("#navecho").click(function () {
         setConsole();
         vdt.echoback();
+    });
+    $("#naventrap").click(function () {
+        emu.superTrap = true;
+    });
+    $("#navdistrap").click(function () {
+        emu.superTrap = false;
     });
     $(".ideCommands").click(function () {
         $("#collapsibleIdeCommands").collapsible("collapse");
@@ -992,7 +1024,8 @@ var emu;
         setConsole();
         //ideResiezer();
         //loadTest1();
-        loadCpm();
+        emu.superTrap = true;
+        setupCpm();
     });
 })(emu || (emu = {}));
 //# sourceMappingURL=emu.js.map
