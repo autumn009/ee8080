@@ -2,6 +2,8 @@
     export var virtualMachine: ee8080;
     export var superTrap: boolean = false;
     export var trace: boolean = false;
+    var waitingInput = false;
+    var inputChars = "";
 
     function getVirtualMachine() {
         return virtualMachine;
@@ -63,9 +65,14 @@
 
         public in(addr: number): number {
             if (addr == 0xf0) {
-                if (debugrepeat <= 0) return 0;
-                debugrepeat--;
-                return 0x0d;
+                waitingInput = true;
+                return 0;
+            }
+            if (addr == 0xf1) {
+                if (inputChars.length == 0) return 0;
+                var r = inputChars.charCodeAt(0);
+                inputChars = inputChars.substring(1, inputChars.length);
+                return r;
             }
             if (addr == 0xff) return this.getBitsPortFF();
             return 0;
@@ -467,6 +474,15 @@
         {
             for (; ;)
             {
+                if (waitingInput)
+                {
+                    waitingInput = false;
+                    vdt.inputChar((num) => {
+                        inputChars += String.fromCharCode(num);
+                        this.runMain();
+                    });
+                    return;
+                }
                 if (trace) {
                     console.log("pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16));
                 }

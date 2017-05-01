@@ -7,6 +7,8 @@ var emu;
 (function (emu) {
     emu.superTrap = false;
     emu.trace = false;
+    var waitingInput = false;
+    var inputChars = "";
     function getVirtualMachine() {
         return emu.virtualMachine;
     }
@@ -70,10 +72,15 @@ var emu;
         };
         IOUnit.prototype.in = function (addr) {
             if (addr == 0xf0) {
-                if (debugrepeat <= 0)
+                waitingInput = true;
+                return 0;
+            }
+            if (addr == 0xf1) {
+                if (inputChars.length == 0)
                     return 0;
-                debugrepeat--;
-                return 0x0d;
+                var r = inputChars.charCodeAt(0);
+                inputChars = inputChars.substring(1, inputChars.length);
+                return r;
             }
             if (addr == 0xff)
                 return this.getBitsPortFF();
@@ -528,7 +535,16 @@ var emu;
             this.setStopped();
         };
         i8080.prototype.runMain = function () {
+            var _this = this;
             for (;;) {
+                if (waitingInput) {
+                    waitingInput = false;
+                    vdt.inputChar(function (num) {
+                        inputChars += String.fromCharCode(num);
+                        _this.runMain();
+                    });
+                    return;
+                }
                 if (emu.trace) {
                     console.log("pc=" + emu.virtualMachine.cpu.regarray.pc.getValue().toString(16));
                 }

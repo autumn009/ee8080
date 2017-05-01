@@ -192,6 +192,7 @@ halt:
 
 conin:
 	in	0f0h
+	in	0f1h
 	ora	a
 	rnz
 	hlt
