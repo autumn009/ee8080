@@ -73,6 +73,8 @@ var emu;
             return 0;
         };
         IOUnit.prototype.out = function (addr, v) {
+            if (addr == 0xf0)
+                vdt.outputChar(v);
             if (addr == 0xff)
                 this.putBitsPortFF(v);
         };

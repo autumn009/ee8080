@@ -1,5 +1,8 @@
 ﻿	org	0f200h
 
+buff	equ	0080h	;default buffer address
+buff80h	equ	0100h
+
 	jmp	boot
 wboote:	jmp	wboot
 	jmp	const
@@ -69,7 +72,16 @@ CHK01:	DS	16		;CHECK VECTOR 1
 CHK02:	DS	16	 	;CHECK VECTOR 2
 CHK03:	DS	16	 	;CHECK VECTOR 3
 
+signon:	db	0dh,0ah,"CP/M 2.2 on EE8080",0dh,0ah,0ah,0
+
 boot:
+	lxi	sp,buff80h
+	lxi	h,signon
+	call	prmsg	;print message
+	xra	a	;clear accumulator
+	;sta	cdisk	;set initially to disk a
+	;jmp	gocpm	;go to cp/m
+
 	mvi	a,0
 	rst	7
 wboot:
@@ -120,6 +132,25 @@ listst:	;list status
 sectran:
 	mvi	a,010h
 	rst	7
+
+prmsg:	;print message at h,l to 0
+	mov	a,m
+	ora	a	;zero?
+	rz
+;	more to print
+	push	h
+	mov	c,a
+	call	conout
+	pop	h
+	inx	h
+	jmp	prmsg
+
+conout:	;console outout c
+	push	psw
+	mov	a,c
+	out	0f0h
+	pop	psw
+	ret
 
 	end
 

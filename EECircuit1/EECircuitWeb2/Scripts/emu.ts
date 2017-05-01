@@ -64,6 +64,7 @@
             return 0;
         }
         public out(addr: number, v: number): void {
+            if (addr == 0xf0) vdt.outputChar(v);
             if (addr == 0xff) this.putBitsPortFF(v);
         }
     }

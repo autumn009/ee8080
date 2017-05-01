@@ -219,7 +219,7 @@
         // CONDITIONAL JUMP/CALL GROUP
         fillCond("J", 0xc2, false);
         fillCond("C", 0xc4, false);
-        fillCond("R", 0xc8, true);
+        fillCond("R", 0xc0, true);
 
         // INCREMENT DECREMENT GROUP
         mnemonicTable["INR"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
@@ -389,12 +389,26 @@
     function dbdw(tokens: string[], length: number, out: (byte: number) => void) {
         for (var i = 2; i < tokens.length; i++) {
             if (tokens[i]) {
-                var v = 0;
-                if (pass == 2) v = myParseNumber(tokens[i]);
-                if (length == 1) {
-                    out(v);
-                } else {
-                    out16(v, out);
+                if ((tokens[i].charAt(0) == "\"" || tokens[i].charAt(0) == "'")
+                    && (tokens[i].charAt(tokens[i].length - 1) == "\"" || tokens[tokens[i].length - 1].charAt(0) == "'")
+                ) {
+                    for (var j = 1; j < tokens[i].length - 1; j++) {
+                        var v = tokens[i].charCodeAt(j);
+                        if (length == 1) {
+                            out(v);
+                        } else {
+                            out16(v, out);
+                        }
+                    }
+                }
+                else {
+                    var v = 0;
+                    if (pass == 2) v = myParseNumber(tokens[i]);
+                    if (length == 1) {
+                        out(v);
+                    } else {
+                        out16(v, out);
+                    }
                 }
             }
         }
