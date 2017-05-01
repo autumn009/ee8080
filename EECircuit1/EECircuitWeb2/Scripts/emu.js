@@ -519,6 +519,7 @@ var emu;
         };
         i8080.prototype.runMain = function () {
             for (;;) {
+                //console.log("pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16));
                 var machinCode1 = this.fetchNextByte();
                 var g1 = machinCode1 >> 6;
                 var g2 = (machinCode1 >> 3) & 0x7;
@@ -874,8 +875,8 @@ var emu;
     $("#stopcont").click(function () {
         // TBW
     });
-    function loadTest1() {
-        var jqxhr = $.get("/Content/diag.a80.txt")
+    function loadSource(uri) {
+        var jqxhr = $.get(uri)
             .done(function (data) {
             $("#sourceCode").val(data);
             $("#sourceCode").keyup(); // 枠を広げるおまじない
@@ -883,6 +884,12 @@ var emu;
             .fail(function () {
             alert("load error");
         });
+    }
+    function loadTest1() {
+        loadSource("/Content/diag.a80.txt");
+    }
+    function loadBiosSource() {
+        loadSource("/Content/bios.a80.txt");
     }
     function loadTest2() {
         var s = "";
@@ -929,8 +936,11 @@ var emu;
             }
             emu.virtualMachine.memory.Bytes.write(0, 0xc3);
             emu.virtualMachine.memory.Bytes.write(1, 0x00);
-            emu.virtualMachine.memory.Bytes.write(2, 0xdc);
-            emu.virtualMachine.cpu.reset();
+            emu.virtualMachine.memory.Bytes.write(2, 0xf2);
+            loadBiosSource();
+            setIde();
+            // enable to auto-run
+            //virtualMachine.cpu.reset();
         });
     }
     $("#navtest2").click(function () {

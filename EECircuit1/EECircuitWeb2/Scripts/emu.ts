@@ -458,6 +458,8 @@
         {
             for (; ;)
             {
+                //console.log("pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16));
+
                 var machinCode1 = this.fetchNextByte();
                 var g1 = machinCode1 >> 6;
                 var g2 = (machinCode1 >> 3) & 0x7;
@@ -881,8 +883,9 @@
         // TBW
     });
 
-    function loadTest1() {
-        var jqxhr = $.get("/Content/diag.a80.txt")
+    function loadSource(uri:string)
+    {
+        var jqxhr = $.get(uri)
             .done(function (data) {
                 $("#sourceCode").val(data);
                 $("#sourceCode").keyup();   // 枠を広げるおまじない
@@ -890,6 +893,15 @@
             .fail(function () {
                 alert("load error");
             });
+
+    }
+
+    function loadTest1() {
+        loadSource("/Content/diag.a80.txt");
+    }
+
+    function loadBiosSource() {
+        loadSource("/Content/bios.a80.txt");
     }
 
     function loadTest2() {
@@ -939,8 +951,11 @@
             }
             virtualMachine.memory.Bytes.write(0, 0xc3);
             virtualMachine.memory.Bytes.write(1, 0x00);
-            virtualMachine.memory.Bytes.write(2, 0xdc);
-            virtualMachine.cpu.reset();
+            virtualMachine.memory.Bytes.write(2, 0xf2);
+            loadBiosSource();
+            setIde();
+            // enable to auto-run
+            //virtualMachine.cpu.reset();
         });
     }
 

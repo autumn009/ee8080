@@ -1,0 +1,93 @@
+﻿	org	0f200h
+
+	jmp	boot
+wboote:	jmp	wboot
+	jmp	const
+	jmp	conin
+	jmp	conout
+	jmp	list
+	jmp	punch
+	jmp	reader
+	jmp	home
+	jmp	seldsk
+	jmp	settrk
+	jmp	setsec
+	jmp	setdma
+	jmp	read
+	jmp	write
+	jmp	listst	;list status
+	jmp	sectran
+
+DPBASE:	DW	TRANS, 0000H
+ 	DW	0000H, 0000H
+  	DW	DIRBF, DPBLK
+ 	DW	CHK00, ALL00
+;	DISK PARAMETER HEADER FOR DISK 01
+	DW	TRANS, 0000H
+	DW	0000H, 0000H
+ 	DW	DIRBF, DPBLK
+ 	DW	CHK01, ALL01
+;	DISK PARAMETER HEADER FOR DISK 02
+ 	DW	TRANS, 0000H
+  	DW	0000H, 0000H
+  	DW	DIRBF, DPBLK
+  	DW	CHK02, ALL02
+;	DISK PARAMETER HEADER FOR DISK 03
+  	DW	TRANS, 0000H
+  	DW	0000H, 0000H
+  	DW	DIRBF, DPBLK
+  	DW	CHK03, ALL03
+;
+;	SECTOR TRANSLATE VECTOR
+TRANS:	DB	 1,  7, 13, 19	;SECTORS  1,  2,  3,  4
+	DB	25,  5, 11, 17	;SECTORS  5,  6,  7,  6
+	DB	23,  3,  9, 15	;SECTORS  9, 10, 11, 12
+	DB	21,  2,  8, 14	;SECTORS 13, 14, 15, 16
+	DB	20, 26,  6, 12	;SECTORS 17, 18, 19, 20
+	DB	18, 24,  4, 10	;SECTORS 21, 22, 23, 24
+	DB	16, 22		;SECTORS 25, 26
+                  ;
+DPBLK:	;DISK PARAMETER BLOCK, COMMON TO ALL DISKS
+	DW	26		;SECTORS PER TRACK
+	DB	3		;BLOCK SHIFT FACTOR
+	DB	7		;BLOCK MASK
+	DB	0		;NULL MASK
+	DW	242		;DISK SIZE-1
+	DW	63		;DIRECTORY MAX
+	DB	192		;ALLOC 0
+	DB	0		;ALLOC 1
+	DW	16		;CHECK SIZE
+	DW	2		;TRACK OFFSET
+
+DIRBF:	DS	128	 	;SCRATCH DIRECTORY AREA
+ALL00:	DS	31	 	;ALLOCATION VECTOR 0
+ALL01:	DS	31	 	;ALLOCATION VECTOR 1
+ALL02:	DS	31	 	;ALLOCATION VECTOR 2
+ALL03:	DS	31	 	;ALLOCATION VECTOR 3
+CHK00:	DS	16		;CHECK VECTOR 0
+CHK01:	DS	16		;CHECK VECTOR 1
+CHK02:	DS	16	 	;CHECK VECTOR 2
+CHK03:	DS	16	 	;CHECK VECTOR 3
+
+boot:
+wboot:
+const:
+conin:
+conout:
+list:
+punch:
+reader:
+home:
+seldsk:
+settrk:
+setsec:
+setdma:
+read:
+write:
+listst:	;list status
+sectran:
+ RST	7
+
+
+	end
+

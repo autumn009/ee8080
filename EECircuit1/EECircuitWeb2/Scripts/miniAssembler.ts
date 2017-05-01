@@ -386,6 +386,20 @@
         }
     }
 
+    function dbdw(tokens: string[], length: number, out: (byte: number) => void) {
+        for (var i = 2; i < tokens.length; i++) {
+            if (tokens[i]) {
+                var v = 0;
+                if (pass == 2) v = myParseNumber(tokens[i]);
+                if (length == 1) {
+                    out(v);
+                } else {
+                    out16(v, out);
+                }
+            }
+        }
+    }
+
     function compileLine(pc: number, tokens: string[], out: (byte: number) => void) {
         if (pass == 1 && tokens[0]) {
             var n = tokens[0];
@@ -402,6 +416,21 @@
         }
         if (tokens[1]) {
             if (tokens[1] == "EQU") return;
+            if (tokens[1] == "DB") {
+                dbdw(tokens, 1, out);
+                return;
+            }
+            if (tokens[1] == "DW") {
+                dbdw(tokens, 2, out);
+                return;
+            }
+            if (tokens[1] == "DS") {
+                var l = myParseNumber(tokens[2]);
+                for (var i = 0; i < l; i++) {
+                    out(0);
+                }
+                return;
+            }
             var mnem: mnemonicUnit = mnemonicTable[tokens[1]];
             if (mnem)
                 mnem.generate(tokens[2], tokens[3], out);
