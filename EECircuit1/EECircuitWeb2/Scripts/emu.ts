@@ -1,7 +1,7 @@
 ﻿namespace emu {
     export var virtualMachine: ee8080;
     export var superTrap: boolean = false;
-    export var trace: boolean = true;
+    export var trace: boolean = false;
 
     function getVirtualMachine() {
         return virtualMachine;
@@ -62,6 +62,11 @@
         }
 
         public in(addr: number): number {
+            if (addr == 0xf0) {
+                if (debugrepeat <= 0) return 0;
+                debugrepeat--;
+                return 0x0d;
+            }
             if (addr == 0xff) return this.getBitsPortFF();
             return 0;
         }
@@ -70,6 +75,7 @@
             if (addr == 0xff) this.putBitsPortFF(v);
         }
     }
+    var debugrepeat = 3;
     class DataBus {
 
     }

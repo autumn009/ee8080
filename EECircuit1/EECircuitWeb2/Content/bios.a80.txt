@@ -192,6 +192,8 @@ halt:
 
 conin:
 	in	0f0h
+	ora	a
+	rnz
 	hlt
 
 prmsg:	;print message at h,l to 0

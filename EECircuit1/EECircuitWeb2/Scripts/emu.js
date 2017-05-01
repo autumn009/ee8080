@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var emu;
 (function (emu) {
     emu.superTrap = false;
-    emu.trace = true;
+    emu.trace = false;
     function getVirtualMachine() {
         return emu.virtualMachine;
     }
@@ -69,6 +69,12 @@ var emu;
             $("#outPortFF").text(createBitsString(ar));
         };
         IOUnit.prototype.in = function (addr) {
+            if (addr == 0xf0) {
+                if (debugrepeat <= 0)
+                    return 0;
+                debugrepeat--;
+                return 0x0d;
+            }
             if (addr == 0xff)
                 return this.getBitsPortFF();
             return 0;
@@ -81,6 +87,7 @@ var emu;
         };
         return IOUnit;
     }());
+    var debugrepeat = 3;
     var DataBus = (function () {
         function DataBus() {
         }
