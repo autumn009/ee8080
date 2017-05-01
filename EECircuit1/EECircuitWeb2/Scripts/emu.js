@@ -6,6 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var emu;
 (function (emu) {
     emu.superTrap = false;
+    emu.trace = true;
     function getVirtualMachine() {
         return emu.virtualMachine;
     }
@@ -521,7 +522,9 @@ var emu;
         };
         i8080.prototype.runMain = function () {
             for (;;) {
-                //console.log("pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16));
+                if (emu.trace) {
+                    console.log("pc=" + emu.virtualMachine.cpu.regarray.pc.getValue().toString(16));
+                }
                 var machinCode1 = this.fetchNextByte();
                 var g1 = machinCode1 >> 6;
                 var g2 = (machinCode1 >> 3) & 0x7;

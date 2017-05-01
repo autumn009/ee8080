@@ -424,6 +424,9 @@ var miniAssembler;
             if (n.substring(n.length - 1, n.length) == ":") {
                 n = n.substring(0, n.length - 1).trim();
             }
+            if (symbolTable[n]) {
+                writeError(n + " was duplicated.");
+            }
             if (tokens[1] == "EQU") {
                 symbolTable[n] = myParseNumber(tokens[2], true);
                 return;

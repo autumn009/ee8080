@@ -1,10 +1,12 @@
 ﻿	org	0f200h
 
+offset	equ	2	;number of disk tracks used by cp/m
 cdisk	equ	0004h	;address of last logged disk on warm start
 buff	equ	0080h	;default buffer address
 buff80h	equ	0100h
 cpmb	equ	0dc00h	;base of cpm console processor
-bdos	equ	0e496h	;806h+cpmb basic dos (resident portion)
+bdos	equ	0e406h	;806h+cpmb basic dos (resident portion)
+ndisks	equ	4		;number of disks
 
 	jmp	boot
 wboote:	jmp	wboot
@@ -91,7 +93,7 @@ boot:
 		;	done with the load, reset default buffer address
 gocpm:	;(enter here from cold start boot)
 		;	enable rst0 and rst7
-	di
+	;di
 
 ;	set default buffer address to 80h
 	lxi	b,buff
@@ -113,20 +115,11 @@ gocpm:	;(enter here from cold start boot)
 ;	previously selected disk was b, send parameter to cpm
 	lda	cdisk	;last logged disk number
 	mov	c,a	;send to ccp to log it in
-	ei
+	;ei
 	jmp	cpmb
 
 wboot:
 	mvi	a,1
-	rst	7
-const:
-	mvi	a,2
-	rst	7
-conin:
-	mvi	a,3
-	rst	7
-conout:
-	mvi	a,4
 	rst	7
 list:
 	mvi	a,5
@@ -137,20 +130,8 @@ punch:
 reader:
 	mvi	a,7
 	rst	7
-home:
-	mvi	a,8
-	rst	7
-seldsk:
-	mvi	a,9
-	rst	7
-settrk:
-	mvi	a,0ah
-	rst	7
 setsec:
 	mvi	a,0bh
-	rst	7
-setdma:
-	mvi	a,0ch
 	rst	7
 read:
 	mvi	a,0dh
@@ -165,10 +146,52 @@ sectran:
 	mvi	a,010h
 	rst	7
 
+setdma:	;set dma address given by regs b,c
+	mov	l,c
+	mov	h,b
+	shld	iod
+	ret
+
+seldsk:	;select disk given by register c
+	lxi	h,0000h	;return 0000 if error
+	mov	a,c
+	cpi	ndisks	;too large?
+	rnc		;leave HL = 0000
+	sta	iodrive
+;
+	mov	l,c
+	mvi	h,0	;HL=disk number
+	dad	h	;*2
+	dad	h	;*4
+	dad	h	;*8
+	dad	h	;*16
+	lxi	d,dpbase
+	dad	d	;HL=disk header table address
+	ret
+
+home:	;move to home position
+;	treat as track 00 seek
+	mvi	c,0
+	jmp	settrk
+
+settrk:	;set track address given by c
+	lxi	h,iotrack
+	mov	m,c
+	ret
+
+const:		;CONSOLE STATUS, RETURN 0FFH IF CHARACTER READY, 00H IF NOT
+	mvi	a,0FFh
+	ret
+
 haltmsg	db	"System halted by RTS 7",0
 halt:
 	lxi	h,haltmsg
 	call	prmsg
+	mvi	a,0ffh
+	hlt
+
+conin:
+	in	0f0h
 	hlt
 
 prmsg:	;print message at h,l to 0
@@ -189,6 +212,21 @@ conout:	;console outout c
 	out	0f0h
 	pop	psw
 	ret
+
+;	data areas (must be in ram)
+; dbank:	db	0	;disk bank 00 if drive 0,1
+			;	   10 if drive 2,3
+; iopb:	;io parameter block
+	db	80h	;normal i/o operation
+; iof:	db	readf	;io function, initial read
+; ion:	db	1	;number of sectors to read
+; iot:	db	offset	;track number
+; ios:	db	1	;sector number
+iod:	dw	buff	;io address
+
+; selected drive
+iodrive:	db	0		;
+iotrack:	db	0
 
 	end
 

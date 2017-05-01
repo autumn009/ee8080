@@ -1,6 +1,8 @@
 ﻿namespace emu {
     export var virtualMachine: ee8080;
     export var superTrap: boolean = false;
+    export var trace: boolean = true;
+
     function getVirtualMachine() {
         return virtualMachine;
     }
@@ -459,7 +461,9 @@
         {
             for (; ;)
             {
-                //console.log("pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16));
+                if (trace) {
+                    console.log("pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16));
+                }
 
                 var machinCode1 = this.fetchNextByte();
                 var g1 = machinCode1 >> 6;
