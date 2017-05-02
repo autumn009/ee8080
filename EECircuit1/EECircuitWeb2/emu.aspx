@@ -21,7 +21,7 @@
                     <th >S</th>
                     <th >Z</th>
                     <th >P</th>
-                    <th >C</th>
+                    <th >CY</th>
                     <th >AC</th>
                 </tr>
                 <tr>

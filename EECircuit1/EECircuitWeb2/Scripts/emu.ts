@@ -238,6 +238,12 @@
             var hl = this.regarray.h.getValue() * 256 + this.regarray.l.getValue();
             var m = virtualMachine.memory.Bytes.read(Math.floor(hl));
             $("#regM").text(dec2hex(m, 2));
+
+            $("#regS").text(this.flags.s ? 1 : 0);
+            $("#regZ").text(this.flags.z ? 1 : 0);
+            $("#regP").text(this.flags.p ? 1 : 0);
+            $("#regC").text(this.flags.cy ? 1 : 0);
+            $("#regAC").text(this.flags.ac ? 1 : 0);
         }
         private randomInitialize() {
             this.accumulator.randomInitialize();
