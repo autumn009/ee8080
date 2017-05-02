@@ -201,6 +201,8 @@ var vdt;
     }
     vdt.echoback = echoback;
     function commonInputRowCode(code) {
+        if ($("#con").css("display") == "none")
+            return true;
         if (inputFunc)
             inputFunc(code);
         return false;

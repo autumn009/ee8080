@@ -215,6 +215,7 @@
 
     function commonInputRowCode(code: number)
     {
+        if ($("#con").css("display") == "none") return true;
         if (inputFunc) inputFunc(code);
         return false;
     }
