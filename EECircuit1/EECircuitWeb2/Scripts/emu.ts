@@ -79,6 +79,7 @@
         }
         public out(addr: number, v: number): void {
             if (addr == 0xf0) vdt.outputChar(v);
+            if (addr == 0xf2) reloadCpm(0xf200-0xdc00);
             if (addr == 0xff) this.putBitsPortFF(v);
         }
     }
@@ -939,6 +940,15 @@
         $("#sourceCode").val(s);
     }
 
+    var cpmArray: Uint8Array;
+
+    function reloadCpm(limit:number)
+    {
+        for (var i = 0; i < limit; i++) {
+            virtualMachine.memory.Bytes.write(0xdc00 + i, cpmArray[i]);
+        }
+    }
+
     function loadCpm(afterproc: () => void) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "/Content/CPM.bin", true);
@@ -952,10 +962,8 @@
                 var fileReader = new FileReader();
                 fileReader.onload = function () {
                     arrayBuffer = this.result;
-                    var ary = new Uint8Array(arrayBuffer);
-                    for (var i = 0; i < ary.length; i++) {
-                        virtualMachine.memory.Bytes.write(0xdc00 + i, ary[i]);
-                    }
+                    cpmArray = new Uint8Array(arrayBuffer);
+                    reloadCpm(cpmArray.length);
                     if (afterproc) afterproc();
                 };
                 fileReader.onerror = () => { alert("Error"); };

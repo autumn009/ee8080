@@ -89,6 +89,8 @@ var emu;
         IOUnit.prototype.out = function (addr, v) {
             if (addr == 0xf0)
                 vdt.outputChar(v);
+            if (addr == 0xf2)
+                reloadCpm(0xf200 - 0xdc00);
             if (addr == 0xff)
                 this.putBitsPortFF(v);
         };
@@ -926,6 +928,12 @@ var emu;
         s += " hlt\r\n";
         $("#sourceCode").val(s);
     }
+    var cpmArray;
+    function reloadCpm(limit) {
+        for (var i = 0; i < limit; i++) {
+            emu.virtualMachine.memory.Bytes.write(0xdc00 + i, cpmArray[i]);
+        }
+    }
     function loadCpm(afterproc) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "/Content/CPM.bin", true);
@@ -938,10 +946,8 @@ var emu;
                 var fileReader = new FileReader();
                 fileReader.onload = function () {
                     arrayBuffer = this.result;
-                    var ary = new Uint8Array(arrayBuffer);
-                    for (var i = 0; i < ary.length; i++) {
-                        emu.virtualMachine.memory.Bytes.write(0xdc00 + i, ary[i]);
-                    }
+                    cpmArray = new Uint8Array(arrayBuffer);
+                    reloadCpm(cpmArray.length);
                     if (afterproc)
                         afterproc();
                 };

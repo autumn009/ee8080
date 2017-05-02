@@ -7,6 +7,7 @@ buff80h	equ	0100h
 cpmb	equ	0dc00h	;base of cpm console processor
 bdos	equ	0e406h	;806h+cpmb basic dos (resident portion)
 ndisks	equ	4		;number of disks
+retry	equ	10	;max retries on disk i/o before error
 
 	jmp	boot
 wboote:	jmp	wboot
@@ -87,8 +88,10 @@ boot:
 	sta	cdisk	;set initially to disk a
 	jmp	gocpm	;go to cp/m
 
-	mvi	a,0
-	rst	7
+wboot:
+	lxi	sp,buff	;using dma - thus 80 thru ff available for stack
+;
+	out	0f2h	; load CP/M request
 
 		;	done with the load, reset default buffer address
 gocpm:	;(enter here from cold start boot)
@@ -118,9 +121,6 @@ gocpm:	;(enter here from cold start boot)
 	;ei
 	jmp	cpmb
 
-wboot:
-	mvi	a,1
-	rst	7
 list:
 	mvi	a,5
 	rst	7
