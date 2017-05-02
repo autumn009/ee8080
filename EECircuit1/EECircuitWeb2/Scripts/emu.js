@@ -942,7 +942,7 @@ var emu;
     }
     function loadCpm(afterproc) {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', "/Content/CPM.bin", true);
+        xhr.open('GET', "/Content/CPM.bin.exe", true);
         xhr.responseType = 'blob';
         xhr.onload = function (e) {
             if (xhr.status == 200) {
