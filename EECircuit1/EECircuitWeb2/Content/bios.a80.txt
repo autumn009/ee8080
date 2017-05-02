@@ -192,8 +192,8 @@ halt:
 	hlt
 
 conin:
-	in	0f0h
-	in	0f1h
+	in	0f0h	; Request for next character
+	in	0f1h	; Get the character
 	ora	a
 	rnz
 	hlt
@@ -213,7 +213,7 @@ prmsg:	;print message at h,l to 0
 conout:	;console outout c
 	push	psw
 	mov	a,c
-	out	0f0h
+	out	0f0h	; Output character in ACC
 	pop	psw
 	ret
 
