@@ -203,25 +203,27 @@ var vdt;
     function commonInputRowCode(code) {
         if (inputFunc)
             inputFunc(code);
+        return false;
     }
     function commonInputRow(evt) {
         if ($("#con").css("display") == "none")
-            return;
+            return true;
         var code = 0;
         if (evt.keyCode == 16) {
             setKeyboardShiftState(true, ctrlState);
-            return;
         }
         else if (evt.keyCode == 17) {
             setKeyboardShiftState(shiftState, true);
-            return;
         }
-        else
-            return;
+        else if (evt.keyCode == 8) {
+            commonInputRowCode(8);
+            return false;
+        }
+        return true;
     }
     function commonInputRowUp(evt, code) {
         if ($("#con").css("display") == "none")
-            return;
+            return true;
         if (code == null) {
             if (evt.keyCode == 16) {
                 setKeyboardShiftState(false, ctrlState);
@@ -229,10 +231,11 @@ var vdt;
             else if (evt.keyCode == 17) {
                 setKeyboardShiftState(shiftState, false);
             }
-            else
-                return;
+            else if (evt.keyCode == 8) {
+                return false;
+            }
         }
-        return false;
+        return true;
     }
     function setCursorClass() {
         $(".vdtchar").removeClass("invert");

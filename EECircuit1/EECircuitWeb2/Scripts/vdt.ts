@@ -216,27 +216,30 @@
     function commonInputRowCode(code: number)
     {
         if (inputFunc) inputFunc(code);
+        return false;
     }
 
-    function commonInputRow(evt)
-    {
-        if ($("#con").css("display") == "none") return;
+    function commonInputRow(evt) {
+        if ($("#con").css("display") == "none") return true;
         var code = 0;
         if (evt.keyCode == 16)   // Shift
         {
             setKeyboardShiftState(true, ctrlState);
-            return;
         }
         else if (evt.keyCode == 17)   // Ctrl
         {
             setKeyboardShiftState(shiftState, true);
-            return;
         }
-        else return;
+        else if (evt.keyCode == 8)   // BS
+        {
+            commonInputRowCode(8);
+            return false;
+        }
+        return true;
     }
 
     function commonInputRowUp(evt, code: number) {
-        if ($("#con").css("display") == "none") return;
+        if ($("#con").css("display") == "none") return true;
         if (code == null) {
             if (evt.keyCode == 16)   // Shift
             {
@@ -246,9 +249,12 @@
             {
                 setKeyboardShiftState(shiftState, false);
             }
-            else return;
+            else if (evt.keyCode == 8)   // BS
+            {
+                return false;
+            }
         }
-        return false;
+        return true;
     }
 
     function setCursorClass() {
