@@ -12,7 +12,7 @@ stack2	equ	0e000h
 	mvi	a,60h
 	ret
 
-	org	38h
+	org	28h
 	mvi	a,70h
 	ret
 
@@ -174,7 +174,7 @@ next:
 	rst	6
 	cpi	60h
 	jnz	fail
-	rst	7
+	rst	5
 	cpi	70h
 	jnz	fail
 
