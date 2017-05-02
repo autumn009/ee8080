@@ -219,6 +219,10 @@ var vdt;
             commonInputRowCode(8);
             return false;
         }
+        else if (evt.keyCode == 67 && evt.ctrlKey) {
+            commonInputRowCode(3);
+            return false;
+        }
         return true;
     }
     function commonInputRowUp(evt, code) {
