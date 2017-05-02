@@ -540,6 +540,7 @@ var emu;
             this.halt = true;
             emu.virtualMachine.update();
             this.setStopped();
+            emu.setMonitor();
         };
         i8080.prototype.runMain = function () {
             var _this = this;

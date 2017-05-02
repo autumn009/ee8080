@@ -468,6 +468,7 @@
             this.halt = true;
             virtualMachine.update();
             this.setStopped();
+            emu.setMonitor();
         }
 
         public runMain() {
