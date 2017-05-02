@@ -546,6 +546,7 @@ var miniAssembler;
         }, 10);
         $('#result').keyup(); // 枠を広げるおまじない
     }
+    miniAssembler.compileCommon = compileCommon;
     $("#ideCompile").click(function () {
         compileCommon(null);
     });

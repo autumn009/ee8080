@@ -527,7 +527,7 @@
         //}
     }
 
-    function compileCommon(completion:()=>void)
+    export function compileCommon(completion:()=>void)
     {
         $("#result").text("");
         resultMessage = "";

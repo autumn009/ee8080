@@ -977,9 +977,6 @@ var emu;
             emu.virtualMachine.memory.Bytes.write(1, 0x00);
             emu.virtualMachine.memory.Bytes.write(2, 0xf2);
             loadBiosSource();
-            setIde();
-            // enable to auto-run
-            //virtualMachine.cpu.reset();
         });
     }
     $("#navtest2").click(function () {
@@ -1069,12 +1066,24 @@ var emu;
     });
     $(document).on("pagecreate", function () {
         emu.virtualMachine.reset();
-        //setIde();
-        setConsole();
-        //ideResiezer();
-        //loadTest1();
-        emu.superTrap = true;
-        setupCpm();
+        if (arg["cpm"] != undefined) {
+            setConsole();
+            emu.superTrap = true;
+            setupCpm();
+            var r = miniAssembler.compileCommon(function () {
+                emu.setMonitor();
+                emu.restart();
+            });
+        }
+        else if (arg["cpmdev"] != undefined) {
+            setIde();
+            emu.superTrap = true;
+            setupCpm();
+        }
+        else {
+            setIde();
+            loadTest1();
+        }
     });
 })(emu || (emu = {}));
 //# sourceMappingURL=emu.js.map
