@@ -25,18 +25,18 @@
                     <th >AC</th>
                 </tr>
                 <tr>
-                    <td  class="border"><span id="regA" class="fixed">XX</span></td>
-                    <td  class="border"><span id="regBC" class="fixed">XX</span></td>
-                    <td  class="border"><span id="regDE" class="fixed">XX</span></td>
-                    <td  class="border"><span id="regHL" class="fixed">XX</span></td>
-                    <td  class="border"><span id="regM" class="fixed">XX</span></td>
-                    <td  class="border"><span id="regSP" class="fixed">XX</span></td>
-                    <td  class="border"><span id="regPC" class="fixed">XX</span></td>
-                    <td  class="border"><span id="regS" class="fixed">XX</span></td>
-                    <td  class="border"><span id="regZ" class="fixed">XX</span></td>
-                    <td  class="border"><span id="regP" class="fixed">XX</span></td>
-                    <td  class="border"><span id="regC" class="fixed">XX</span></td>
-                    <td  class="border"><span id="regAC" class="fixed">XX</span></td>
+                    <td  class="border center"><span id="regA" class="fixed">XX</span></td>
+                    <td  class="border center"><span id="regBC" class="fixed">XX</span></td>
+                    <td  class="border center"><span id="regDE" class="fixed">XX</span></td>
+                    <td  class="border center"><span id="regHL" class="fixed">XX</span></td>
+                    <td  class="border center"><span id="regM" class="fixed">XX</span></td>
+                    <td  class="border center"><span id="regSP" class="fixed">XX</span></td>
+                    <td  class="border center"><span id="regPC" class="fixed">XX</span></td>
+                    <td  class="border center"><span id="regS" class="fixed">XX</span></td>
+                    <td  class="border center"><span id="regZ" class="fixed">XX</span></td>
+                    <td  class="border center"><span id="regP" class="fixed">XX</span></td>
+                    <td  class="border center"><span id="regC" class="fixed">XX</span></td>
+                    <td  class="border center"><span id="regAC" class="fixed">XX</span></td>
                 </tr>
             </table>
             <table>
