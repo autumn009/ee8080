@@ -954,7 +954,7 @@
         xhr.send();
     }
 
-    function setupCpm() {
+    function setupCpm(afterproc:()=>void) {
         for (var i = 0x0; i < 0x10000; i++) {
             virtualMachine.memory.Bytes.write(i, 0xff);
         }
@@ -966,6 +966,7 @@
             virtualMachine.memory.Bytes.write(1, 0x00);
             virtualMachine.memory.Bytes.write(2, 0xf2);
             loadBiosSource();
+            if (afterproc) afterproc();
         });
     }
 
@@ -978,7 +979,7 @@
     });
 
     $("#navcpm").click(() => {
-        setupCpm();
+        setupCpm(null);
     });
 
     $(".modemenu").click(() => {
@@ -1074,16 +1075,17 @@
         if (arg["cpm"] != undefined) {
             setConsole();
             superTrap = true;
-            setupCpm();
-            var r = miniAssembler.compileCommon(() => {
-                emu.setMonitor();
-                emu.restart();
+            setupCpm(() => {
+                var r = miniAssembler.compileCommon(() => {
+                    //emu.setMonitor();
+                    emu.restart();
+                });
             });
         }
         else if (arg["cpmdev"] != undefined) {
             setIde();
             superTrap = true;
-            setupCpm();
+            setupCpm(null);
         }
         else {
             setIde();

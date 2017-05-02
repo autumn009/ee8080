@@ -8,6 +8,6 @@
         <li><a href="/seripara.aspx">Serial/Parallel</a></li>
         <li><a href="/emu.aspx?cpm=">CP/M</a></li>
         <li><a href="/emu.aspx">CPU Emulation</a></li>
-        <li><a href="/emu.aspx?cpmdev=">BIOS dev</a></li>
+        <li><a href="/emu.aspx?cpmdev=">[BIOS dev]</a></li>
     </ul>
 </asp:Content>
