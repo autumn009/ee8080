@@ -196,7 +196,14 @@ conin:
 	in	0f1h	; Get the character
 	ora	a
 	rnz
+	; firefoxの場合0で来る
+	lxi	h,coninmsg
+	push	psw
+	call	prmsg
+	pop	psw
 	hlt
+
+coninmsg	db	"conin returns 0",0
 
 prmsg:	;print message at h,l to 0
 	mov	a,m

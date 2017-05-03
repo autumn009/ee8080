@@ -892,24 +892,24 @@
         // TBW
     });
 
-    function loadSource(uri: string) {
+    function loadSource(uri: string, afterproc: () => void) {
         var jqxhr = $.get(uri)
             .done(function (data) {
                 $("#sourceCode").val(data);
                 $("#sourceCode").keyup();   // 枠を広げるおまじない
+                if (afterproc) afterproc();
             })
             .fail(function () {
                 alert("load error");
             });
-
     }
 
-    function loadTest1() {
-        loadSource("/Content/diag.a80.txt");
+    function loadTest1(afterproc: () => void) {
+        loadSource("/Content/diag.a80.txt", afterproc);
     }
 
-    function loadBiosSource() {
-        loadSource("/Content/bios.a80.txt");
+    function loadBiosSource(afterproc: () => void) {
+        loadSource("/Content/bios.a80.txt", afterproc);
     }
 
     function loadTest2() {
@@ -966,8 +966,9 @@
             virtualMachine.memory.Bytes.write(0, 0xc3);
             virtualMachine.memory.Bytes.write(1, 0x00);
             virtualMachine.memory.Bytes.write(2, 0xf2);
-            loadBiosSource();
-            if (afterproc) afterproc();
+            loadBiosSource(() => {
+                if (afterproc) afterproc();
+            });
         });
     }
 
@@ -976,7 +977,7 @@
     });
 
     $("#navtest1").click(() => {
-        loadTest1();
+        loadTest1(null);
     });
 
     $("#navcpm").click(() => {
@@ -1077,7 +1078,7 @@
             setConsole();
             superTrap = true;
             setupCpm(() => {
-                var r = miniAssembler.compileCommon(() => {
+                miniAssembler.compileCommon(() => {
                     //emu.setMonitor();
                     emu.restart();
                 });
@@ -1090,7 +1091,7 @@
         }
         else {
             setIde();
-            loadTest1();
+            loadTest1(null);
         }
     });
 }

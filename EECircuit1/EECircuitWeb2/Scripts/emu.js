@@ -911,21 +911,23 @@ var emu;
     $("#stopcont").click(function () {
         // TBW
     });
-    function loadSource(uri) {
+    function loadSource(uri, afterproc) {
         var jqxhr = $.get(uri)
             .done(function (data) {
             $("#sourceCode").val(data);
             $("#sourceCode").keyup(); // 枠を広げるおまじない
+            if (afterproc)
+                afterproc();
         })
             .fail(function () {
             alert("load error");
         });
     }
-    function loadTest1() {
-        loadSource("/Content/diag.a80.txt");
+    function loadTest1(afterproc) {
+        loadSource("/Content/diag.a80.txt", afterproc);
     }
-    function loadBiosSource() {
-        loadSource("/Content/bios.a80.txt");
+    function loadBiosSource(afterproc) {
+        loadSource("/Content/bios.a80.txt", afterproc);
     }
     function loadTest2() {
         var s = "";
@@ -977,16 +979,17 @@ var emu;
             emu.virtualMachine.memory.Bytes.write(0, 0xc3);
             emu.virtualMachine.memory.Bytes.write(1, 0x00);
             emu.virtualMachine.memory.Bytes.write(2, 0xf2);
-            loadBiosSource();
-            if (afterproc)
-                afterproc();
+            loadBiosSource(function () {
+                if (afterproc)
+                    afterproc();
+            });
         });
     }
     $("#navtest2").click(function () {
         loadTest2();
     });
     $("#navtest1").click(function () {
-        loadTest1();
+        loadTest1(null);
     });
     $("#navcpm").click(function () {
         setupCpm(null);
@@ -1073,7 +1076,7 @@ var emu;
             setConsole();
             emu.superTrap = true;
             setupCpm(function () {
-                var r = miniAssembler.compileCommon(function () {
+                miniAssembler.compileCommon(function () {
                     //emu.setMonitor();
                     emu.restart();
                 });
@@ -1086,7 +1089,7 @@ var emu;
         }
         else {
             setIde();
-            loadTest1();
+            loadTest1(null);
         }
     });
 })(emu || (emu = {}));
