@@ -424,6 +424,15 @@ next:
 	ora	h
 	jnz	fail
 
+	lxi	h,8040h
+	mvi	c,2
+	call	SHIFTR
+	mov	a,h
+	cpi	20h
+	jnz	fail
+	mov	a,l
+	cpi	10h
+	jnz	fail
 
 
 
