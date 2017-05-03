@@ -454,6 +454,16 @@ next:
 	cpi	0ffh
 	jnz	fail
 
+	lxi	h,055aah
+	mvi	c,0
+	call	SHIFTR
+	mov	a,h
+	cpi	55h
+	jnz	fail
+	mov	a,l
+	cpi	0aah
+	jnz	fail
+
 	jmp	success
 
 ;
