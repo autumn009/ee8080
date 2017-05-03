@@ -133,20 +133,36 @@ reader:
 	mvi	a,7
 	rst	7
 setsec:
-	mvi	a,0bh
-	rst	7
+	MOV	A, C
+	STA	iosector
+	ret
+
 read:
-	mvi	a,0dh
-	rst	7
+	lda	iodrive
+	mov	b,a
+	lda	iotrack
+	mov	c,a
+	lda	iosector
+	mov	e,a
+	lhld	iod
+	in	0f2h
+	ret
+
 write:
 	mvi	a,0eh
 	rst	7
 listst:	;list status
 	mvi	a,0fh
 	rst	7
+
 sectran:
-	mvi	a,010h
-	rst	7
+;TRANSLATE THE SECTOR GIVEN BY BC USING THE
+;TRANSLATE TABLE GIVEN BY DE
+	XCHG			;HL=.TRANS
+	DAD	B		;HL=.TRANS (SECTOR)
+	MOV	L, M		;L=TRANS (SECTOR)
+	MVI	H, 0		;HL=TRANS (SECTOR)
+	RET			;WITH VALUE IN HL
 
 setdma:	;set dma address given by regs b,c
 	mov	l,c
@@ -154,24 +170,7 @@ setdma:	;set dma address given by regs b,c
 	shld	iod
 	ret
 
-msg:	db "!",0
-
 seldsk:	;select disk given by register c
-	push	h
-	push	b
-	lxi	h,msg
-	call	prmsg
-	pop	b
-	push	b
-	mov	a,c
-	adi	30h
-	mov	c,a
-	call	conout
-	lxi	h,msg
-	call	prmsg
-	pop	b
-	pop	h
-
 	lxi	h,0000h	;return 0000 if error
 	mov	a,c
 	cpi	ndisks	;too large?
@@ -215,7 +214,7 @@ conin:
 	in	0f1h	; Get the character
 	ora	a
 	rnz
-	; firefoxの場合0で来る
+	; firefoxの場合keyCodeは0で来る
 	lxi	h,coninmsg
 	push	psw
 	call	prmsg
@@ -254,9 +253,10 @@ conout:	;console outout c
 ; ios:	db	1	;sector number
 iod:	dw	buff	;io address
 
-; selected drive
-iodrive:	db	0		;
+
+iodrive:	db	0	; selected drive
 iotrack:	db	0
+iosector:	db	0
 
 	end
 

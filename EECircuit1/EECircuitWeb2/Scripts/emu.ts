@@ -73,6 +73,14 @@
                 inputChars = inputChars.substring(1, inputChars.length);
                 return r;
             }
+            if (addr == 0xf2) return disk.read(virtualMachine.cpu.regarray.b.getValue(),
+                virtualMachine.cpu.regarray.c.getValue(),
+                virtualMachine.cpu.regarray.e.getValue(),
+                virtualMachine.cpu.regarray.getRegisterPairValue(2));
+            if (addr == 0xf3) return disk.write(virtualMachine.cpu.regarray.b.getValue(),
+                virtualMachine.cpu.regarray.c.getValue(),
+                virtualMachine.cpu.regarray.e.getValue(),
+                virtualMachine.cpu.regarray.getRegisterPairValue(2));
             if (addr == 0xff) return this.getBitsPortFF();
             return 0;
         }

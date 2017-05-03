@@ -228,6 +228,7 @@
         <p class="close-btn"><a href="#" data-rel="close" data-role="button" data-theme="c" data-icon="delete">Close</a></p>
     </div>
     <script src="/Scripts/vdt.js"></script>
+    <script src="/Scripts/disk.js"></script>
     <script src="/Scripts/emu.js"></script>
     <script src="/Scripts/miniAssembler.js"></script>
 </asp:Content>
