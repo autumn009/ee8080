@@ -1,6 +1,7 @@
 ﻿	org	0f200h
 
 offset	equ	2	;number of disk tracks used by cp/m
+iobyte	equ	0003h	;address of iobyte
 cdisk	equ	0004h	;address of last logged disk on warm start
 buff	equ	0080h	;default buffer address
 buff80h	equ	0100h
@@ -86,6 +87,7 @@ boot:
 	call	prmsg	;print message
 	xra	a	;clear accumulator
 	sta	cdisk	;set initially to disk a
+	sta	iobyte
 	jmp	gocpm	;go to cp/m
 
 wboot:
