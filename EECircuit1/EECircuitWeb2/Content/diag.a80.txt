@@ -434,7 +434,25 @@ next:
 	cpi	10h
 	jnz	fail
 
+	lxi	h,0100h
+	mvi	c,1
+	call	SHIFTR
+	mov	a,h
+	cpi	00h
+	jnz	fail
+	mov	a,l
+	cpi	80h
+	jnz	fail
 
+	lxi	h,0ffffh
+	mvi	c,4
+	call	SHIFTR
+	mov	a,h
+	cpi	0fh
+	jnz	fail
+	mov	a,l
+	cpi	0ffh
+	jnz	fail
 
 	jmp	success
 
