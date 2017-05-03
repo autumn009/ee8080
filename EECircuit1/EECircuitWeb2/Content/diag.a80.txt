@@ -241,11 +241,26 @@ next:
 	cpi	4
 	jnz	fail
 
+	stc
+	cmc
+	mvi	a,1
+	mvi	b,2
+	adc	b
+	cpi	3
+	jnz	fail
+
 ; test aci
 	stc
 	mvi	a,2
 	aci	3
 	cpi	6
+	jnz	fail
+
+	stc
+	cmc
+	mvi	a,2
+	aci	3
+	cpi	5
 	jnz	fail
 
 ; test dad
@@ -284,11 +299,26 @@ next:
 	sbb	b
 	cpi	1
 	jnz	fail
+
+	stc
+	cmc
+	mvi	a,3
+	mvi	b,1
+	sbb	b
+	cpi	2
+	jnz	fail
 	
 	stc
 	mvi	a,4
 	sbi	3
 	cpi	0
+	jnz	fail
+
+	stc
+	cmc
+	mvi	a,4
+	sbi	3
+	cpi	1
 	jnz	fail
 
 ; test and, ani

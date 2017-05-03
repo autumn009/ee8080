@@ -661,7 +661,7 @@
                     }
                     else if (g2 == 1)    // ADC
                     {
-                        this.accumulator.setValue(this.add(this.accumulator.getValue(), this.getRegister(g3), false, true));
+                        this.accumulator.setValue(this.add(this.accumulator.getValue(), this.getRegister(g3), false, this.flags.cy));
                     }
                     else if (g2 == 2)    // SUB
                     {
@@ -669,7 +669,7 @@
                     }
                     else if (g2 == 3)    // SBB
                     {
-                        this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.getRegister(g3), false, true));
+                        this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.getRegister(g3), false, this.flags.cy));
                     }
                     else if (g2 == 4)    // AND
                     {
@@ -793,7 +793,7 @@
                         }
                         else if (g2 == 1) // ACI
                         {
-                            this.accumulator.setValue(this.add(this.accumulator.getValue(), this.fetchNextByte(), false, true));
+                            this.accumulator.setValue(this.add(this.accumulator.getValue(), this.fetchNextByte(), false, this.flags.cy));
                         }
                         else if (g2 == 2) // SUI
                         {
@@ -801,7 +801,7 @@
                         }
                         else if (g2 == 3) // SBI
                         {
-                            this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.fetchNextByte(), false, true));
+                            this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.fetchNextByte(), false, this.flags.cy));
                         }
                         else if (g2 == 4) // ANI
                         {
