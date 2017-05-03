@@ -301,7 +301,7 @@
             }
         });
         $("body").keypress((evt) => {
-            return commonInputRowCode(evt.keyCode);
+            return commonInputRowCode(evt.which);
         });
         $("#vklshift").click(() => {
             setKeyboardShiftState(!shiftState, ctrlState);
@@ -325,6 +325,8 @@
             }
             else if ($(button).attr("id") == "vkspace")
                 commonInputRowCode(0x20);
+            else if (keytop == "BS")
+                commonInputRowCode(0x08);
             else if (keytop == "Enter")
                 commonInputRowCode(0x0d);
             else if (keytop == "LF")

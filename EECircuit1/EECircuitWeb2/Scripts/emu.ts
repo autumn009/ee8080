@@ -68,7 +68,7 @@
                 return 0;
             }
             if (addr == 0xf1) {
-                if (inputChars.length == 0) return 0;
+                if (inputChars.length == 0) return "?".charCodeAt(0);
                 var r = inputChars.charCodeAt(0);
                 inputChars = inputChars.substring(1, inputChars.length);
                 return r;

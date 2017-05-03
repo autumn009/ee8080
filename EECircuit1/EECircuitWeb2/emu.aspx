@@ -135,6 +135,7 @@
                     <button id="vkopen" type="button" class="vkey" data-shift="{" data-normal="["><span class="blabel">X</span></button>
                     <button id="vkclose" type="button" class="vkey" data-shift="}" data-normal="]"><span class="blabel">X</span></button>
                     <button id="vkhome" type="button" class="vkey" data-shift="HOME" data-normal="~"><span class="blabel">X</span></button>
+                    <button id="vkbs" type="button" class="vkey" data-normal="BS"><span class="blabel">X</span></button>
                 </fieldset>
                 <fieldset id="kbd2" class="kbdl" data-role="controlgroup" data-type="horizontal" data-mini="true">
                     <button id="vkesc" type="button" class="vkey" data-normal="ESC"><span class="blabel">X</span></button>
@@ -155,7 +156,7 @@
                     <button id="vkctrl" type="button" class="vkey" data-normal="Ctrl"><span class="blabel">X</span></button>
                     <button id="vka" type="button" class="vkey" data-shift="A" data-normal="a"><span class="blabel">X</span></button>
                     <button id="vks" type="button" class="vkey" data-shift="S" data-normal="s"><span class="blabel">X</span></button>
-                    <button id="vkd" type="button" class="vkey" data-shift="S" data-normal="s"><span class="blabel">X</span></button>
+                    <button id="vkd" type="button" class="vkey" data-shift="D" data-normal="d"><span class="blabel">X</span></button>
                     <button id="vkf" type="button" class="vkey" data-shift="F" data-normal="f"><span class="blabel">X</span></button>
                     <button id="vkg" type="button" class="vkey" data-shift="G" data-normal="g"><span class="blabel">X</span></button>
                     <button id="vkh" type="button" class="vkey" data-shift="H" data-normal="h"><span class="blabel">X</span></button>
