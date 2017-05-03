@@ -154,7 +154,24 @@ setdma:	;set dma address given by regs b,c
 	shld	iod
 	ret
 
+msg:	db "!",0
+
 seldsk:	;select disk given by register c
+	push	h
+	push	b
+	lxi	h,msg
+	call	prmsg
+	pop	b
+	push	b
+	mov	a,c
+	adi	30h
+	mov	c,a
+	call	conout
+	lxi	h,msg
+	call	prmsg
+	pop	b
+	pop	h
+
 	lxi	h,0000h	;return 0000 if error
 	mov	a,c
 	cpi	ndisks	;too large?

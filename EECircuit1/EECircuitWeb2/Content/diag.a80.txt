@@ -416,7 +416,35 @@ next:
 	ora	l
 	jnz	fail
 
+; test SHIFTR
+	lxi	h,0
+	mvi	c,1
+	call	SHIFTR
+	mov	a,l
+	ora	h
+	jnz	fail
+
+
+
+
 	jmp	success
+
+;
+;   Shift (HL) right (C) bits.
+;
+SHIFTR	INR	C
+SHIFTR1	DCR	C
+	RZ
+	MOV	A,H
+	ORA	A
+	RAR
+	MOV	H,A
+	MOV	A,L
+	RAR
+	MOV	L,A
+	JMP	SHIFTR1
+
+
 
 ; test ret
 sub:
