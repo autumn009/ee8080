@@ -149,8 +149,16 @@ read:
 	ret
 
 write:
-	mvi	a,0eh
-	rst	7
+	lda	iodrive
+	mov	b,a
+	lda	iotrack
+	mov	c,a
+	lda	iosector
+	mov	e,a
+	lhld	iod
+	in	0f3h
+	ret
+
 listst:	;list status
 	mvi	a,0fh
 	rst	7
