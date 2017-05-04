@@ -2,10 +2,12 @@ var disk;
 (function (disk) {
     var drives = [];
     function read(drive, track, sector, dma) {
+        //alert("read " + (drives[0])[0]);
         var view = drives[drive];
         var p = (sector + 26 * track) * 128;
-        for (var i = 0; i < length; i++) {
-            emu.virtualMachine.memory.Bytes.write(dma++, view[p++]);
+        for (var i = 0; i < 128; i++) {
+            var v = view[p++];
+            emu.virtualMachine.memory.Bytes.write(dma++, v);
         }
         return 0; // success
     }
@@ -13,7 +15,7 @@ var disk;
     function write(drive, track, sector, dma) {
         var view = drives[drive];
         var p = (sector + 26 * track) * 128;
-        for (var i = 0; i < length; i++) {
+        for (var i = 0; i < 128; i++) {
             view[p++] = emu.virtualMachine.memory.Bytes.read(dma++);
         }
         return 0; // success
@@ -30,6 +32,7 @@ var disk;
                 view[i] = 0xe5;
             }
         }
+        //alert("init "+(drives[0])[0]);
     });
 })(disk || (disk = {}));
 //# sourceMappingURL=disk.js.map
