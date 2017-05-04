@@ -161,7 +161,7 @@ next:
 	mvi	a,0
 	adi	0
 	cz	sub2
-	cpi	2
+	cpi	3
 	jnz	fail
 	mvi	a,80h
 	adi	80h
@@ -541,10 +541,10 @@ sub:
 sub2:
 	mvi	a,1
 	adi	1
-	ret	z
-	mvi	a,2
-	ret nc
+	rz
 	mvi	a,3
+	rnc
+	mvi	a,4
 	ret
 
 fail:

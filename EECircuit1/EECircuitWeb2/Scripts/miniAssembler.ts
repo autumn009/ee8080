@@ -12,7 +12,7 @@
             resultMessage += msg + "\r\n";
     }
 
-    class mnemonicUnit {
+    class mnemonicUnit2 {
         constructor(public operands: number, public bytes: number, public generate: (opr1: string, opr2: string, out: (byte: number) => void) => void) {
         }
     }
@@ -21,12 +21,21 @@
         return s != null && s != undefined && s != "";
     }
 
-    class mnemonicUnit0 extends mnemonicUnit {
+    class mnemonicUnit0 extends mnemonicUnit2 {
         constructor(operands: number, bytes: number, generate: (out: (byte: number) => void) => void) {
             super(operands, bytes, (opr1, opr2, out2) => {
                 if (isEmpty(opr1)) writeError(opr1 + " is syntax error.");
                 if (isEmpty(opr2)) writeError(opr2 + " is syntax error.");
                 generate(out2);
+            });
+        }
+    }
+
+    class mnemonicUnit1 extends mnemonicUnit2 {
+        constructor(operands: number, bytes: number, generate: (opr1: string, out: (byte: number) => void) => void) {
+            super(operands, bytes, (opr1, opr2, out2) => {
+                if (isEmpty(opr2)) writeError(opr1 + " is syntax error.");
+                generate(opr1, out2);
             });
         }
     }
@@ -138,10 +147,19 @@
     var conditions: string[] = ["NZ","Z","NC","C","PO","PE","P","M"];
 
     function fillCondSub(opcode: number, isRet: boolean) {
-        return new mnemonicUnit(1, isRet ? 1 : 3, (opr1, opr2, out) => {
-            out(opcode);
-            if (!isRet) out16(myParseNumber(opr1), out);
-        });
+        if (isRet)
+        {
+            return new mnemonicUnit0(1, 1, (out) => {
+                out(opcode);
+            });
+        }
+        else
+        {
+            return new mnemonicUnit1(1, 3, (opr1, out) => {
+                out(opcode);
+                if (!isRet) out16(myParseNumber(opr1), out);
+            });
+        }
     }
     function fillCond(prefix: string, basecode: number, isRet: boolean) {
         for (var i = 0; i < conditions.length; i++) {
@@ -150,83 +168,83 @@
     }
 
     function fillMnemonicTable() {
-        mnemonicTable["ORG"] = new mnemonicUnit(1, 0, (opr1, opr2, out) => {
+        mnemonicTable["ORG"] = new mnemonicUnit1(1, 0, (opr1, out) => {
             compilePointer = myParseNumber(opr1);
         });
-        mnemonicTable["END"] = new mnemonicUnit(0, 0, (opr1, opr2, out) => {
+        mnemonicTable["END"] = new mnemonicUnit0(0, 0, (out) => {
             endRequest = true;
         });
 
         // TRANSFER GROUP
-        mnemonicTable["MOV"] = new mnemonicUnit(3, 1, (opr1, opr2, out) => {
+        mnemonicTable["MOV"] = new mnemonicUnit2(3, 1, (opr1, opr2, out) => {
             out(0x40 | myParseDDD(opr1) | myParseSSS(opr2));
         });
-        mnemonicTable["MVI"] = new mnemonicUnit(2, 2, (opr1, opr2, out) => {
+        mnemonicTable["MVI"] = new mnemonicUnit2(2, 2, (opr1, opr2, out) => {
             out(6 | myParseDDD(opr1));
             out(myParseNumber(opr2));
         });
-        mnemonicTable["LXI"] = new mnemonicUnit(2, 3, (opr1, opr2, out) => {
+        mnemonicTable["LXI"] = new mnemonicUnit2(2, 3, (opr1, opr2, out) => {
             out(1 | myParseBDHSP(opr1));
             out16(myParseNumber(opr2), out);
         });
-        mnemonicTable["STAX"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["STAX"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0x02 | myParseBD(opr1));
         });
-        mnemonicTable["LDAX"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["LDAX"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0x0a | myParseBD(opr1));
         });
-        mnemonicTable["STA"] = new mnemonicUnit(1, 3, (opr1, opr2, out) => {
+        mnemonicTable["STA"] = new mnemonicUnit1(1, 3, (opr1, out) => {
             out(0x32);
             out16(myParseNumber(opr1), out);
         });
-        mnemonicTable["LDA"] = new mnemonicUnit(1, 3, (opr1, opr2, out) => {
+        mnemonicTable["LDA"] = new mnemonicUnit1(1, 3, (opr1, out) => {
             out(0x3A);
             out16(myParseNumber(opr1), out);
         });
-        mnemonicTable["SHLD"] = new mnemonicUnit(1, 3, (opr1, opr2, out) => {
+        mnemonicTable["SHLD"] = new mnemonicUnit1(1, 3, (opr1, out) => {
             out(0x22);
             out16(myParseNumber(opr1), out);
         });
-        mnemonicTable["LHLD"] = new mnemonicUnit(1, 3, (opr1, opr2, out) => {
+        mnemonicTable["LHLD"] = new mnemonicUnit1(1, 3, (opr1, out) => {
             out(0x2A);
             out16(myParseNumber(opr1), out);
         });
-        mnemonicTable["XCHG"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["XCHG"] = new mnemonicUnit0(0, 1, (out) => {
             out(0xeb);
         });
 
         // STACK GROUP
-        mnemonicTable["PUSH"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["PUSH"] = new mnemonicUnit1(0, 1, (opr1, out) => {
             out(0xc5 | myParseBDHPSW(opr1));
         });
-        mnemonicTable["POP"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["POP"] = new mnemonicUnit1(0, 1, (opr1, out) => {
             out(0xc1 | myParseBDHPSW(opr1));
         });
-        mnemonicTable["CALL"] = new mnemonicUnit(1, 3, (opr1, opr2, out) => {
+        mnemonicTable["CALL"] = new mnemonicUnit1(1, 3, (opr1, out) => {
             out(0xcd);
             out16(myParseNumber(opr1), out);
         });
         mnemonicTable["RET"] = new mnemonicUnit0(0, 1, (out) => {
             out(0xc9);
         });
-        mnemonicTable["RST"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["RST"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             var n = myParseNumber(opr1);
             if (n < 0 || n > 7) writeError(n + "is out of range. RST requires 0 to 7.");
             else out(0xc7 + (n << 3));
         });
-        mnemonicTable["XTHL"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["XTHL"] = new mnemonicUnit0(0, 1, (out) => {
             out(0xe3);
         });
-        mnemonicTable["SPHL"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["SPHL"] = new mnemonicUnit0(0, 1, (out) => {
             out(0xf9);
         });
 
         // NON-CONDITIONAL JUMP GROUP
-        mnemonicTable["JMP"] = new mnemonicUnit(1, 3, (opr1, opr2, out) => {
+        mnemonicTable["JMP"] = new mnemonicUnit1(1, 3, (opr1, out) => {
             out(0xc3);
             out16(myParseNumber(opr1), out);
         });
-        mnemonicTable["PCHL"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["PCHL"] = new mnemonicUnit0(0, 1, (out) => {
             out(0xe9);
         });
 
@@ -236,127 +254,127 @@
         fillCond("R", 0xc0, true);
 
         // INCREMENT DECREMENT GROUP
-        mnemonicTable["INR"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["INR"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0x04 | myParseDDD(opr1));
         });
-        mnemonicTable["DCR"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["DCR"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0x05 | myParseDDD(opr1));
         });
-        mnemonicTable["INX"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["INX"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0x03 | myParseBDHSP(opr1));
         });
-        mnemonicTable["DCX"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["DCX"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0x0b | myParseBDHSP(opr1));
         });
 
         // ARITHMETIC GROUP
-        mnemonicTable["ADD"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["ADD"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0x80 | myParseSSS(opr1));
         });
-        mnemonicTable["ADC"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["ADC"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0x88 | myParseSSS(opr1));
         });
-        mnemonicTable["ADI"] = new mnemonicUnit(1, 2, (opr1, opr2, out) => {
+        mnemonicTable["ADI"] = new mnemonicUnit1(1, 2, (opr1, out) => {
             out(0xc6);
             out(myParseNumber(opr1));
         });
-        mnemonicTable["ACI"] = new mnemonicUnit(1, 2, (opr1, opr2, out) => {
+        mnemonicTable["ACI"] = new mnemonicUnit1(1, 2, (opr1, out) => {
             out(0xce);
             out(myParseNumber(opr1));
         });
-        mnemonicTable["DAD"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["DAD"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0x09 | myParseBDHSP(opr1));
         });
-        mnemonicTable["SUB"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["SUB"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0x90 | myParseSSS(opr1));
         });
-        mnemonicTable["SBB"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["SBB"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0x98 | myParseSSS(opr1));
         });
-        mnemonicTable["SUI"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["SUI"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0xd6);
             out(myParseNumber(opr1));
         });
-        mnemonicTable["SBI"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["SBI"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0xde);
             out(myParseNumber(opr1));
         });
-        mnemonicTable["AND"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["AND"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0xa0 | myParseSSS(opr1));
         });
-        mnemonicTable["ORA"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["ORA"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0xb0 | myParseSSS(opr1));
         });
-        mnemonicTable["XRA"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["XRA"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0xa8 | myParseSSS(opr1));
         });
-        mnemonicTable["ANI"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["ANI"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0xe6);
             out(myParseNumber(opr1));
         });
-        mnemonicTable["ORI"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["ORI"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0xf6);
             out(myParseNumber(opr1));
         });
-        mnemonicTable["XRI"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["XRI"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0xee);
             out(myParseNumber(opr1));
         });
-        mnemonicTable["CMP"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {
+        mnemonicTable["CMP"] = new mnemonicUnit1(1, 1, (opr1, out) => {
             out(0xb8 | myParseSSS(opr1));
         });
-        mnemonicTable["CPI"] = new mnemonicUnit(1, 2, (opr1, opr2, out) => {
+        mnemonicTable["CPI"] = new mnemonicUnit1(1, 2, (opr1, out) => {
             out(0xfe);
             out(myParseNumber(opr1));
         });
         // ROTATE GROUP
-        mnemonicTable["RLC"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["RLC"] = new mnemonicUnit0(0, 1, (out) => {
             out(0x07);
         });
-        mnemonicTable["RRC"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["RRC"] = new mnemonicUnit0(0, 1, (out) => {
             out(0x0f);
         });
-        mnemonicTable["RAL"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["RAL"] = new mnemonicUnit0(0, 1, (out) => {
             out(0x17);
         });
-        mnemonicTable["RAR"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["RAR"] = new mnemonicUnit0(0, 1, (out) => {
             out(0x1f);
         });
 
-        mnemonicTable["IN"] = new mnemonicUnit(1, 2, (opr1, opr2, out) => {
+        mnemonicTable["IN"] = new mnemonicUnit1(1, 2, (opr1, out) => {
             out(0xdb);
             out(myParseNumber(opr1));
         });
-        mnemonicTable["OUT"] = new mnemonicUnit(1, 2, (opr1, opr2, out) => {
+        mnemonicTable["OUT"] = new mnemonicUnit1(1, 2, (opr1, out) => {
             out(0xd3);
             out(myParseNumber(opr1));
         });
 
         // SPECIALS GROUP
-        mnemonicTable["STC"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["STC"] = new mnemonicUnit0(0, 1, (out) => {
             out(0x37);
         });
-        mnemonicTable["CMC"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["CMC"] = new mnemonicUnit0(0, 1, (out) => {
             out(0x3f);
         });
-        mnemonicTable["CMA"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["CMA"] = new mnemonicUnit0(0, 1, (out) => {
             out(0x2f);
         });
-        mnemonicTable["DAA"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["DAA"] = new mnemonicUnit0(0, 1, (out) => {
             out(0x27);
         });
 
         //CONTROL GROUP
-        mnemonicTable["HLT"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["HLT"] = new mnemonicUnit0(0, 1, (out) => {
             out(0x76);
         });
-        mnemonicTable["NOP"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["NOP"] = new mnemonicUnit0(0, 1, (out) => {
             out(0x00);
         });
-        mnemonicTable["EI"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["EI"] = new mnemonicUnit0(0, 1, (out) => {
             out(0xfb);
         });
-        mnemonicTable["DI"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["DI"] = new mnemonicUnit0(0, 1, (out) => {
             out(0xf3);
         });
     }
@@ -462,7 +480,7 @@
                 }
                 return;
             }
-            var mnem: mnemonicUnit = mnemonicTable[tokens[1]];
+            var mnem: mnemonicUnit2 = mnemonicTable[tokens[1]];
             if (mnem)
                 mnem.generate(tokens[2], tokens[3], out);
             else
