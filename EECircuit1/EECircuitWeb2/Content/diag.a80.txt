@@ -506,6 +506,12 @@ next:
 	cpi	2
 	jnc	fail
 
+; test for inr again
+	mvi	a,0ffh
+	ora	a
+	jz	fail
+	inr	a
+	jnz	fail
 
 	jmp	success
 

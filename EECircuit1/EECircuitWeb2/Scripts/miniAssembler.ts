@@ -17,6 +17,20 @@
         }
     }
 
+    function isEmpty(s: string) {
+        return s != null && s != undefined && s != "";
+    }
+
+    class mnemonicUnit0 extends mnemonicUnit {
+        constructor(operands: number, bytes: number, generate: (out: (byte: number) => void) => void) {
+            super(operands, bytes, (opr1, opr2, out2) => {
+                if (isEmpty(opr1)) writeError(opr1 + " is syntax error.");
+                if (isEmpty(opr2)) writeError(opr2 + " is syntax error.");
+                generate(out2);
+            });
+        }
+    }
+
     function myParseSSS(opr: string): number {
         if (opr == "B") return 0;
         if (opr == "C") return 1;
@@ -192,7 +206,7 @@
             out(0xcd);
             out16(myParseNumber(opr1), out);
         });
-        mnemonicTable["RET"] = new mnemonicUnit(0, 1, (opr1, opr2, out) => {
+        mnemonicTable["RET"] = new mnemonicUnit0(0, 1, (out) => {
             out(0xc9);
         });
         mnemonicTable["RST"] = new mnemonicUnit(1, 1, (opr1, opr2, out) => {

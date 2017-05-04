@@ -1,3 +1,8 @@
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var miniAssembler;
 (function (miniAssembler) {
     var resultMessage = "";
@@ -18,6 +23,22 @@ var miniAssembler;
         }
         return mnemonicUnit;
     }());
+    function isEmpty(s) {
+        return s != null && s != undefined && s != "";
+    }
+    var mnemonicUnit0 = (function (_super) {
+        __extends(mnemonicUnit0, _super);
+        function mnemonicUnit0(operands, bytes, generate) {
+            return _super.call(this, operands, bytes, function (opr1, opr2, out2) {
+                if (isEmpty(opr1))
+                    writeError(opr1 + " is syntax error.");
+                if (isEmpty(opr2))
+                    writeError(opr2 + " is syntax error.");
+                generate(out2);
+            }) || this;
+        }
+        return mnemonicUnit0;
+    }(mnemonicUnit));
     function myParseSSS(opr) {
         if (opr == "B")
             return 0;
@@ -200,7 +221,7 @@ var miniAssembler;
             out(0xcd);
             out16(myParseNumber(opr1), out);
         });
-        mnemonicTable["RET"] = new mnemonicUnit(0, 1, function (opr1, opr2, out) {
+        mnemonicTable["RET"] = new mnemonicUnit0(0, 1, function (out) {
             out(0xc9);
         });
         mnemonicTable["RST"] = new mnemonicUnit(1, 1, function (opr1, opr2, out) {
