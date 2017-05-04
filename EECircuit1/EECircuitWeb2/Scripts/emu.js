@@ -449,6 +449,7 @@ var emu;
             this.flags.cy = (a < b);
             this.setps(this.accumulator.getValue());
             this.flags.ac = false;
+            //if (a == 0xe5 || b == 0xe5) this.hlt();
         };
         i8080.prototype.add = function (a, b, cyUnchange, c) {
             if (cyUnchange === void 0) { cyUnchange = false; }
@@ -634,7 +635,7 @@ var emu;
                     }
                     else if (g3 == 5) {
                         var val = this.getRegister(g2);
-                        val = this.add(val, 0xff, true);
+                        val = this.sub(val, 1, true);
                         this.setRegister(g2, val);
                     }
                     else if (g3 == 6) {

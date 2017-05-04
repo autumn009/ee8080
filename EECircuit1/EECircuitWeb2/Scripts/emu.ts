@@ -379,6 +379,8 @@
             this.flags.cy = (a < b);
             this.setps(this.accumulator.getValue());
             this.flags.ac = false;
+
+            //if (a == 0xe5 || b == 0xe5) this.hlt();
         }
 
         private add(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
@@ -578,7 +580,7 @@
                     }
                     else if (g3 == 5) { // DCR
                         var val = this.getRegister(g2);
-                        val = this.add(val, 0xff, true);
+                        val = this.sub(val, 1, true);
                         this.setRegister(g2, val);
                     }
                     else if (g3 == 6)    // MVI r,x
