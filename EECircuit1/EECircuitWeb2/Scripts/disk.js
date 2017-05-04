@@ -27,7 +27,7 @@ var disk;
             drives.push(view);
             // TBW create initial format
             for (var i = 0; i < totalSize; i++) {
-                view[i] = 0xff;
+                view[i] = 0xe5;
             }
         }
     });

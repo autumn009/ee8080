@@ -494,6 +494,19 @@ next:
 	cpi	0aah
 	jnz	fail
 
+; test cmp/cpi again
+	stc
+	mvi	a,2
+	cpi	1
+	jc	fail
+
+	stc
+	cmc
+	mvi	a,1
+	cpi	2
+	jnc	fail
+
+
 	jmp	success
 
 ;
