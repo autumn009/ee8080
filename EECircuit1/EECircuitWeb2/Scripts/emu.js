@@ -1048,6 +1048,17 @@ var emu;
     $(".ideCommands").click(function () {
         $("#collapsibleIdeCommands").collapsible("collapse");
     });
+    $("#fileUpTPA").change(function (evt) {
+        var target = evt.target;
+        var files = target.files; // FileList object
+        // files is a FileList of File objects. List some properties.
+        var output = [];
+        for (var i = 0, f; f = files[i]; i++) {
+            var byte = files[i].slice(0, 1);
+            alert(byte);
+        }
+        //document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+    });
     function getAbsoluteHeiht(id) {
         var element = document.getElementById(id);
         var rect = element.getBoundingClientRect();

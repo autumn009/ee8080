@@ -1053,6 +1053,24 @@
         $("#collapsibleIdeCommands").collapsible("collapse");
     });
 
+    $("#fileUpTPA").change((evt) => {
+        var target: any = evt.target;
+        var files: File[] = target.files; // FileList object
+
+        // files is a FileList of File objects. List some properties.
+        var output = [];
+        for (var i = 0, f; f = files[i]; i++) {
+            var byte = files[i].slice(0, 1);
+            alert(byte);
+
+
+            //output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+            //    f.size, ' bytes, last modified: ',
+            //    f.lastModifiedDate.toLocaleDateString(), '</li>');
+        }
+        //document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+    });
+
     function getAbsoluteHeiht(id: string): number {
         var element = document.getElementById(id);
         var rect = element.getBoundingClientRect();

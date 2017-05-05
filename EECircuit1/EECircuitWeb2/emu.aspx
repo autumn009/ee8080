@@ -213,21 +213,64 @@
     </div>
 
     <div data-role="panel" id="menu-left" data-theme="b" data-display="push" data-position="left">
-        <ul data-role="listview">
-            <li><a data-rel="close" class="anchor modemenu" href="#" id="navcon">Console</a></li>
-            <li><a data-rel="close" class="anchor modemenu" href="#" id="navmon">Monitor</a></li>
-            <li><a data-rel="close" class="anchor modemenu" href="#" id="navide">Ide</a></li>
-            <li><a data-rel="close" class="anchor modemenu" href="#" id="navecho">Echo Back</a></li>
-            <li><a data-rel="close" class="anchor" href="#" id="navtest1">Load Test-1</a></li>
-            <li><a data-rel="close" class="anchor" href="#" id="navtest2">Load Test-2</a></li>
-            <li><a data-rel="close" class="anchor" href="#" id="navcpm">Load CPM to mem</a></li>
-            <li><a data-rel="close" class="anchor" href="#" id="navreset">Reset System</a></li>
-            <li><a data-rel="close" class="anchor" href="#" id="naventrap">Enable Trap</a></li>
-            <li><a data-rel="close" class="anchor" href="#" id="navdistrap">Disable Trap</a></li>
-            <li><a data-rel="close" class="anchor" href="#" id="navupdown">Upload/Download</a></li>
-            <li><a data-rel="close" class="anchor" href="#" data-icon="delete">Close</a></li>
-        </ul>
+        <div style="margin: 0px; width: 250px;" data-role="collapsibleset" data-theme="b" data-expanded-icon="arrow-d" data-collapsed-icon="arrow-r" data-content-theme="a">
+            <div data-role="collapsible" data-inset="false">
+                <h2>Modes</h2>
+                <ul data-role="listview">
+                    <li><a data-rel="close" class="anchor modemenu" href="#" id="navcon">Console</a></li>
+                    <li><a data-rel="close" class="anchor modemenu" href="#" id="navmon">Monitor</a></li>
+                    <li><a data-rel="close" class="anchor modemenu" href="#" id="navide">Ide</a></li>
+                    <li><a data-rel="close" class="anchor modemenu" href="#" id="navecho">Echo Back</a></li>
+                </ul>
+            </div>
+            <div data-role="collapsible" data-inset="false">
+                <h2>CPU</h2>
+                <ul data-role="listview">
+                    <li><a data-rel="close" class="anchor" href="#" id="navreset">Reset System</a></li>
+                </ul>
+            </div>
+            <div data-role="collapsible" data-inset="false">
+                <h2>Files</h2>
+                <ul data-role="listview">
+                    <li><a href="#popupUpTPA" data-rel="popup" data-transition="pop">Upload TPA</a></li>
+                    <li><a href="#popupUpMem" data-rel="popup" data-transition="pop">Upload Memory</a></li>
+                    <li><a href="#" data-rel="close">Download Memory</a></li>
+                    <li><a href="#" data-rel="close">Upload FD</a></li>
+                    <li><a href="#" data-rel="close">Download FD</a></li>
+                </ul>
+            </div>
+            <div data-role="collapsible" data-inset="false">
+                <h2>Test/Dev</h2>
+                <ul data-role="listview">
+                    <li><a data-rel="close" class="anchor" href="#" id="navtest1">Load Test-1</a></li>
+                    <li><a data-rel="close" class="anchor" href="#" id="navtest2">Load Test-2</a></li>
+                    <li><a data-rel="close" class="anchor" href="#" id="navcpm">Load CPM to mem</a></li>
+                    <li><a data-rel="close" class="anchor" href="#" id="naventrap">Enable Trap</a></li>
+                    <li><a data-rel="close" class="anchor" href="#" id="navdistrap">Disable Trap</a></li>
+                </ul>
+            </div>
+        </div>
+        <a data-rel="close" class="anchor" href="#" data-role="button" data-icon="delete">Close</a>
     </div>
+
+    <div id="popupUpTPA" data-role="popup" data-theme="a">
+        <label>
+            <input type="checkbox" name="auto" checked="checked">Auto type of SAVE command
+        </label>
+        <input type="file" id="fileUpTPA" name="files[]" multiple />
+    </div>
+
+    <div id="popupUpMem" data-role="popup" data-theme="a">
+        From:<input type="text" value="0000" />
+        <input type="file" id="fileUpMem" />
+    </div>
+
+    <div id="popupDownMem" data-role="popup" data-theme="a">
+        From:<input type="text" value="0000" />
+        To:<input type="text" value="FFFF" />
+        <input type="file" id="fileDownMem" />
+    </div>
+
     <script src="/Scripts/vdt.js"></script>
     <script src="/Scripts/disk.js"></script>
     <script src="/Scripts/emu.js"></script>
