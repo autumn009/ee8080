@@ -64,14 +64,28 @@
 
         public in(addr: number): number {
             if (addr == 0xf0) {
-                waitingInput = true;
+                if ((inputChars.length + autoTypeQueue.length) == 0)
+                    waitingInput = true;
                 return 0;
             }
             if (addr == 0xf1) {
-                if (inputChars.length == 0) return "?".charCodeAt(0);
-                var r = inputChars.charCodeAt(0);
-                inputChars = inputChars.substring(1, inputChars.length);
-                return r;
+                if (inputChars.length > 0)
+                {
+                    var r = inputChars.charCodeAt(0);
+                    inputChars = inputChars.substring(1, inputChars.length);
+                    return r;
+                }
+                if (autoTypeQueue.length > 0) {
+                    var r = autoTypeQueue.charCodeAt(0);
+                    autoTypeQueue = autoTypeQueue.substring(1, autoTypeQueue.length);
+                    if (autoTypeDone) {
+                        var a = autoTypeDone;
+                        autoTypeDone = null;
+                        a();
+                    }
+                    return r;
+                }
+                return "?".charCodeAt(0);
             }
             if (addr == 0xf2) {
                 var hl = virtualMachine.cpu.regarray.getRegisterPairValue(2);
@@ -86,6 +100,9 @@
                 virtualMachine.cpu.regarray.c.getValue(),
                 virtualMachine.cpu.regarray.e.getValue(),
                 virtualMachine.cpu.regarray.getRegisterPairValue(2));
+            if (addr == 0xf4) {
+                return ((autoTypeQueue.length + inputChars.length) == 0) ? 0 : 0xff;
+            }
             if (addr == 0xff) return this.getBitsPortFF();
             return 0;
         }
@@ -95,6 +112,19 @@
             if (addr == 0xff) this.putBitsPortFF(v);
         }
     }
+
+    var autoTypeDone: () => void = null;
+    var autoTypeQueue = "";
+
+    export function pushAutoTypeQueue(chars: string, done: () => void) {
+        autoTypeQueue += chars;
+        autoTypeDone = done;
+        if (autoTypeQueue.length == 0) return;
+        var r = autoTypeQueue[0];
+        autoTypeQueue = autoTypeQueue.substring(1, autoTypeQueue.length);
+        vdt.commonInputRowCode(r.charCodeAt(0));
+    }
+
     var debugrepeat = 3;
     class DataBus {
 
@@ -1062,18 +1092,17 @@
         var reader = new FileReader();
         $(reader).load((evt) => {
             var t: any = evt.target;
-            var ab : ArrayBuffer = t.result;
+            var ab: ArrayBuffer = t.result;
             var view = new Uint8ClampedArray(ab);
             for (var i = 0; i < view.length; i++) {
                 virtualMachine.memory.Bytes.write(i + 0x100, view[i]);
             }
-            if (autoType)
-            {
-                //var pages = 
+            if (autoType) {
+                var pages = Math.floor((view.length + 255) / 256);
                 var filename = f.name;
-                //vdt.PushAutoTypeQueue("SAVE " + pages + " " + filename, () => {
-                //    uploadTPASub();
-                //});
+                pushAutoTypeQueue("SAVE " + pages + " " + filename + "\r", () => {
+                    uploadTPASub();
+                });
                 return;
             }
             uploadTPASub();

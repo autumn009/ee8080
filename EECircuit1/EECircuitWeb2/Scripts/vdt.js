@@ -207,6 +207,7 @@ var vdt;
             inputFunc(code);
         return false;
     }
+    vdt.commonInputRowCode = commonInputRowCode;
     function commonInputRow(evt) {
         if ($("#con").css("display") == "none")
             return true;

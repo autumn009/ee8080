@@ -213,7 +213,7 @@
         });
     }
 
-    function commonInputRowCode(code: number)
+    export function commonInputRowCode(code: number)
     {
         if ($("#con").css("display") == "none") return true;
         if (inputFunc) inputFunc(code);

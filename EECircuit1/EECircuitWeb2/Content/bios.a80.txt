@@ -207,7 +207,7 @@ settrk:	;set track address given by c
 
 	; realtime keyscan
 const:		;CONSOLE STATUS, RETURN 0FFH IF CHARACTER READY, 00H IF NOT
-	mvi	a,000h
+	in	0f4h
 	ret
 
 haltmsg	db	"System halted by RTS 7",0

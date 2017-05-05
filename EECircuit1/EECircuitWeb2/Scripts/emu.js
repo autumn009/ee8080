@@ -72,15 +72,27 @@ var emu;
         };
         IOUnit.prototype.in = function (addr) {
             if (addr == 0xf0) {
-                waitingInput = true;
+                if ((inputChars.length + autoTypeQueue.length) == 0)
+                    waitingInput = true;
                 return 0;
             }
             if (addr == 0xf1) {
-                if (inputChars.length == 0)
-                    return "?".charCodeAt(0);
-                var r = inputChars.charCodeAt(0);
-                inputChars = inputChars.substring(1, inputChars.length);
-                return r;
+                if (inputChars.length > 0) {
+                    var r = inputChars.charCodeAt(0);
+                    inputChars = inputChars.substring(1, inputChars.length);
+                    return r;
+                }
+                if (autoTypeQueue.length > 0) {
+                    var r = autoTypeQueue.charCodeAt(0);
+                    autoTypeQueue = autoTypeQueue.substring(1, autoTypeQueue.length);
+                    if (autoTypeDone) {
+                        var a = autoTypeDone;
+                        autoTypeDone = null;
+                        a();
+                    }
+                    return r;
+                }
+                return "?".charCodeAt(0);
             }
             if (addr == 0xf2) {
                 var hl = emu.virtualMachine.cpu.regarray.getRegisterPairValue(2);
@@ -90,6 +102,9 @@ var emu;
             }
             if (addr == 0xf3)
                 return disk.write(emu.virtualMachine.cpu.regarray.b.getValue(), emu.virtualMachine.cpu.regarray.c.getValue(), emu.virtualMachine.cpu.regarray.e.getValue(), emu.virtualMachine.cpu.regarray.getRegisterPairValue(2));
+            if (addr == 0xf4) {
+                return ((autoTypeQueue.length + inputChars.length) == 0) ? 0 : 0xff;
+            }
             if (addr == 0xff)
                 return this.getBitsPortFF();
             return 0;
@@ -104,6 +119,18 @@ var emu;
         };
         return IOUnit;
     }());
+    var autoTypeDone = null;
+    var autoTypeQueue = "";
+    function pushAutoTypeQueue(chars, done) {
+        autoTypeQueue += chars;
+        autoTypeDone = done;
+        if (autoTypeQueue.length == 0)
+            return;
+        var r = autoTypeQueue[0];
+        autoTypeQueue = autoTypeQueue.substring(1, autoTypeQueue.length);
+        vdt.commonInputRowCode(r.charCodeAt(0));
+    }
+    emu.pushAutoTypeQueue = pushAutoTypeQueue;
     var debugrepeat = 3;
     var DataBus = (function () {
         function DataBus() {
@@ -1063,11 +1090,11 @@ var emu;
                 emu.virtualMachine.memory.Bytes.write(i + 0x100, view[i]);
             }
             if (autoType) {
-                //var pages = 
+                var pages = Math.floor((view.length + 255) / 256);
                 var filename = f.name;
-                //vdt.PushAutoTypeQueue("SAVE " + pages + " " + filename, () => {
-                //    uploadTPASub();
-                //});
+                pushAutoTypeQueue("SAVE " + pages + " " + filename + "\r", function () {
+                    uploadTPASub();
+                });
                 return;
             }
             uploadTPASub();
