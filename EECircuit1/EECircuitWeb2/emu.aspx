@@ -224,8 +224,9 @@
             <li><a data-rel="close" class="anchor" href="#" id="navreset">Reset System</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="naventrap">Enable Trap</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navdistrap">Disable Trap</a></li>
+            <li><a data-rel="close" class="anchor" href="#" id="navupdown">Upload/Download</a></li>
+            <li><a data-rel="close" class="anchor" href="#" data-icon="delete">Close</a></li>
         </ul>
-        <p class="close-btn"><a href="#" data-rel="close" data-role="button" data-theme="c" data-icon="delete">Close</a></p>
     </div>
     <script src="/Scripts/vdt.js"></script>
     <script src="/Scripts/disk.js"></script>
