@@ -75,6 +75,7 @@ var vdt;
             }
             else if (charCode == 0x0d) {
                 cursorX = 0;
+                setCursorClass();
                 return;
             }
             else if (charCode == 0x1a) {
@@ -108,12 +109,6 @@ var vdt;
     vdt.outputChar = outputChar;
     vdt.inputFunc = null;
     vdt.inputFuncAfter = null;
-    //export function inputChar(done: (number) => void) {
-    //    inputFunc = (code) => {
-    //        inputFunc = null;
-    //        done(code);
-    //    };
-    //}
     function lf() {
         cursorY++;
         if (cursorY >= 24) {

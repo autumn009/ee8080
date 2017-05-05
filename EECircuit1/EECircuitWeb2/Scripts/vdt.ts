@@ -77,6 +77,7 @@
             else if (charCode == 0x0d)  // CR
             {
                 cursorX = 0;
+                setCursorClass();
                 return;
             }
             else if (charCode == 0x1a)  // SUB (Clear Screen)
@@ -115,13 +116,6 @@
 
     export var inputFunc: (number) => void = null;
     export var inputFuncAfter: () => void = null;
-
-    //export function inputChar(done: (number) => void) {
-    //    inputFunc = (code) => {
-    //        inputFunc = null;
-    //        done(code);
-    //    };
-    //}
 
     function lf() {
         cursorY++;
