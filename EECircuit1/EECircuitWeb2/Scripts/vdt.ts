@@ -236,6 +236,18 @@
             commonInputRowCode(3);
             return false;
         }
+        else if (evt.keyCode == 80 && evt.ctrlKey) {
+            commonInputRowCode(0x10);
+            return false;
+        }
+        else if (evt.keyCode == 81 && evt.ctrlKey) {
+            commonInputRowCode(0x11);
+            return false;
+        }
+        else if (evt.keyCode == 83 && evt.ctrlKey) {
+            commonInputRowCode(0x13);
+            return false;
+        }
         return true;
     }
 
