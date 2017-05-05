@@ -106,14 +106,13 @@ var vdt;
         }
     }
     vdt.outputChar = outputChar;
-    var inputFunc = null;
-    function inputChar(done) {
-        inputFunc = function (code) {
-            inputFunc = null;
-            done(code);
-        };
-    }
-    vdt.inputChar = inputChar;
+    vdt.inputFunc = null;
+    //export function inputChar(done: (number) => void) {
+    //    inputFunc = (code) => {
+    //        inputFunc = null;
+    //        done(code);
+    //    };
+    //}
     function lf() {
         cursorY++;
         if (cursorY >= 24) {
@@ -188,7 +187,7 @@ var vdt;
     vdt.clear = clear;
     function echoback() {
         requestToClear = false;
-        inputChar(function (code) {
+        vdt.inputFunc = function (code) {
             if (requestToClear)
                 return;
             outputChar(code);
@@ -197,14 +196,14 @@ var vdt;
             echoback();
             if (requestToClear)
                 return;
-        });
+        };
     }
     vdt.echoback = echoback;
     function commonInputRowCode(code) {
         if ($("#con").css("display") == "none")
             return true;
-        if (inputFunc)
-            inputFunc(code);
+        if (vdt.inputFunc)
+            vdt.inputFunc(code);
         return false;
     }
     vdt.commonInputRowCode = commonInputRowCode;

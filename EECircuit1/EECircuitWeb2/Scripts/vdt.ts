@@ -113,14 +113,14 @@
         }
     }
 
-    var inputFunc: (number) => void = null;
+    export var inputFunc: (number) => void = null;
 
-    export function inputChar(done: (number) => void) {
-        inputFunc = (code) => {
-            inputFunc = null;
-            done(code);
-        };
-    }
+    //export function inputChar(done: (number) => void) {
+    //    inputFunc = (code) => {
+    //        inputFunc = null;
+    //        done(code);
+    //    };
+    //}
 
     function lf() {
         cursorY++;
@@ -204,13 +204,13 @@
 
     export function echoback() {
         requestToClear = false;
-        inputChar((code) => {
+        inputFunc = (code) => {
             if (requestToClear) return;
             outputChar(code);
             if (requestToClear) return;
             echoback();
             if (requestToClear) return;
-        });
+        };
     }
 
     export function commonInputRowCode(code: number)

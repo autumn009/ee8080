@@ -583,13 +583,13 @@ var emu;
         };
         i8080.prototype.runMain = function () {
             var _this = this;
+            vdt.inputFunc = function (num) {
+                inputChars += String.fromCharCode(num);
+                _this.runMain();
+            };
             for (;;) {
                 if (waitingInput) {
                     waitingInput = false;
-                    vdt.inputChar(function (num) {
-                        inputChars += String.fromCharCode(num);
-                        _this.runMain();
-                    });
                     return;
                 }
                 if (screenRefreshRequest) {

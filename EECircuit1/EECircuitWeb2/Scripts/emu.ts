@@ -521,13 +521,13 @@
         }
 
         public runMain() {
+            vdt.inputFunc = (num) => {
+                inputChars += String.fromCharCode(num);
+                this.runMain();
+            };
             for (; ;) {
                 if (waitingInput) {
                     waitingInput = false;
-                    vdt.inputChar((num) => {
-                        inputChars += String.fromCharCode(num);
-                        this.runMain();
-                    });
                     return;
                 }
                 if (screenRefreshRequest) {
