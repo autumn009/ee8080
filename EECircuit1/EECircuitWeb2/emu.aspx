@@ -255,7 +255,7 @@
 
     <div id="popupUpTPA" data-role="popup" data-theme="a">
         <label>
-            <input type="checkbox" name="auto" checked="checked">Auto type of SAVE command
+            <input type="checkbox" name="auto" checked="checked" id="tpaauto">Auto type of SAVE command
         </label>
         <input type="file" id="fileUpTPA" name="files[]" multiple />
     </div>

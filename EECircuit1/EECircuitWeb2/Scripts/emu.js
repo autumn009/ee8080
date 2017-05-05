@@ -1048,16 +1048,40 @@ var emu;
     $(".ideCommands").click(function () {
         $("#collapsibleIdeCommands").collapsible("collapse");
     });
+    var files;
+    var autoType = false;
+    function uploadTPASub() {
+        if (files.length == 0)
+            return;
+        var f = files.pop();
+        var reader = new FileReader();
+        $(reader).load(function (evt) {
+            var t = evt.target;
+            var ab = t.result;
+            var view = new Uint8ClampedArray(ab);
+            for (var i = 0; i < view.length; i++) {
+                emu.virtualMachine.memory.Bytes.write(i + 0x100, view[i]);
+            }
+            if (autoType) {
+                //var pages = 
+                var filename = f.name;
+                //vdt.PushAutoTypeQueue("SAVE " + pages + " " + filename, () => {
+                //    uploadTPASub();
+                //});
+                return;
+            }
+            uploadTPASub();
+        });
+        reader.readAsArrayBuffer(f);
+    }
     $("#fileUpTPA").change(function (evt) {
         var target = evt.target;
-        var files = target.files; // FileList object
-        // files is a FileList of File objects. List some properties.
-        var output = [];
-        for (var i = 0, f; f = files[i]; i++) {
-            var byte = files[i].slice(0, 1);
-            alert(byte);
+        files = [];
+        for (var i = 0; i < target.files.length; i++) {
+            files.push(target.files[i]);
         }
-        //document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+        autoType = $("#tpaauto").prop("checked");
+        uploadTPASub();
     });
     function getAbsoluteHeiht(id) {
         var element = document.getElementById(id);
