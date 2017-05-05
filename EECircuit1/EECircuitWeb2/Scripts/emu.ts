@@ -4,6 +4,7 @@
     export var trace: boolean = false;
     var waitingInput = false;
     var inputChars = "";
+    var screenRefreshRequest = false;
 
     function getVirtualMachine() {
         return virtualMachine;
@@ -107,7 +108,10 @@
             return 0;
         }
         public out(addr: number, v: number): void {
-            if (addr == 0xf0) vdt.outputChar(v);
+            if (addr == 0xf0) {
+                vdt.outputChar(v);
+                screenRefreshRequest = true;
+            }
             if (addr == 0xf2) reloadCpm(0xf200 - 0xdc00);
             if (addr == 0xff) this.putBitsPortFF(v);
         }
@@ -524,6 +528,13 @@
                         inputChars += String.fromCharCode(num);
                         this.runMain();
                     });
+                    return;
+                }
+                if (screenRefreshRequest) {
+                    screenRefreshRequest = false;
+                    setTimeout(() => {
+                        this.runMain();
+                    }, 0);
                     return;
                 }
                 if (trace) {

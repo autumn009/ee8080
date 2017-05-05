@@ -9,6 +9,7 @@ var emu;
     emu.trace = false;
     var waitingInput = false;
     var inputChars = "";
+    var screenRefreshRequest = false;
     function getVirtualMachine() {
         return emu.virtualMachine;
     }
@@ -110,8 +111,10 @@ var emu;
             return 0;
         };
         IOUnit.prototype.out = function (addr, v) {
-            if (addr == 0xf0)
+            if (addr == 0xf0) {
                 vdt.outputChar(v);
+                screenRefreshRequest = true;
+            }
             if (addr == 0xf2)
                 reloadCpm(0xf200 - 0xdc00);
             if (addr == 0xff)
@@ -587,6 +590,13 @@ var emu;
                         inputChars += String.fromCharCode(num);
                         _this.runMain();
                     });
+                    return;
+                }
+                if (screenRefreshRequest) {
+                    screenRefreshRequest = false;
+                    setTimeout(function () {
+                        _this.runMain();
+                    }, 0);
                     return;
                 }
                 if (emu.trace) {
