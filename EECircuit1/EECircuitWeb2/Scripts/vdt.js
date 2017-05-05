@@ -107,6 +107,7 @@ var vdt;
     }
     vdt.outputChar = outputChar;
     vdt.inputFunc = null;
+    vdt.inputFuncAfter = null;
     //export function inputChar(done: (number) => void) {
     //    inputFunc = (code) => {
     //        inputFunc = null;

@@ -114,6 +114,7 @@
     }
 
     export var inputFunc: (number) => void = null;
+    export var inputFuncAfter: () => void = null;
 
     //export function inputChar(done: (number) => void) {
     //    inputFunc = (code) => {

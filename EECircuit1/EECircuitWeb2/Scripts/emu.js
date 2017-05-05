@@ -73,11 +73,15 @@ var emu;
         };
         IOUnit.prototype.in = function (addr) {
             if (addr == 0xf0) {
-                if ((inputChars.length + autoTypeQueue.length) == 0)
+                console.log("f0:" + (inputChars.length + autoTypeQueue.length));
+                if ((inputChars.length + autoTypeQueue.length) == 0) {
+                    console.log("waitingInput");
                     waitingInput = true;
+                }
                 return 0;
             }
             if (addr == 0xf1) {
+                console.log("f1:" + (inputChars.length + autoTypeQueue.length));
                 if (inputChars.length > 0) {
                     var r = inputChars.charCodeAt(0);
                     inputChars = inputChars.substring(1, inputChars.length);
@@ -585,11 +589,16 @@ var emu;
             var _this = this;
             vdt.inputFunc = function (num) {
                 inputChars += String.fromCharCode(num);
-                _this.runMain();
+                if (vdt.inputFuncAfter)
+                    vdt.inputFuncAfter();
+                vdt.inputFuncAfter = null;
             };
             for (;;) {
                 if (waitingInput) {
                     waitingInput = false;
+                    vdt.inputFuncAfter = function () {
+                        _this.runMain();
+                    };
                     return;
                 }
                 if (screenRefreshRequest) {

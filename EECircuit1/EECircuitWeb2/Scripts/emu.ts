@@ -65,11 +65,15 @@
 
         public in(addr: number): number {
             if (addr == 0xf0) {
-                if ((inputChars.length + autoTypeQueue.length) == 0)
+                console.log("f0:"+(inputChars.length + autoTypeQueue.length));
+                if ((inputChars.length + autoTypeQueue.length) == 0) {
+                    console.log("waitingInput");
                     waitingInput = true;
+                }
                 return 0;
             }
             if (addr == 0xf1) {
+                console.log("f1:" + (inputChars.length + autoTypeQueue.length));
                 if (inputChars.length > 0)
                 {
                     var r = inputChars.charCodeAt(0);
@@ -523,11 +527,15 @@
         public runMain() {
             vdt.inputFunc = (num) => {
                 inputChars += String.fromCharCode(num);
-                this.runMain();
+                if (vdt.inputFuncAfter) vdt.inputFuncAfter();
+                vdt.inputFuncAfter = null;
             };
             for (; ;) {
                 if (waitingInput) {
                     waitingInput = false;
+                    vdt.inputFuncAfter = () => {
+                        this.runMain();
+                    };
                     return;
                 }
                 if (screenRefreshRequest) {
