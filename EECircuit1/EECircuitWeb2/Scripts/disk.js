@@ -3,6 +3,9 @@ var disk;
     disk.drives = [];
     function read(drive, track, sector, dma) {
         //alert("read " + (drives[0])[0]);
+        //if (drive < 0 || drive > 3) return 0xff;
+        //if (track < 0 || track > 76) return 0xff;
+        //if (sector < 0 || sector > 25) return 0xff;
         var view = disk.drives[drive];
         var p = (sector + 26 * track) * 128;
         for (var i = 0; i < 128; i++) {
@@ -13,6 +16,9 @@ var disk;
     }
     disk.read = read;
     function write(drive, track, sector, dma) {
+        //if (drive < 0 || drive > 3) return 0xff;
+        //if (track < 0 || track > 76) return 0xff;
+        //if (sector < 0 || sector > 25) return 0xff;
         var view = disk.drives[drive];
         var p = (sector + 26 * track) * 128;
         for (var i = 0; i < 128; i++) {

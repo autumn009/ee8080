@@ -138,6 +138,9 @@ setsec:
 	ret
 
 read:
+	push	b
+	push	d
+	push	h
 	lda	iodrive
 	mov	b,a
 	lda	iotrack
@@ -146,9 +149,15 @@ read:
 	mov	e,a
 	lhld	iod
 	in	0f2h
+	pop	h
+	pop	d
+	pop	b
 	ret
 
 write:
+	push	b
+	push	d
+	push	h
 	lda	iodrive
 	mov	b,a
 	lda	iotrack
@@ -157,6 +166,9 @@ write:
 	mov	e,a
 	lhld	iod
 	in	0f3h
+	pop	h
+	pop	d
+	pop	b
 	ret
 
 listst:	;list status

@@ -3,6 +3,9 @@
 
     export function read(drive: number, track: number, sector: number, dma: number): number {
         //alert("read " + (drives[0])[0]);
+        //if (drive < 0 || drive > 3) return 0xff;
+        //if (track < 0 || track > 76) return 0xff;
+        //if (sector < 0 || sector > 25) return 0xff;
         var view = drives[drive];
         var p = (sector + 26 * track) * 128;
         for (var i = 0; i < 128; i++) {
@@ -13,6 +16,9 @@
     }
 
     export function write(drive: number, track: number, sector: number, dma: number): number {
+        //if (drive < 0 || drive > 3) return 0xff;
+        //if (track < 0 || track > 76) return 0xff;
+        //if (sector < 0 || sector > 25) return 0xff;
         var view = drives[drive];
         var p = (sector + 26 * track) * 128;
         for (var i = 0; i < 128; i++) {

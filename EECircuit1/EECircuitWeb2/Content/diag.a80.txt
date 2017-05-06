@@ -513,6 +513,12 @@ next:
 	inr	a
 	jnz	fail
 
+; test rc again
+	mvi	a,0ffh
+	call	sub3
+	cpi	0
+	jnz	fail
+
 	jmp	success
 
 ;
@@ -545,6 +551,17 @@ sub2:
 	mvi	a,3
 	rnc
 	mvi	a,4
+	ret
+
+; test rc
+sub3:
+	mvi	a,1h
+	adi	1h
+	rc
+	mvi	a,80h
+	adi	80h
+	rc
+	mvi	a,1
 	ret
 
 fail:
