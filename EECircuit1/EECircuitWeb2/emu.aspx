@@ -233,10 +233,8 @@
                 <h2>Files</h2>
                 <ul data-role="listview">
                     <li><a href="#popupUpTPA" data-rel="popup" data-transition="pop">Upload TPA</a></li>
-                    <li><a href="#popupUpMem" data-rel="popup" data-transition="pop">Upload Memory</a></li>
-                    <li><a href="#" data-rel="close">Download Memory</a></li>
-                    <li><a href="#" data-rel="close">Upload FD</a></li>
-                    <li><a href="#" data-rel="close">Download FD</a></li>
+                    <li><a id="popupDownFD0" class="updownfd" data-rel="close" href="#" download='BlobFile.txt'>Download FD-A</a></li>
+                    <li><a id="popupUpFD0" class="updownfd" data-rel="close">Upload FD-A</a></li>
                 </ul>
             </div>
             <div data-role="collapsible" data-inset="false">

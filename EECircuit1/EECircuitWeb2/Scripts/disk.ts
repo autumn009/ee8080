@@ -1,5 +1,5 @@
 ﻿namespace disk {
-    var drives: Uint8ClampedArray[] = [];
+    export var drives: Uint8ClampedArray[] = [];
 
     export function read(drive: number, track: number, sector: number, dma: number): number {
         //alert("read " + (drives[0])[0]);

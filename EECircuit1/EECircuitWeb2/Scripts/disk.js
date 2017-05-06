@@ -1,9 +1,9 @@
 var disk;
 (function (disk) {
-    var drives = [];
+    disk.drives = [];
     function read(drive, track, sector, dma) {
         //alert("read " + (drives[0])[0]);
-        var view = drives[drive];
+        var view = disk.drives[drive];
         var p = (sector + 26 * track) * 128;
         for (var i = 0; i < 128; i++) {
             var v = view[p++];
@@ -13,7 +13,7 @@ var disk;
     }
     disk.read = read;
     function write(drive, track, sector, dma) {
-        var view = drives[drive];
+        var view = disk.drives[drive];
         var p = (sector + 26 * track) * 128;
         for (var i = 0; i < 128; i++) {
             view[p++] = emu.virtualMachine.memory.Bytes.read(dma++);
@@ -63,7 +63,7 @@ var disk;
         for (var i = 0; i < 4; i++) {
             var buffer = new ArrayBuffer(totalSize);
             var view = new Uint8ClampedArray(buffer);
-            drives.push(view);
+            disk.drives.push(view);
             for (var j = 0; j < 77; j++) {
                 trackLoad(i, j, view);
             }
@@ -72,7 +72,7 @@ var disk;
     $(window).unload(function () {
         for (var i = 0; i < 4; i++) {
             for (var j = 0; j < 77; j++) {
-                trackSave(i, j, drives[i]);
+                trackSave(i, j, disk.drives[i]);
             }
         }
     });

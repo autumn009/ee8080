@@ -1139,6 +1139,30 @@
         uploadTPASub();
     });
 
+    function downloadDrive(drive: number) {
+        var blob = new Blob([disk.drives[drive].buffer]);
+        var filename = "drive" + String.fromCharCode(drive + 0x41) + ".bin";
+        if (window.navigator.msSaveBlob) {
+            window.navigator.msSaveBlob(blob, filename);
+        } else {
+            var url = window.URL.createObjectURL(blob);
+            $("#popupDownFD0").attr("href", url);
+            $("#popupDownFD0").attr("download", filename);
+        }
+    }
+    $("#popupDownFD0").click(() => {
+        downloadDrive(0);
+    });
+    $("#popupDownFD1").click(() => {
+        downloadDrive(1);
+    });
+    $("#popupDownFD2").click(() => {
+        downloadDrive(2);
+    });
+    $("#popupDownFD3").click(() => {
+        downloadDrive(3);
+    });
+
     function getAbsoluteHeiht(id: string): number {
         var element = document.getElementById(id);
         var rect = element.getBoundingClientRect();
