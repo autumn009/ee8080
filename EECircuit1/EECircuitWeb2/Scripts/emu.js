@@ -1158,6 +1158,37 @@ var emu;
     $("#popupDownFD3").click(function (evt) {
         downloadDrive(3, evt.target);
     });
+    var driveForUp = 0;
+    $("#popupUpFD0").click(function (evt) {
+        driveForUp = 0;
+    });
+    $("#popupUpFD1").click(function (evt) {
+        driveForUp = 1;
+    });
+    $("#popupUpFD2").click(function (evt) {
+        driveForUp = 2;
+    });
+    $("#popupUpFD3").click(function (evt) {
+        driveForUp = 3;
+    });
+    $("#fileUpDrive").change(function (evt) {
+        $("#popupUpDrive").popup("close");
+        var x = $("#menu-left");
+        x.panel("close");
+        var target = evt.target;
+        if (target.files.length == 0)
+            return;
+        var f = target.files[0];
+        var reader = new FileReader();
+        $(reader).load(function (evt) {
+            var t = evt.target;
+            var ab = t.result;
+            var view = new Uint8ClampedArray(ab);
+            disk.drives[driveForUp] = view;
+            $("#fileUpDrive").val("");
+        });
+        reader.readAsArrayBuffer(f);
+    });
     function getAbsoluteHeiht(id) {
         var element = document.getElementById(id);
         var rect = element.getBoundingClientRect();

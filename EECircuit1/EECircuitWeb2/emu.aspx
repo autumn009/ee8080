@@ -232,12 +232,15 @@
             <div data-role="collapsible" data-inset="false">
                 <h2>Files</h2>
                 <ul data-role="listview">
-                    <li><a href="#popupUpTPA" data-rel="popup" data-transition="pop">Upload TPA</a></li>
+                    <li><a href="#popupUpTPA" class="updownfd" data-rel="popup" data-transition="pop">Upload TPA</a></li>
                     <li><a id="popupDownFD0" class="updownfd" data-rel="close" href="#" download='BlobFile.txt'>Download FD-A</a></li>
                     <li><a id="popupDownFD1" class="updownfd" data-rel="close" href="#" download='BlobFile.txt'>Download FD-B</a></li>
                     <li><a id="popupDownFD2" class="updownfd" data-rel="close" href="#" download='BlobFile.txt'>Download FD-C</a></li>
                     <li><a id="popupDownFD3" class="updownfd" data-rel="close" href="#" download='BlobFile.txt'>Download FD-D</a></li>
-                    <li><a id="popupUpFD0" class="updownfd" data-rel="close">Upload FD-A</a></li>
+                    <li><a id="popupUpFD0" href="#popupUpDrive" class="updownfd" data-rel="popup" data-transition="pop">Upload FD-A</a></li>
+                    <li><a id="popupUpFD1" href="#popupUpDrive" class="updownfd" data-rel="popup" data-transition="pop">Upload FD-B</a></li>
+                    <li><a id="popupUpFD2" href="#popupUpDrive" class="updownfd" data-rel="popup" data-transition="pop">Upload FD-C</a></li>
+                    <li><a id="popupUpFD3" href="#popupUpDrive" class="updownfd" data-rel="popup" data-transition="pop">Upload FD-D</a></li>
                 </ul>
             </div>
             <div data-role="collapsible" data-inset="false">
@@ -261,15 +264,8 @@
         <input type="file" id="fileUpTPA" name="files[]" multiple />
     </div>
 
-    <div id="popupUpMem" data-role="popup" data-theme="a">
-        From:<input type="text" value="0000" />
-        <input type="file" id="fileUpMem" />
-    </div>
-
-    <div id="popupDownMem" data-role="popup" data-theme="a">
-        From:<input type="text" value="0000" />
-        To:<input type="text" value="FFFF" />
-        <input type="file" id="fileDownMem" />
+    <div id="popupUpDrive" data-role="popup" data-theme="a">
+        <input type="file" id="fileUpDrive" name="file" />
     </div>
 
     <script src="/Scripts/vdt.js"></script>

@@ -1169,6 +1169,38 @@
         downloadDrive(3, evt.target);
     });
 
+    var driveForUp = 0;
+    $("#popupUpFD0").click((evt) => {
+        driveForUp = 0;
+    });
+    $("#popupUpFD1").click((evt) => {
+        driveForUp = 1;
+    });
+    $("#popupUpFD2").click((evt) => {
+        driveForUp = 2;
+    });
+    $("#popupUpFD3").click((evt) => {
+        driveForUp = 3;
+    });
+    
+    $("#fileUpDrive").change((evt) => {
+        $("#popupUpDrive").popup("close");
+        var x: any = $("#menu-left");
+        x.panel("close");
+        var target: any = evt.target;
+        if (target.files.length == 0) return;
+        var f = target.files[0];
+        var reader = new FileReader();
+        $(reader).load((evt) => {
+            var t: any = evt.target;
+            var ab: ArrayBuffer = t.result;
+            var view = new Uint8ClampedArray(ab);
+            disk.drives[driveForUp] = view;
+            $("#fileUpDrive").val("");
+        });
+        reader.readAsArrayBuffer(f);
+    });
+
     function getAbsoluteHeiht(id: string): number {
         var element = document.getElementById(id);
         var rect = element.getBoundingClientRect();
