@@ -401,6 +401,19 @@ next:
 	jnc	fail
 	cpi	0
 	jnz	fail
+	stc
+	mvi	a,0feh
+	rar
+	jc	fail
+	cpi	0ffh
+	jnz	fail
+	stc
+	cmc
+	mvi	a,0
+	rar
+	jc	fail
+	cpi	0h
+	jnz	fail
 
 ; test cma
 	mvi	a,5ah

@@ -119,7 +119,14 @@ gocpm:	;(enter here from cold start boot)
 ;	leave iobyte set
 ;	previously selected disk was b, send parameter to cpm
 	lda	cdisk	;last logged disk number
+	; 存在しないドライブが指定されたらドライブ0(A)と見なす
+	; これを行わないとリブートが無限ループする場合がある
+	cpi	4
+	jc	skip
+	mvi	a,0
+skip:
 	mov	c,a	;send to ccp to log it in
+
 	;ei
 	jmp	cpmb
 
