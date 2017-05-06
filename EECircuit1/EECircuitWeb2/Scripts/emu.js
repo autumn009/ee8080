@@ -90,7 +90,7 @@ var emu;
                 if (autoTypeQueue.length > 0) {
                     var r = autoTypeQueue.charCodeAt(0);
                     autoTypeQueue = autoTypeQueue.substring(1, autoTypeQueue.length);
-                    if (autoTypeDone) {
+                    if (autoTypeQueue.length == 0 && autoTypeDone) {
                         var a = autoTypeDone;
                         autoTypeDone = null;
                         a();
@@ -1097,8 +1097,10 @@ var emu;
     var files;
     var autoType = false;
     function uploadTPASub() {
-        if (files.length == 0)
+        if (files.length == 0) {
+            $("#fileUpTPA").val("");
             return;
+        }
         var f = files.pop();
         var reader = new FileReader();
         $(reader).load(function (evt) {
@@ -1131,7 +1133,6 @@ var emu;
         }
         autoType = $("#tpaauto").prop("checked");
         uploadTPASub();
-        $("#fileUpTPA").val("");
     });
     function downloadDrive(drive, target) {
         var blob = new Blob([disk.drives[drive].buffer]);
