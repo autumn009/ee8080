@@ -1131,6 +1131,7 @@ var emu;
         }
         autoType = $("#tpaauto").prop("checked");
         uploadTPASub();
+        $("#fileUpTPA").val("");
     });
     function downloadDrive(drive, target) {
         var blob = new Blob([disk.drives[drive].buffer]);

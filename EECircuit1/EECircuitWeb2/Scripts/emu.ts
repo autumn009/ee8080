@@ -1140,6 +1140,7 @@
         }
         autoType = $("#tpaauto").prop("checked");
         uploadTPASub();
+        $("#fileUpTPA").val("");
     });
 
     function downloadDrive(drive: number, target) {
