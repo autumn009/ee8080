@@ -234,6 +234,9 @@
                 <ul data-role="listview">
                     <li><a href="#popupUpTPA" data-rel="popup" data-transition="pop">Upload TPA</a></li>
                     <li><a id="popupDownFD0" class="updownfd" data-rel="close" href="#" download='BlobFile.txt'>Download FD-A</a></li>
+                    <li><a id="popupDownFD1" class="updownfd" data-rel="close" href="#" download='BlobFile.txt'>Download FD-B</a></li>
+                    <li><a id="popupDownFD2" class="updownfd" data-rel="close" href="#" download='BlobFile.txt'>Download FD-C</a></li>
+                    <li><a id="popupDownFD3" class="updownfd" data-rel="close" href="#" download='BlobFile.txt'>Download FD-D</a></li>
                     <li><a id="popupUpFD0" class="updownfd" data-rel="close">Upload FD-A</a></li>
                 </ul>
             </div>

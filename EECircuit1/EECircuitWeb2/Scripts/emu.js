@@ -1129,7 +1129,7 @@ var emu;
         autoType = $("#tpaauto").prop("checked");
         uploadTPASub();
     });
-    function downloadDrive(drive) {
+    function downloadDrive(drive, target) {
         var blob = new Blob([disk.drives[drive].buffer]);
         var filename = "drive" + String.fromCharCode(drive + 0x41) + ".bin";
         if (window.navigator.msSaveBlob) {
@@ -1137,21 +1137,21 @@ var emu;
         }
         else {
             var url = window.URL.createObjectURL(blob);
-            $("#popupDownFD0").attr("href", url);
-            $("#popupDownFD0").attr("download", filename);
+            $(target).attr("href", url);
+            $(target).attr("download", filename);
         }
     }
-    $("#popupDownFD0").click(function () {
-        downloadDrive(0);
+    $("#popupDownFD0").click(function (evt) {
+        downloadDrive(0, evt.target);
     });
-    $("#popupDownFD1").click(function () {
-        downloadDrive(1);
+    $("#popupDownFD1").click(function (evt) {
+        downloadDrive(1, evt.target);
     });
-    $("#popupDownFD2").click(function () {
-        downloadDrive(2);
+    $("#popupDownFD2").click(function (evt) {
+        downloadDrive(2, evt.target);
     });
-    $("#popupDownFD3").click(function () {
-        downloadDrive(3);
+    $("#popupDownFD3").click(function (evt) {
+        downloadDrive(3, evt.target);
     });
     function getAbsoluteHeiht(id) {
         var element = document.getElementById(id);

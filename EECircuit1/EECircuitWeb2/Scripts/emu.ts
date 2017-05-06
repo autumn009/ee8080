@@ -1139,28 +1139,28 @@
         uploadTPASub();
     });
 
-    function downloadDrive(drive: number) {
+    function downloadDrive(drive: number, target) {
         var blob = new Blob([disk.drives[drive].buffer]);
         var filename = "drive" + String.fromCharCode(drive + 0x41) + ".bin";
         if (window.navigator.msSaveBlob) {
             window.navigator.msSaveBlob(blob, filename);
         } else {
             var url = window.URL.createObjectURL(blob);
-            $("#popupDownFD0").attr("href", url);
-            $("#popupDownFD0").attr("download", filename);
+            $(target).attr("href", url);
+            $(target).attr("download", filename);
         }
     }
-    $("#popupDownFD0").click(() => {
-        downloadDrive(0);
+    $("#popupDownFD0").click((evt) => {
+        downloadDrive(0, evt.target);
     });
-    $("#popupDownFD1").click(() => {
-        downloadDrive(1);
+    $("#popupDownFD1").click((evt) => {
+        downloadDrive(1, evt.target);
     });
-    $("#popupDownFD2").click(() => {
-        downloadDrive(2);
+    $("#popupDownFD2").click((evt) => {
+        downloadDrive(2, evt.target);
     });
-    $("#popupDownFD3").click(() => {
-        downloadDrive(3);
+    $("#popupDownFD3").click((evt) => {
+        downloadDrive(3, evt.target);
     });
 
     function getAbsoluteHeiht(id: string): number {
