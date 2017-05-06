@@ -1121,6 +1121,9 @@ var emu;
         reader.readAsArrayBuffer(f);
     }
     $("#fileUpTPA").change(function (evt) {
+        $("#popupUpTPA").popup("close");
+        var x = $("#menu-left");
+        x.panel("close");
         var target = evt.target;
         files = [];
         for (var i = 0; i < target.files.length; i++) {

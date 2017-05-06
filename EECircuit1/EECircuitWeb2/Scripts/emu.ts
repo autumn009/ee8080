@@ -1130,6 +1130,9 @@
     }
 
     $("#fileUpTPA").change((evt) => {
+        $("#popupUpTPA").popup("close");
+        var x: any = $("#menu-left");
+        x.panel("close");
         var target: any = evt.target;
         files = [];
         for (var i = 0; i < target.files.length; i++) {
