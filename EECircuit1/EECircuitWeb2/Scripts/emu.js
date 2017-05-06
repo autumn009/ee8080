@@ -49,6 +49,7 @@ var emu;
         }
         return MemoryUnit;
     }());
+    var outputCharCount = 0;
     var IOUnit = (function () {
         function IOUnit() {
         }
@@ -117,7 +118,12 @@ var emu;
         IOUnit.prototype.out = function (addr, v) {
             if (addr == 0xf0) {
                 vdt.outputChar(v);
-                screenRefreshRequest = true;
+                if (v == 0x0d || outputCharCount >= 10) {
+                    screenRefreshRequest = true;
+                    outputCharCount = 0;
+                }
+                else
+                    outputCharCount++;
             }
             if (addr == 0xf2)
                 reloadCpm(0xf200 - 0xdc00);
@@ -591,13 +597,15 @@ var emu;
                 inputChars += String.fromCharCode(num);
                 if (vdt.inputFuncAfter)
                     vdt.inputFuncAfter();
-                vdt.inputFuncAfter = null;
             };
             for (;;) {
                 if (waitingInput) {
                     waitingInput = false;
                     vdt.inputFuncAfter = function () {
-                        _this.runMain();
+                        vdt.inputFuncAfter = null;
+                        setTimeout(function () {
+                            _this.runMain();
+                        }, 0);
                     };
                     return;
                 }

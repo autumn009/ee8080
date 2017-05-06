@@ -42,6 +42,9 @@
         public Bytes = new NumberArray();
 
     }
+
+    var outputCharCount = 0;
+
     class IOUnit {
         private getBitsPortFF(): number {
             var n = 0;
@@ -74,8 +77,7 @@
             }
             if (addr == 0xf1) {
                 //console.log("f1:" + (inputChars.length + autoTypeQueue.length));
-                if (inputChars.length > 0)
-                {
+                if (inputChars.length > 0) {
                     var r = inputChars.charCodeAt(0);
                     inputChars = inputChars.substring(1, inputChars.length);
                     return r;
@@ -114,7 +116,12 @@
         public out(addr: number, v: number): void {
             if (addr == 0xf0) {
                 vdt.outputChar(v);
-                screenRefreshRequest = true;
+                if (v == 0x0d || outputCharCount >= 10) {
+                    screenRefreshRequest = true;
+                    outputCharCount = 0;
+                }
+                else
+                    outputCharCount++;
             }
             if (addr == 0xf2) reloadCpm(0xf200 - 0xdc00);
             if (addr == 0xff) this.putBitsPortFF(v);
@@ -528,13 +535,15 @@
             vdt.inputFunc = (num) => {
                 inputChars += String.fromCharCode(num);
                 if (vdt.inputFuncAfter) vdt.inputFuncAfter();
-                vdt.inputFuncAfter = null;
             };
             for (; ;) {
                 if (waitingInput) {
                     waitingInput = false;
                     vdt.inputFuncAfter = () => {
-                        this.runMain();
+                        vdt.inputFuncAfter = null;
+                        setTimeout(() => {
+                            this.runMain();
+                        }, 0);
                     };
                     return;
                 }
