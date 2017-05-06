@@ -65,15 +65,15 @@
 
         public in(addr: number): number {
             if (addr == 0xf0) {
-                console.log("f0:"+(inputChars.length + autoTypeQueue.length));
+                //console.log("f0:"+(inputChars.length + autoTypeQueue.length));
                 if ((inputChars.length + autoTypeQueue.length) == 0) {
-                    console.log("waitingInput");
+                    //console.log("waitingInput");
                     waitingInput = true;
                 }
                 return 0;
             }
             if (addr == 0xf1) {
-                console.log("f1:" + (inputChars.length + autoTypeQueue.length));
+                //console.log("f1:" + (inputChars.length + autoTypeQueue.length));
                 if (inputChars.length > 0)
                 {
                     var r = inputChars.charCodeAt(0);
