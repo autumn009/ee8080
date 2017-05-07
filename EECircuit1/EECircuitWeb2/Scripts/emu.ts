@@ -69,6 +69,11 @@
         public in(addr: number): number {
             if (addr == 0xf0) {
                 //console.log("f0:"+(inputChars.length + autoTypeQueue.length));
+                if (autoTypeQueue.length == 0 && autoTypeDone) {
+                    var a = autoTypeDone;
+                    autoTypeDone = null;
+                    a();
+                }
                 if ((inputChars.length + autoTypeQueue.length) == 0) {
                     //console.log("waitingInput");
                     waitingInput = true;
@@ -85,11 +90,6 @@
                 if (autoTypeQueue.length > 0) {
                     var r = autoTypeQueue.charCodeAt(0);
                     autoTypeQueue = autoTypeQueue.substring(1, autoTypeQueue.length);
-                    if (autoTypeQueue.length == 0 && autoTypeDone) {
-                        var a = autoTypeDone;
-                        autoTypeDone = null;
-                        a();
-                    }
                     return r;
                 }
                 return "?".charCodeAt(0);
@@ -1125,6 +1125,7 @@
             var t: any = evt.target;
             var ab: ArrayBuffer = t.result;
             var view = new Uint8ClampedArray(ab);
+            //console.log(view[0]);
             for (var i = 0; i < view.length; i++) {
                 virtualMachine.memory.Bytes.write(i + 0x100, view[i]);
             }
