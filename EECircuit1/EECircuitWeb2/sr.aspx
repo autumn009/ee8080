@@ -116,6 +116,7 @@
             <li><a data-rel="close" class="anchor" href="#" id="navpara">parallel In</a></li>
         </ul>
         <p class="close-btn"><a href="#" data-rel="close" data-role="button" data-theme="c" data-icon="delete">Close</a></p>
+        <a data-rel="close" class="anchor" href="/" data-role="button" >Home</a>
     </div>
     <script src="/Scripts/sr.js"></script>
 </asp:Content>

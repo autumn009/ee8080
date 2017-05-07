@@ -255,6 +255,7 @@
             </div>
         </div>
         <a data-rel="close" class="anchor" href="#" data-role="button" data-icon="delete">Close</a>
+        <a data-rel="close" class="anchor" href="/" data-role="button" >Home</a>
     </div>
 
     <div id="popupUpTPA" data-role="popup" data-theme="a">

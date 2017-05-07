@@ -61,7 +61,7 @@
             </asp:ContentPlaceHolder>
             <div data-role="footer" data-position="fixed" data-fullscreen="true" id="myhooter">
                 <footer>
-                    <p>&copy; 2017 EE8080</p>
+                    <p>&copy; 2017 EE8080 [<a href="/" >Home</a>]</p>
                 </footer>
             </div>
         </div>
