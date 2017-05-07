@@ -1001,9 +1001,9 @@
         }
     }
 
-    function loadCpm(afterproc: () => void) {
+    function loadBinary(url:string, afterproc: (ab:ArrayBuffer) => void) {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', "/Content/CPM.bin.exe", true);
+        xhr.open('GET', url, true);
         xhr.responseType = 'blob';
         xhr.onload = function (e) {
             if (xhr.status == 200) {
@@ -1013,10 +1013,7 @@
                 var arrayBuffer;
                 var fileReader = new FileReader();
                 fileReader.onload = function () {
-                    arrayBuffer = this.result;
-                    cpmArray = new Uint8Array(arrayBuffer);
-                    reloadCpm(cpmArray.length);
-                    if (afterproc) afterproc();
+                    if (afterproc) afterproc(this.result);
                 };
                 fileReader.onerror = () => { alert("Error"); };
                 fileReader.readAsArrayBuffer(blob);
@@ -1026,6 +1023,24 @@
             }
         };
         xhr.send();
+    }
+
+    export function loadDisk(drive:number, filename: string, afterproc: () => void) {
+        loadBinary("/Content/" + filename, (arrayBuffer) => {
+            var array = new Uint8Array(arrayBuffer);
+            for (var i = 0; i < array.length; i++) {
+                disk.drives[drive][i] = array[i];
+            }
+            if (afterproc) afterproc();
+        });
+    }
+
+    function loadCpm(afterproc: () => void) {
+        loadBinary("/Content/CPM.bin.exe", (arrayBuffer) => {
+            cpmArray = new Uint8Array(arrayBuffer);
+            reloadCpm(cpmArray.length);
+            if (afterproc) afterproc();
+        });
     }
 
     function setupCpm(afterproc:()=>void) {

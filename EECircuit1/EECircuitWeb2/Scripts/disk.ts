@@ -66,14 +66,35 @@
         localStorage.removeItem(key);
     }
 
+    function isSaveDriveExist(drive: number) {
+        for (var track = 0; track < 77; track++) {
+            var key = "drive" + drive + "track" + track;
+            if (localStorage.getItem(key)) return true;
+        }
+        return false;
+    }
+
     $(document).on("pagecreate", function () {
+        var initdisk = (arg["initdisk"] != undefined);
         var totalSize = 128 * 26 * 77;
         for (var i = 0; i < 4; i++) {
             var buffer = new ArrayBuffer(totalSize);
             var view = new Uint8ClampedArray(buffer);
             drives.push(view);
-            for (var j = 0; j < 77; j++) {
-                trackLoad(i, j, view);
+            if (i == 0 && (initdisk ||!isSaveDriveExist(i))) {
+                emu.loadDisk(i, "CPMDISK.bin.exe", null);
+            }
+            else {
+                if (initdisk) {
+                    for (var j = 0; j < totalSize; j++) {
+                        view[j] = 0xe5;
+                    }
+                }
+                else {
+                    for (var j = 0; j < 77; j++) {
+                        trackLoad(i, j, view);
+                    }
+                }
             }
         }
     });
