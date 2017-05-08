@@ -135,8 +135,11 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\ccdisk1.bin.exe" />
+    <Content Include="Content\ccdisk2.bin.exe" />
     <Content Include="Content\CPMDISK.bin.exe" />
     <Content Include="Content\diag.a80.txt" />
+    <Content Include="Content\F80.bin.exe" />
     <Content Include="Content\images\arrow-u-white.png" />
     <Content Include="Content\images\check-white.png" />
     <Content Include="Content\images\gate\ADDER.png" />
@@ -150,8 +153,11 @@
     <Content Include="Content\images\gate\SELECTOR.png" />
     <Content Include="Content\images\gate\TWOCOMP.png" />
     <Content Include="Content\images\gate\XOR.png" />
+    <Content Include="Content\JRTPascal4.bin.exe" />
     <Content Include="Content\mbasic.bin.exe" />
     <Content Include="Content\Site.css" />
+    <Content Include="Content\tpas30.bin.exe" />
+    <Content Include="Content\zsid.bin.exe" />
     <Content Include="counter.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="emu.aspx" />
