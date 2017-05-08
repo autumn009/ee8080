@@ -176,6 +176,7 @@
                     <button id="vkv" type="button" class="vkey" data-shift="V" data-normal="v"><span class="blabel">X</span></button>
                     <button id="vkb" type="button" class="vkey" data-shift="B" data-normal="b"><span class="blabel">X</span></button>
                     <button id="vkn" type="button" class="vkey" data-shift="N" data-normal="n"><span class="blabel">X</span></button>
+                    <button id="vkm" type="button" class="vkey" data-shift="M" data-normal="m"><span class="blabel">X</span></button>
                     <button id="vklt" type="button" class="vkey" data-shift="&lt;" data-normal=","><span class="blabel">X</span></button>
                     <button id="vkgt" type="button" class="vkey" data-shift="&gt;" data-normal="."><span class="blabel">X</span></button>
                     <button id="vkquestion" type="button" class="vkey" data-shift="?" data-normal="/"><span class="blabel">X</span></button>
