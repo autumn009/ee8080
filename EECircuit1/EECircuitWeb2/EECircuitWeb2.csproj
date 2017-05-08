@@ -150,6 +150,7 @@
     <Content Include="Content\images\gate\SELECTOR.png" />
     <Content Include="Content\images\gate\TWOCOMP.png" />
     <Content Include="Content\images\gate\XOR.png" />
+    <Content Include="Content\mbasic.bin.exe" />
     <Content Include="Content\Site.css" />
     <Content Include="counter.aspx" />
     <Content Include="Default.aspx" />
