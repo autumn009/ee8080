@@ -1215,21 +1215,33 @@
         }, 500);
     }
 
+    function confirmErase(drive: number) {
+        if (window.confirm('This will erase all files in disk-' + String.fromCharCode(drive + 0x41) + '. Are you sure?')) {
+            return false;
+        }
+        return true;
+    }
+
     $("#loadempty").click((evt) => {
+        if (confirmErase(driveForUp)) return;
         disk.initdrive(driveForUp);
         showCompleted();
     });
 
     export function loadDiskWithComplete(filename: string) {
-        var x: any = $("#menu-left");
-        x.panel("close");
-        loadBinary("/Content/" + filename, (arrayBuffer) => {
-            var array = new Uint8Array(arrayBuffer);
-            for (var i = 0; i < array.length; i++) {
-                disk.drives[driveForUp][i] = array[i];
-            }
-            showCompleted();
-        });
+        setTimeout(() => {
+            $("#popupUpDrive").popup("close");
+            var x: any = $("#menu-left");
+            x.panel("close");
+            if (confirmErase(driveForUp)) return;
+            loadBinary("/Content/" + filename, (arrayBuffer) => {
+                var array = new Uint8Array(arrayBuffer);
+                for (var i = 0; i < array.length; i++) {
+                    disk.drives[driveForUp][i] = array[i];
+                }
+                showCompleted();
+            });
+        }, 500);
     }
 
     $("#loadstda").click((evt) => { loadDiskWithComplete("stdA.bin.exe"); });

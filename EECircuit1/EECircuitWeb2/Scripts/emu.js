@@ -1201,20 +1201,33 @@ var emu;
             $("#popupUpCompleted").popup("open");
         }, 500);
     }
+    function confirmErase(drive) {
+        if (window.confirm('This will erase all files in disk-' + String.fromCharCode(drive + 0x41) + '. Are you sure?')) {
+            return false;
+        }
+        return true;
+    }
     $("#loadempty").click(function (evt) {
+        if (confirmErase(driveForUp))
+            return;
         disk.initdrive(driveForUp);
         showCompleted();
     });
     function loadDiskWithComplete(filename) {
-        var x = $("#menu-left");
-        x.panel("close");
-        loadBinary("/Content/" + filename, function (arrayBuffer) {
-            var array = new Uint8Array(arrayBuffer);
-            for (var i = 0; i < array.length; i++) {
-                disk.drives[driveForUp][i] = array[i];
-            }
-            showCompleted();
-        });
+        setTimeout(function () {
+            $("#popupUpDrive").popup("close");
+            var x = $("#menu-left");
+            x.panel("close");
+            if (confirmErase(driveForUp))
+                return;
+            loadBinary("/Content/" + filename, function (arrayBuffer) {
+                var array = new Uint8Array(arrayBuffer);
+                for (var i = 0; i < array.length; i++) {
+                    disk.drives[driveForUp][i] = array[i];
+                }
+                showCompleted();
+            });
+        }, 500);
     }
     emu.loadDiskWithComplete = loadDiskWithComplete;
     $("#loadstda").click(function (evt) { loadDiskWithComplete("stdA.bin.exe"); });
