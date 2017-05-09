@@ -1196,6 +1196,12 @@ var emu;
     $("#popupUpFD3").click(function (evt) {
         driveForUp = 3;
     });
+    $("#loadempty").click(function (evt) {
+        disk.initdrive(driveForUp);
+        setTimeout(function () {
+            $("#popupUpCompleted").popup("open");
+        }, 500);
+    });
     $("#fileUpDrive").change(function (evt) {
         $("#popupUpDrive").popup("close");
         var x = $("#menu-left");

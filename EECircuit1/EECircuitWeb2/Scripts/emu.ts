@@ -1207,6 +1207,16 @@
     $("#popupUpFD3").click((evt) => {
         driveForUp = 3;
     });
+
+    $("#loadempty").click((evt) => {
+        disk.initdrive(driveForUp);
+        setTimeout(() => {
+            $("#popupUpCompleted").popup("open");
+        }, 500);
+    });
+
+
+
     
     $("#fileUpDrive").change((evt) => {
         $("#popupUpDrive").popup("close");

@@ -260,6 +260,7 @@
     </div>
 
     <div id="popupUpTPA" data-role="popup" data-theme="a">
+        <a class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" href="#" data-rel="back">Close</a>
         <label>
             <input type="checkbox" name="auto" checked="checked" id="tpaauto">Auto type of SAVE command
         </label>
@@ -267,7 +268,18 @@
     </div>
 
     <div id="popupUpDrive" data-role="popup" data-theme="a">
+        <a class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" href="#" data-rel="back">Close</a>
         <input type="file" id="fileUpDrive" name="file" />
+        <ul data-role="listview">
+            <li><a data-rel="back" class="anchor" href="#" id="loadempty">Empty</a></li>
+            <li><a data-rel="back" class="anchor" href="#" id="loadstda">Initial Disk-A</a></li>
+            <li><a data-rel="back" class="anchor" href="#" id="loadcpm22">CP/M 2.2 Disk</a></li>
+            <li><a data-rel="back" class="anchor" href="#" id="loadmbasic">MBASIC Disk</a></li>
+        </ul>
+    </div>
+
+    <div id="popupUpCompleted" data-role="popup" data-theme="b">
+        <p style="color:lightskyblue;font-size:larger;">Completed.</p>
     </div>
 
     <script src="/Scripts/vdt.js"></script>

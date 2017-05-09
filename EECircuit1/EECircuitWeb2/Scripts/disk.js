@@ -64,6 +64,14 @@ var disk;
         // 全バイト0xe5のトラックは保存しない。
         localStorage.removeItem(key);
     }
+    function initdrive(drive) {
+        var totalSize = 128 * 26 * 77;
+        var view = disk.drives[drive];
+        for (var j = 0; j < totalSize; j++) {
+            view[j] = 0xe5;
+        }
+    }
+    disk.initdrive = initdrive;
     function isSaveDriveExist(drive) {
         for (var track = 0; track < 77; track++) {
             var key = "drive" + drive + "track" + track;
@@ -84,9 +92,7 @@ var disk;
             }
             else {
                 if (initdisk) {
-                    for (var j = 0; j < totalSize; j++) {
-                        view[j] = 0xe5;
-                    }
+                    initdrive(i);
                 }
                 else {
                     for (var j = 0; j < 77; j++) {

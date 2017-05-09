@@ -66,6 +66,14 @@
         localStorage.removeItem(key);
     }
 
+    export function initdrive(drive: number) {
+        var totalSize = 128 * 26 * 77;
+        var view = drives[drive];
+        for (var j = 0; j < totalSize; j++) {
+            view[j] = 0xe5;
+        }
+    }
+
     function isSaveDriveExist(drive: number) {
         for (var track = 0; track < 77; track++) {
             var key = "drive" + drive + "track" + track;
@@ -86,9 +94,7 @@
             }
             else {
                 if (initdisk) {
-                    for (var j = 0; j < totalSize; j++) {
-                        view[j] = 0xe5;
-                    }
+                    initdrive(i);
                 }
                 else {
                     for (var j = 0; j < 77; j++) {
