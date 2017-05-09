@@ -131,14 +131,20 @@ skip:
 	jmp	cpmb
 
 list:
-	mvi	a,5
-	rst	7
+	push	psw
+	mov	a,c
+	out	0f3h	; Output character in ACC for lst
+	pop	psw
+	ret
 punch:
-	mvi	a,6
-	rst	7
+	push	psw
+	mov	a,c
+	out	0f4h	; Output character in ACC for pun
+	pop	psw
+	ret
 reader:
-	mvi	a,7
-	rst	7
+	in	0f5h	; Input from Rdr
+	ret
 setsec:
 	MOV	A, C
 	STA	iosector

@@ -46,6 +46,24 @@
     var outputCharCount = 0;
 
     class IOUnit {
+        private outputCharLst(code: number) {
+            if (code == 0x0a) return;
+            var s: string = $("#lsttext").val();
+            s += String.fromCharCode(code);
+            if (s.length > 5000) s = s.substring(2);
+            $("#lsttext").val(s);
+            $("#lsttext").keyup();   // 枠を広げるおまじない
+        }
+
+        private outputCharPunch(code: number) {
+            if (code == 0x0a) return;
+            var s: string = $("#rdrtext").val();
+            s += String.fromCharCode(code);
+            if (s.length > 5000) s = s.substring(2);
+            $("#rdrtext").val(s);
+            $("#rdrtext").keyup();   // 枠を広げるおまじない
+        }
+
         private getBitsPortFF(): number {
             var n = 0;
             for (var i = 8 - 1; i >= 0; i--) {
@@ -110,12 +128,41 @@
             if (addr == 0xf4) {
                 return ((autoTypeQueue.length + inputChars.length) == 0) ? 0 : 0xff;
             }
+            if (addr == 0xf5) {
+                var s: string = $("#rdrtext").val();
+                // 以下の1行は動作しない。修正を要する
+                s = s.replace("/\n/g", "\r\n");
+                var rdrPointer:number = Number($("#rdrPointer").text());
+                var rc = s.charCodeAt(rdrPointer - 1);
+                rdrPointer++;
+                $("#rdrPointer").text(rdrPointer);
+                if (!rc) rc = 0x1a;
+                return rc;
+            }
             if (addr == 0xff) return this.getBitsPortFF();
             return 0;
         }
         public out(addr: number, v: number): void {
             if (addr == 0xf0) {
                 vdt.outputChar(v);
+                if (v == 0x0d || outputCharCount >= 10) {
+                    screenRefreshRequest = true;
+                    outputCharCount = 0;
+                }
+                else
+                    outputCharCount++;
+            }
+            if (addr == 0xf3) {
+                this.outputCharLst(v);
+                if (v == 0x0d || outputCharCount >= 10) {
+                    screenRefreshRequest = true;
+                    outputCharCount = 0;
+                }
+                else
+                    outputCharCount++;
+            }
+            if (addr == 0xf4) {
+                this.outputCharPunch(v);
                 if (v == 0x0d || outputCharCount >= 10) {
                     screenRefreshRequest = true;
                     outputCharCount = 0;
@@ -1060,6 +1107,10 @@
         });
     }
 
+    $("#rdrReset").click(() => {
+        $("#rdrPointer").text("1");
+    });
+
     $("#navtest2").click(() => {
         loadTest2();
     });
@@ -1092,6 +1143,18 @@
         $("#ide").css("display", "inherit");
         $("#logicname").text("IDE");
     }
+    function setLst() {
+        $(".mypane").css("display", "none");
+        $("#lst").css("display", "inherit");
+        $("#logicname").text("Printer");
+        $("#lsttext").keyup();   // 枠を広げるおまじない
+    }
+    function setRdr() {
+        $(".mypane").css("display", "none");
+        $("#punrdr").css("display", "inherit");
+        $("#logicname").text("Puncher/Reader");
+        $("#rdrtext").keyup();   // 枠を広げるおまじない
+    }
 
     $("#navcon").click(() => {
         setConsole();
@@ -1103,6 +1166,14 @@
 
     $("#navide").click(() => {
         setIde();
+    });
+
+    $("#navlst").click(() => {
+        setLst();
+    });
+
+    $("#navrdr").click(() => {
+        setRdr();
     });
 
     $("#navreset").click(() => {

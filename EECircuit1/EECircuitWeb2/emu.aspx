@@ -211,6 +211,14 @@
             <label for="sourceCode">Source Code:</label>
             <textarea name="sourceCode" id="sourceCode" data-autogrow="false" style="margin: 0px 0px 0px 0px"></textarea>
         </div>
+        <div id="lst" class="mypane">
+            <textarea id="lsttext"></textarea>
+        </div>
+
+        <div id="punrdr" class="mypane">
+            <p>Pointer <span id="rdrPointer">1</span><button type="button" data-inline="true" id="rdrReset">RESET</button></p>
+            <textarea id="rdrtext"></textarea>
+        </div>
     </div>
 
     <div data-role="panel" id="menu-left" data-theme="b" data-display="push" data-position="left">
@@ -219,6 +227,8 @@
                 <h2>Modes</h2>
                 <ul data-role="listview">
                     <li><a data-rel="close" class="anchor modemenu" href="#" id="navcon">Console</a></li>
+                    <li><a data-rel="close" class="anchor modemenu" href="#" id="navlst">Printer</a></li>
+                    <li><a data-rel="close" class="anchor modemenu" href="#" id="navrdr">Puncher/Reader</a></li>
                     <li><a data-rel="close" class="anchor modemenu" href="#" id="navmon">Monitor</a></li>
                     <li><a data-rel="close" class="anchor modemenu" href="#" id="navide">Ide</a></li>
                     <li><a data-rel="close" class="anchor modemenu" href="#" id="navecho">Echo Back</a></li>
