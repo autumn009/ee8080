@@ -323,6 +323,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\common.ts" />
     <TypeScriptCompile Include="Scripts\counter.ts" />
+    <TypeScriptCompile Include="Scripts\Default.ts" />
     <TypeScriptCompile Include="Scripts\disk.ts" />
     <TypeScriptCompile Include="Scripts\emu.ts" />
     <TypeScriptCompile Include="Scripts\logic.ts" />

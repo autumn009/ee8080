@@ -7,8 +7,11 @@
         <li><a href="/sr.aspx">Shift Register</a></li>
         <li><a href="/seripara.aspx">Serial/Parallel</a></li>
         <li><a href="/emu.aspx?cpm=">CP/M</a></li>
-        <li><a href="/emu.aspx?cpm=&initdisk=">CP/M (with disk initialize)</a></li>
+        <li><a href="#" id="warnbutton">CP/M (with disk initialize)</a></li>
         <li><a href="/emu.aspx">CPU Emulation</a></li>
         <li><a href="/emu.aspx?cpmdev=">[BIOS dev]</a></li>
     </ul>
+    <script src="/Scripts/Default.js">
+
+    </script>
 </asp:Content>
