@@ -1217,15 +1217,15 @@ var emu;
         });
     }
     emu.loadDiskWithComplete = loadDiskWithComplete;
-    $("#loadstda").click(function (evt) {
-        loadDiskWithComplete("stdA.bin.exe");
-    });
-    $("#loadcpm22").click(function (evt) {
-        loadDiskWithComplete("CPMDISK.bin.exe");
-    });
-    $("#loadmbasic").click(function (evt) {
-        loadDiskWithComplete("mbasic.bin.exe");
-    });
+    $("#loadstda").click(function (evt) { loadDiskWithComplete("stdA.bin.exe"); });
+    $("#loadcpm22").click(function (evt) { loadDiskWithComplete("CPMDISK.bin.exe"); });
+    $("#loadmbasic").click(function (evt) { loadDiskWithComplete("mbasic.bin.exe"); });
+    $("#loadf80").click(function (evt) { loadDiskWithComplete("F80.bin.exe"); });
+    $("#loadjrt").click(function (evt) { loadDiskWithComplete("JRTPascal4.bin.exe"); });
+    $("#loadwm").click(function (evt) { loadDiskWithComplete("wrdmastr.bin.exe"); });
+    $("#loadzsid").click(function (evt) { loadDiskWithComplete("zsid.bin.exe"); });
+    $("#loadcc1").click(function (evt) { loadDiskWithComplete("ccdisk1.bin.exe"); });
+    $("#loadcc2").click(function (evt) { loadDiskWithComplete("ccdisk2.bin.exe"); });
     $("#fileUpDrive").change(function (evt) {
         $("#popupUpDrive").popup("close");
         var x = $("#menu-left");

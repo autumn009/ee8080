@@ -1232,17 +1232,15 @@
         });
     }
 
-    $("#loadstda").click((evt) => {
-        loadDiskWithComplete("stdA.bin.exe");
-    });
-
-    $("#loadcpm22").click((evt) => {
-        loadDiskWithComplete("CPMDISK.bin.exe");
-    });
-    $("#loadmbasic").click((evt) => {
-        loadDiskWithComplete("mbasic.bin.exe");
-    });
-
+    $("#loadstda").click((evt) => { loadDiskWithComplete("stdA.bin.exe"); });
+    $("#loadcpm22").click((evt) => { loadDiskWithComplete("CPMDISK.bin.exe"); });
+    $("#loadmbasic").click((evt) => { loadDiskWithComplete("mbasic.bin.exe"); });
+    $("#loadf80").click((evt) => { loadDiskWithComplete("F80.bin.exe"); });
+    $("#loadjrt").click((evt) => { loadDiskWithComplete("JRTPascal4.bin.exe"); });
+    $("#loadwm").click((evt) => { loadDiskWithComplete("wrdmastr.bin.exe"); });
+    $("#loadzsid").click((evt) => { loadDiskWithComplete("zsid.bin.exe"); });
+    $("#loadcc1").click((evt) => { loadDiskWithComplete("ccdisk1.bin.exe"); });
+    $("#loadcc2").click((evt) => { loadDiskWithComplete("ccdisk2.bin.exe"); });
     
     $("#fileUpDrive").change((evt) => {
         $("#popupUpDrive").popup("close");

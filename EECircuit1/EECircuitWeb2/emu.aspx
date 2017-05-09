@@ -272,9 +272,15 @@
         <input type="file" id="fileUpDrive" name="file" />
         <ul data-role="listview">
             <li><a data-rel="back" class="anchor" href="#" id="loadempty">Empty</a></li>
-            <li><a data-rel="back" class="anchor" href="#" id="loadstda">Initial Disk-A</a></li>
-            <li><a data-rel="back" class="anchor" href="#" id="loadcpm22">CP/M 2.2 Disk</a></li>
-            <li><a data-rel="back" class="anchor" href="#" id="loadmbasic">MBASIC Disk</a></li>
+            <li><a data-rel="back" class="anchor" href="#" id="loadstda">Initial EE8080 Disk</a></li>
+            <li><a data-rel="back" class="anchor" href="#" id="loadcpm22">CP/M 2.2</a></li>
+            <li><a data-rel="back" class="anchor" href="#" id="loadmbasic">Microsoft BASIC</a></li>
+            <li><a data-rel="back" class="anchor" href="#" id="loadf80">Microsoft Fortran 80</a></li>
+            <li><a data-rel="back" class="anchor" href="#" id="loadjrt">JRT Pascal 4.0</a></li>
+            <li><a data-rel="back" class="anchor" href="#" id="loadwm">Word Master</a></li>
+            <li><a data-rel="back" class="anchor" href="#" id="loadzsid">zsid</a></li>
+            <li><a data-rel="back" class="anchor" href="#" id="loadcc1">Creative Computing's BASIC Games(1)</a></li>
+            <li><a data-rel="back" class="anchor" href="#" id="loadcc2">Creative Computing's BASIC Games(2)</a></li>
         </ul>
     </div>
 
