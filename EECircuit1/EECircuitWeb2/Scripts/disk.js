@@ -88,7 +88,7 @@ var disk;
             var view = new Uint8ClampedArray(buffer);
             disk.drives.push(view);
             if (i == 0 && (initdisk || !isSaveDriveExist(i))) {
-                emu.loadDisk(i, "CPMDISK.bin.exe", null);
+                emu.loadDisk(i, "stdA.bin.exe", null);
             }
             else {
                 if (initdisk) {

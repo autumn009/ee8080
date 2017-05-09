@@ -156,6 +156,7 @@
     <Content Include="Content\JRTPascal4.bin.exe" />
     <Content Include="Content\mbasic.bin.exe" />
     <Content Include="Content\Site.css" />
+    <Content Include="Content\stdA.bin.exe" />
     <Content Include="Content\tpas30.bin.exe" />
     <Content Include="Content\wrdmastr.bin.exe" />
     <Content Include="Content\zsid.bin.exe" />

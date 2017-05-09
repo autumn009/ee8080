@@ -1196,11 +1196,35 @@ var emu;
     $("#popupUpFD3").click(function (evt) {
         driveForUp = 3;
     });
-    $("#loadempty").click(function (evt) {
-        disk.initdrive(driveForUp);
+    function showCompleted() {
         setTimeout(function () {
             $("#popupUpCompleted").popup("open");
         }, 500);
+    }
+    $("#loadempty").click(function (evt) {
+        disk.initdrive(driveForUp);
+        showCompleted();
+    });
+    function loadDiskWithComplete(filename) {
+        var x = $("#menu-left");
+        x.panel("close");
+        loadBinary("/Content/" + filename, function (arrayBuffer) {
+            var array = new Uint8Array(arrayBuffer);
+            for (var i = 0; i < array.length; i++) {
+                disk.drives[driveForUp][i] = array[i];
+            }
+            showCompleted();
+        });
+    }
+    emu.loadDiskWithComplete = loadDiskWithComplete;
+    $("#loadstda").click(function (evt) {
+        loadDiskWithComplete("stdA.bin.exe");
+    });
+    $("#loadcpm22").click(function (evt) {
+        loadDiskWithComplete("CPMDISK.bin.exe");
+    });
+    $("#loadmbasic").click(function (evt) {
+        loadDiskWithComplete("mbasic.bin.exe");
     });
     $("#fileUpDrive").change(function (evt) {
         $("#popupUpDrive").popup("close");

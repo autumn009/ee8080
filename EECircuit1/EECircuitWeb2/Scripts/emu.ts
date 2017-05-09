@@ -1208,14 +1208,40 @@
         driveForUp = 3;
     });
 
-    $("#loadempty").click((evt) => {
-        disk.initdrive(driveForUp);
+    function showCompleted()
+    {
         setTimeout(() => {
             $("#popupUpCompleted").popup("open");
         }, 500);
+    }
+
+    $("#loadempty").click((evt) => {
+        disk.initdrive(driveForUp);
+        showCompleted();
     });
 
+    export function loadDiskWithComplete(filename: string) {
+        var x: any = $("#menu-left");
+        x.panel("close");
+        loadBinary("/Content/" + filename, (arrayBuffer) => {
+            var array = new Uint8Array(arrayBuffer);
+            for (var i = 0; i < array.length; i++) {
+                disk.drives[driveForUp][i] = array[i];
+            }
+            showCompleted();
+        });
+    }
 
+    $("#loadstda").click((evt) => {
+        loadDiskWithComplete("stdA.bin.exe");
+    });
+
+    $("#loadcpm22").click((evt) => {
+        loadDiskWithComplete("CPMDISK.bin.exe");
+    });
+    $("#loadmbasic").click((evt) => {
+        loadDiskWithComplete("mbasic.bin.exe");
+    });
 
     
     $("#fileUpDrive").change((evt) => {
