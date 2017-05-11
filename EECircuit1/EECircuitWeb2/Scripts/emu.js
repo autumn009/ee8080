@@ -134,9 +134,16 @@ var emu;
             if (addr == 0xf5) {
                 var s = $("#rdrtext").val();
                 // 以下の1行は動作しない。修正を要する
-                s = s.replace("/\n/g", "\r\n");
+                var s0 = "";
+                for (var i = 0; i < s.length; i++) {
+                    if (s.charAt(i) == "\n")
+                        s0 += "\r\n";
+                    else
+                        s0 += s.charAt(i);
+                }
+                //s = s.replace("/\n/g", "\r\n");
                 var rdrPointer = Number($("#rdrPointer").text());
-                var rc = s.charCodeAt(rdrPointer - 1);
+                var rc = s0.charCodeAt(rdrPointer - 1);
                 rdrPointer++;
                 $("#rdrPointer").text(rdrPointer);
                 if (!rc)
