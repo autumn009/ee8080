@@ -38,7 +38,7 @@ var vdt;
                 return;
             }
             else {
-                alert("Unsupporet Escape Sequence ESC+\\" + charCode);
+                alert("Unsupporet Escape Sequence ESC+0" + charCode.toString(16) + "H");
             }
             escapeMode = escapeModes.notMode;
         }
