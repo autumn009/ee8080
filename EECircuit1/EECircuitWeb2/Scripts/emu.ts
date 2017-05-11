@@ -84,6 +84,8 @@
             $("#outPortFF").text(createBitsString(ar));
         }
 
+        private rdrImage: string = null;
+
         public in(addr: number): number {
             if (addr == 0xf0) {
                 //console.log("f0:"+(inputChars.length + autoTypeQueue.length));
@@ -129,18 +131,20 @@
                 return ((autoTypeQueue.length + inputChars.length) == 0) ? 0 : 0xff;
             }
             if (addr == 0xf5) {
-                var s: string = $("#rdrtext").val();
-                // 以下の1行は動作しない。修正を要する
-                var s0: string = "";
-                for (var i = 0; i < s.length; i++) {
-                    if (s.charAt(i) == "\n")
-                        s0 += "\r\n";
-                    else
-                        s0 += s.charAt(i);
+                if (this.rdrImage == null)
+                {
+                    var s = $("#rdrtext").val();
+                    var s0: string = "";
+                    for (var i = 0; i < s.length; i++) {
+                        if (s.charAt(i) == "\n")
+                            s0 += "\r\n";
+                        else
+                            s0 += s.charAt(i);
+                    }
+                    this.rdrImage = s0;
                 }
-                //s = s.replace("/\n/g", "\r\n");
                 var rdrPointer:number = Number($("#rdrPointer").text());
-                var rc = s0.charCodeAt(rdrPointer - 1);
+                var rc = this.rdrImage.charCodeAt(rdrPointer - 1);
                 rdrPointer++;
                 $("#rdrPointer").text(rdrPointer);
                 if (!rc) rc = 0x1a;
@@ -176,6 +180,7 @@
                 }
                 else
                     outputCharCount++;
+                this.rdrImage = null;
             }
             if (addr == 0xf2) reloadCpm(0xf200 - 0xdc00);
             if (addr == 0xff) this.putBitsPortFF(v);

@@ -52,6 +52,7 @@ var emu;
     var outputCharCount = 0;
     var IOUnit = (function () {
         function IOUnit() {
+            this.rdrImage = null;
         }
         IOUnit.prototype.outputCharLst = function (code) {
             if (code == 0x0a)
@@ -132,18 +133,19 @@ var emu;
                 return ((autoTypeQueue.length + inputChars.length) == 0) ? 0 : 0xff;
             }
             if (addr == 0xf5) {
-                var s = $("#rdrtext").val();
-                // 以下の1行は動作しない。修正を要する
-                var s0 = "";
-                for (var i = 0; i < s.length; i++) {
-                    if (s.charAt(i) == "\n")
-                        s0 += "\r\n";
-                    else
-                        s0 += s.charAt(i);
+                if (this.rdrImage == null) {
+                    var s = $("#rdrtext").val();
+                    var s0 = "";
+                    for (var i = 0; i < s.length; i++) {
+                        if (s.charAt(i) == "\n")
+                            s0 += "\r\n";
+                        else
+                            s0 += s.charAt(i);
+                    }
+                    this.rdrImage = s0;
                 }
-                //s = s.replace("/\n/g", "\r\n");
                 var rdrPointer = Number($("#rdrPointer").text());
-                var rc = s0.charCodeAt(rdrPointer - 1);
+                var rc = this.rdrImage.charCodeAt(rdrPointer - 1);
                 rdrPointer++;
                 $("#rdrPointer").text(rdrPointer);
                 if (!rc)
@@ -181,6 +183,7 @@ var emu;
                 }
                 else
                     outputCharCount++;
+                this.rdrImage = null;
             }
             if (addr == 0xf2)
                 reloadCpm(0xf200 - 0xdc00);
