@@ -267,6 +267,38 @@
             commonInputRowCode("C".charCodeAt(0) - 0x40);
             return false;
         }
+        else if (evt.keyCode == 45)   // Insert
+        {
+            commonInputRowCode("O".charCodeAt(0) - 0x40);
+            return false;
+        }
+        else if (evt.keyCode == 46)   // Delete
+        {
+            commonInputRowCode(0x7f);
+            return false;
+        }
+        else if (evt.keyCode == 36 && evt.ctrlKey)   // Ctrl+Home
+        {
+            commonInputRowCode(0x1e);
+            return false;
+        }
+        else if (evt.keyCode == 35 && evt.ctrlKey)   // Ctrl+End
+        {
+            commonInputRowCode(0x1e);
+            commonInputRowCode(0x1e);
+            return false;
+        }
+        else if (evt.keyCode == 36 && !evt.ctrlKey)   // Home
+        {
+            commonInputRowCode("B".charCodeAt(0) - 0x40);
+            return false;
+        }
+        else if (evt.keyCode == 35 && !evt.ctrlKey)   // End
+        {
+            commonInputRowCode("B".charCodeAt(0) - 0x40);
+            commonInputRowCode("B".charCodeAt(0) - 0x40);
+            return false;
+        }
         else if (evt.keyCode >= 64 && evt.keyCode <= 90 && evt.ctrlKey) {
             commonInputRowCode(evt.keyCode - 64);
             return false;
