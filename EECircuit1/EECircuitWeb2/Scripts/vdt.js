@@ -222,20 +222,8 @@ var vdt;
             commonInputRowCode(9);
             return false;
         }
-        else if (evt.keyCode == 67 && evt.ctrlKey) {
-            commonInputRowCode(3);
-            return false;
-        }
-        else if (evt.keyCode == 80 && evt.ctrlKey) {
-            commonInputRowCode(0x10);
-            return false;
-        }
-        else if (evt.keyCode == 81 && evt.ctrlKey) {
-            commonInputRowCode(0x11);
-            return false;
-        }
-        else if (evt.keyCode == 83 && evt.ctrlKey) {
-            commonInputRowCode(0x13);
+        else if (evt.keyCode >= 64 && evt.keyCode <= 90 && evt.ctrlKey) {
+            commonInputRowCode(evt.keyCode - 64);
             return false;
         }
         return true;
