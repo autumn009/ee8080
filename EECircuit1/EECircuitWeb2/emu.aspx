@@ -120,6 +120,7 @@
             </div>
             <div id="vkeyboard">
                 <fieldset id="kbd1" class="kbdl" data-role="controlgroup" data-type="horizontal" data-mini="true">
+                    <button id="vkesc" type="button" class="vkey" data-normal="ESC"><span class="blabel">X</span></button>
                     <button id="vk1" type="button" class="vkey" data-shift="!" data-normal="1"><span class="blabel">X</span></button>
                     <button id="vk2" type="button" class="vkey" data-shift="&quot;" data-normal="2"><span class="blabel">X</span></button>
                     <button id="vk3" type="button" class="vkey" data-shift="#" data-normal="3"><span class="blabel">X</span></button>
@@ -138,7 +139,7 @@
                     <button id="vkbs" type="button" class="vkey" data-normal="BS"><span class="blabel">X</span></button>
                 </fieldset>
                 <fieldset id="kbd2" class="kbdl" data-role="controlgroup" data-type="horizontal" data-mini="true">
-                    <button id="vkesc" type="button" class="vkey" data-normal="ESC"><span class="blabel">X</span></button>
+                    <button id="vktab" type="button" class="vkey" data-normal="TAB"><span class="blabel">X</span></button>
                     <button id="vkq" type="button" class="vkey" data-shift="Q" data-normal="q"><span class="blabel">X</span></button>
                     <button id="vkw" type="button" class="vkey" data-shift="W" data-normal="w"><span class="blabel">X</span></button>
                     <button id="vke" type="button" class="vkey" data-shift="E" data-normal="e"><span class="blabel">X</span></button>

@@ -232,6 +232,11 @@
             commonInputRowCode(8);
             return false;
         }
+        else if (evt.keyCode == 9)   // TAB
+        {
+            commonInputRowCode(9);
+            return false;
+        }
         else if (evt.keyCode == 67 && evt.ctrlKey)
         {
             commonInputRowCode(3);
@@ -335,6 +340,8 @@
                 commonInputRowCode(0x20);
             else if (keytop == "BS")
                 commonInputRowCode(0x08);
+            else if (keytop == "TAB")
+                commonInputRowCode(0x09);
             else if (keytop == "Enter")
                 commonInputRowCode(0x0d);
             else if (keytop == "LF")
