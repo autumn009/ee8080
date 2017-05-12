@@ -32,6 +32,7 @@
     }
 
     export function outputChar(charCode: number) {
+        //console.log(charCode.toString(16));
         if (escapeMode == escapeModes.waiting2ndChar) {
             if (charCode == "=".charCodeAt(0))
             {
@@ -39,7 +40,7 @@
                 return;
             }
             else {
-                alert("Unsupporet Escape Sequence ESC+0" + charCode.toString(16) + "H");
+                console.log("Unsupporet Escape Sequence ESC+0" + charCode.toString(16) + "H");
             }
             escapeMode = escapeModes.notMode;
         }

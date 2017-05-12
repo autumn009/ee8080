@@ -32,13 +32,14 @@ var vdt;
     }
     vdt.outputString = outputString;
     function outputChar(charCode) {
+        //console.log(charCode.toString(16));
         if (escapeMode == escapeModes.waiting2ndChar) {
             if (charCode == "=".charCodeAt(0)) {
                 escapeMode = escapeModes.waitingRow;
                 return;
             }
             else {
-                alert("Unsupporet Escape Sequence ESC+0" + charCode.toString(16) + "H");
+                console.log("Unsupporet Escape Sequence ESC+0" + charCode.toString(16) + "H");
             }
             escapeMode = escapeModes.notMode;
         }
