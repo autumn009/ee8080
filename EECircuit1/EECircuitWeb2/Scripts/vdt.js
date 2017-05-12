@@ -222,6 +222,30 @@ var vdt;
             commonInputRowCode(9);
             return false;
         }
+        else if (evt.keyCode == 37) {
+            commonInputRowCode("S".charCodeAt(0) - 0x40);
+            return false;
+        }
+        else if (evt.keyCode == 38) {
+            commonInputRowCode("E".charCodeAt(0) - 0x40);
+            return false;
+        }
+        else if (evt.keyCode == 39) {
+            commonInputRowCode("D".charCodeAt(0) - 0x40);
+            return false;
+        }
+        else if (evt.keyCode == 40) {
+            commonInputRowCode("X".charCodeAt(0) - 0x40);
+            return false;
+        }
+        else if (evt.keyCode == 33) {
+            commonInputRowCode("R".charCodeAt(0) - 0x40);
+            return false;
+        }
+        else if (evt.keyCode == 34) {
+            commonInputRowCode("C".charCodeAt(0) - 0x40);
+            return false;
+        }
         else if (evt.keyCode >= 64 && evt.keyCode <= 90 && evt.ctrlKey) {
             commonInputRowCode(evt.keyCode - 64);
             return false;
