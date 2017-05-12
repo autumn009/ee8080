@@ -38,6 +38,9 @@ var vdt;
                 escapeMode = escapeModes.waitingRow;
                 return;
             }
+            else if (charCode == 0x2a) {
+                clearScreen();
+            }
             else {
                 console.log("Unsupporet Escape Sequence ESC+0" + charCode.toString(16) + "H");
             }
