@@ -326,7 +326,7 @@ var vdt;
                 commonInputRowCode(0x7f);
         });
         clearScreen();
-        outputString("ADM-3A Emulation Ready\r\n");
+        outputString("Subset of ADM-3A Emulation Ready\r\n");
     });
 })(vdt || (vdt = {}));
 //# sourceMappingURL=vdt.js.map
