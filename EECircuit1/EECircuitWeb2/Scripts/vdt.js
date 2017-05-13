@@ -103,9 +103,9 @@ var vdt;
                 outputChar(charCode + 0x40);
                 return;
             }
-            else if (charCode > 0x7f) {
-                charCode = "?".charCodeAt(0);
-            }
+            //else if (charCode > 0x7f) {
+            //charCode = "?".charCodeAt(0);
+            //}
             internalOutputChar(charCode);
             cursorNext();
         }
