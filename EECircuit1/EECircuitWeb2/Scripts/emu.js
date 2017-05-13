@@ -1317,7 +1317,9 @@ var emu;
     $("#loadf80").click(function (evt) { loadDiskWithComplete("F80.bin.exe"); });
     $("#loadjrt").click(function (evt) { loadDiskWithComplete("JRTPascal4.bin.exe"); });
     $("#loadwm").click(function (evt) { loadDiskWithComplete("wrdmastr.bin.exe"); });
-    $("#loadzsid").click(function (evt) { loadDiskWithComplete("zsid.bin.exe"); });
+    // comment out after Z80 supported
+    //$("#loadzsid").click((evt) => { loadDiskWithComplete("zsid.bin.exe"); });
+    //$("#loadtpas30").click((evt) => { loadDiskWithComplete("tpas30.bin.exe"); });
     $("#loadcc1").click(function (evt) { loadDiskWithComplete("ccdisk1.bin.exe"); });
     $("#loadcc2").click(function (evt) { loadDiskWithComplete("ccdisk2.bin.exe"); });
     $("#fileUpDrive").change(function (evt) {

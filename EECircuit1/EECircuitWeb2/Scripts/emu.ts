@@ -1333,7 +1333,9 @@
     $("#loadf80").click((evt) => { loadDiskWithComplete("F80.bin.exe"); });
     $("#loadjrt").click((evt) => { loadDiskWithComplete("JRTPascal4.bin.exe"); });
     $("#loadwm").click((evt) => { loadDiskWithComplete("wrdmastr.bin.exe"); });
-    $("#loadzsid").click((evt) => { loadDiskWithComplete("zsid.bin.exe"); });
+    // comment out after Z80 supported
+    //$("#loadzsid").click((evt) => { loadDiskWithComplete("zsid.bin.exe"); });
+    //$("#loadtpas30").click((evt) => { loadDiskWithComplete("tpas30.bin.exe"); });
     $("#loadcc1").click((evt) => { loadDiskWithComplete("ccdisk1.bin.exe"); });
     $("#loadcc2").click((evt) => { loadDiskWithComplete("ccdisk2.bin.exe"); });
     

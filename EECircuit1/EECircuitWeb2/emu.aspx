@@ -289,7 +289,6 @@
             <li><a data-rel="back" class="anchor" href="#" id="loadf80">Microsoft Fortran 80</a></li>
             <li><a data-rel="back" class="anchor" href="#" id="loadjrt">JRT Pascal 4.0</a></li>
             <li><a data-rel="back" class="anchor" href="#" id="loadwm">Word Master</a></li>
-            <li><a data-rel="back" class="anchor" href="#" id="loadzsid">zsid</a></li>
             <li><a data-rel="back" class="anchor" href="#" id="loadcc1">Creative Computing's BASIC Games(1)</a></li>
             <li><a data-rel="back" class="anchor" href="#" id="loadcc2">Creative Computing's BASIC Games(2)</a></li>
         </ul>
