@@ -533,12 +533,14 @@ next:
 	jnz	fail
 
 ; test rnc again
+	stc
 	mvi	a,80h
 	call	sub4
 	mov	a,b
 	cpi	2
 	jnz	fail
 
+	stc
 	mvi	a,20h
 	call	sub4
 	mov	a,b
