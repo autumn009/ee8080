@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var emu;
 (function (emu) {
     emu.superTrap = false;
-    emu.trace = false;
+    //export var trace: boolean = false;
     var waitingInput = false;
     var inputChars = "";
     var screenRefreshRequest = false;
@@ -16,7 +16,7 @@ var emu;
         }
         DelayedTraceBox.prototype.add = function (msg) {
             this.lines.push(msg);
-            if (msg.length > 100) {
+            if (this.lines.length > 100) {
                 this.lines.shift();
             }
         };
@@ -274,7 +274,7 @@ var emu;
                 this.value = 0;
         };
         Register.prototype.randomInitialize = function () {
-            this.value = Math.random() * this.upperLimit;
+            this.value = Math.floor(Math.random() * this.upperLimit);
         };
         return Register;
     }());
@@ -434,6 +434,7 @@ var emu;
             this.tempReg = new TempReg();
             this.regarray = new RegisterArray();
             this.flags = new FlagFlipFlop();
+            this.lastval = 65536;
         }
         i8080.prototype.update = function () {
             $("#regA").text(dec2hex(this.accumulator.getValue(), 2));
@@ -696,10 +697,26 @@ var emu;
                     }, 0);
                     return;
                 }
-                if (emu.trace) {
-                    console.log("pc=" + emu.virtualMachine.cpu.regarray.pc.getValue().toString(16));
-                }
-                tracebox.add("pc=" + emu.virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + emu.virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                //if (trace) {
+                //    console.log("pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16));
+                //}
+                //tracebox.add("pc="+virtualMachine.cpu.regarray.pc.getValue().toString(16)+" sp=" +virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                //var sp = virtualMachine.cpu.regarray.sp.getValue();
+                //if (sp < 0x8000 && sp > 0x100)
+                //{
+                //    this.hlt();
+                //    return;
+                //}
+                //if (sp != Math.ceil(sp)) {
+                //    tracebox.add("sp="+sp.toString());
+                //    this.hlt();
+                //    return;
+                //}
+                //var sh = sp >> 8;
+                //if (sp < 0xc000 && Math.abs(sh-this.lastval) >=2) {
+                //    tracebox.add("sh=" + sh.toString(16) + " sp=" + sp.toString(16));
+                //    this.lastval = sh;
+                //}
                 var machinCode1 = this.fetchNextByte();
                 var g1 = machinCode1 >> 6;
                 var g2 = (machinCode1 >> 3) & 0x7;
@@ -717,7 +734,12 @@ var emu;
                     else if (g3 == 1) {
                         if ((g2 & 1) == 0) {
                             if (g2 == 0x6) {
-                                this.regarray.sp.setValue(this.fetchNextWord());
+                                var sp = this.fetchNextWord();
+                                //if (sp != Math.ceil(sp)) {
+                                //    this.hlt();
+                                //    return;
+                                //}
+                                this.regarray.sp.setValue(sp);
                             }
                             else {
                                 this.setRegister(g2 + 1, this.fetchNextByte());

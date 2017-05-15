@@ -1,7 +1,7 @@
 ﻿namespace emu {
     export var virtualMachine: ee8080;
     export var superTrap: boolean = false;
-    export var trace: boolean = false;
+    //export var trace: boolean = false;
     var waitingInput = false;
     var inputChars = "";
     var screenRefreshRequest = false;
@@ -10,7 +10,7 @@
         private lines: string[] = [];
         public add(msg: string) {
             this.lines.push(msg);
-            if (msg.length > 100) {
+            if (this.lines.length > 100) {
                 this.lines.shift();
             }
         }
@@ -254,7 +254,7 @@
             if (this.value > this.upperLimit) this.value = 0;
         }
         public randomInitialize() {
-            this.value = Math.random() * this.upperLimit;
+            this.value = Math.floor(Math.random() * this.upperLimit);
         }
     }
     class Register8 extends Register {
@@ -608,6 +608,7 @@
             emu.setMonitor();
             tracebox.dump();
         }
+        private lastval = 65536;
 
         public runMain() {
             vdt.inputFunc = (num) => {
@@ -632,10 +633,27 @@
                     }, 0);
                     return;
                 }
-                if (trace) {
-                    console.log("pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16));
-                }
-                tracebox.add("pc="+virtualMachine.cpu.regarray.pc.getValue().toString(16)+" sp=" +virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                //if (trace) {
+                //    console.log("pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16));
+                //}
+                //tracebox.add("pc="+virtualMachine.cpu.regarray.pc.getValue().toString(16)+" sp=" +virtualMachine.cpu.regarray.sp.getValue().toString(16));
+
+                //var sp = virtualMachine.cpu.regarray.sp.getValue();
+                //if (sp < 0x8000 && sp > 0x100)
+                //{
+                //    this.hlt();
+                //    return;
+                //}
+                //if (sp != Math.ceil(sp)) {
+                //    tracebox.add("sp="+sp.toString());
+                //    this.hlt();
+                //    return;
+                //}
+                //var sh = sp >> 8;
+                //if (sp < 0xc000 && Math.abs(sh-this.lastval) >=2) {
+                //    tracebox.add("sh=" + sh.toString(16) + " sp=" + sp.toString(16));
+                //    this.lastval = sh;
+                //}
 
                 var machinCode1 = this.fetchNextByte();
                 var g1 = machinCode1 >> 6;
@@ -658,7 +676,13 @@
                         if ((g2 & 1) == 0) // LXI
                         {
                             if (g2 == 0x6) {    // LXI SP,
-                                this.regarray.sp.setValue(this.fetchNextWord());
+                                var sp = this.fetchNextWord();
+                                //if (sp != Math.ceil(sp)) {
+                                //    this.hlt();
+                                //    return;
+                                //}
+                                this.regarray.sp.setValue(sp);
+                                //tracebox.add("lxi pc="+virtualMachine.cpu.regarray.pc.getValue().toString(16)+" sp=" +virtualMachine.cpu.regarray.sp.getValue().toString(16));
                             }
                             else {  // LXI B/D/H,
                                 this.setRegister(g2 + 1, this.fetchNextByte());
@@ -717,6 +741,10 @@
                         else // DEX
                             hl--;
                         this.regarray.setRegisterPairValue(g2 >> 1, hl & 0xffff);
+                        //if ((g2 >> 1) == 3)
+                        //{
+                            //tracebox.add("inx/dex pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                        //}
                     }
                     else if (g3 == 4) { // INR
                         var val = this.getRegister(g2);
@@ -850,15 +878,18 @@
                     if (g3 == 0) {  // Rxx
                         if (this.condCommon(g2)) {
                             this.regarray.pc.setValue(this.popCommon());
+                            //tracebox.add("rxx pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                     }
                     else if (g3 == 1) {
                         if ((g2 & 1) == 0) // POP
                         {
                             this.setRegisterPairBDHPSW(g2 & 6, this.popCommon());
+                            //tracebox.add("pop pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 1) { // RET
                             this.regarray.pc.setValue(this.popCommon());
+                            //tracebox.add("ret pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 5) // PCHL
                         {
@@ -867,6 +898,7 @@
                         else if (g2 == 7) // SPHL
                         {
                             this.regarray.sp.setValue(this.regarray.getRegisterPairValue(2));
+                            //tracebox.add("sphl pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else {
                             this.notImplemented(machinCode1);
@@ -899,6 +931,7 @@
                             var t = this.popCommon();
                             this.pushCommon(this.regarray.getRegisterPairValue(2));
                             this.regarray.setRegisterPairValue(2, t);
+                            //tracebox.add("xthl pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 5) // XCHG
                         {
@@ -931,11 +964,13 @@
                         {
                             var val = this.getRegisterPairBDHPSW(g2 & 6);
                             this.pushCommon(val);
+                            //tracebox.add("push pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 1)   // CALL
                         {
                             var oldpc = this.condJump(true);
                             this.pushCommon(oldpc);
+                            //tracebox.add("call pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else {
                             this.notImplemented(machinCode1);
