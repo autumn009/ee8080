@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C9E13C7A-0B40-4170-8648-BB140B4875D2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EECircuitWeb2", "EECircuitWeb2\EECircuitWeb2.csproj", "{5726E7DA-DD80-4F6F-A093-FC02ADBDE9CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EE8080XDIS", "EE8080XDIS\EE8080XDIS.csproj", "{6CE0192F-C70D-4CC8-A47E-8F3D42873614}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,22 @@ Global
 		{5726E7DA-DD80-4F6F-A093-FC02ADBDE9CB}.Release|x64.Build.0 = Release|Any CPU
 		{5726E7DA-DD80-4F6F-A093-FC02ADBDE9CB}.Release|x86.ActiveCfg = Release|Any CPU
 		{5726E7DA-DD80-4F6F-A093-FC02ADBDE9CB}.Release|x86.Build.0 = Release|Any CPU
+		{6CE0192F-C70D-4CC8-A47E-8F3D42873614}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CE0192F-C70D-4CC8-A47E-8F3D42873614}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CE0192F-C70D-4CC8-A47E-8F3D42873614}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{6CE0192F-C70D-4CC8-A47E-8F3D42873614}.Debug|ARM.Build.0 = Debug|Any CPU
+		{6CE0192F-C70D-4CC8-A47E-8F3D42873614}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6CE0192F-C70D-4CC8-A47E-8F3D42873614}.Debug|x64.Build.0 = Debug|Any CPU
+		{6CE0192F-C70D-4CC8-A47E-8F3D42873614}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6CE0192F-C70D-4CC8-A47E-8F3D42873614}.Debug|x86.Build.0 = Debug|Any CPU
+		{6CE0192F-C70D-4CC8-A47E-8F3D42873614}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CE0192F-C70D-4CC8-A47E-8F3D42873614}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CE0192F-C70D-4CC8-A47E-8F3D42873614}.Release|ARM.ActiveCfg = Release|Any CPU
+		{6CE0192F-C70D-4CC8-A47E-8F3D42873614}.Release|ARM.Build.0 = Release|Any CPU
+		{6CE0192F-C70D-4CC8-A47E-8F3D42873614}.Release|x64.ActiveCfg = Release|Any CPU
+		{6CE0192F-C70D-4CC8-A47E-8F3D42873614}.Release|x64.Build.0 = Release|Any CPU
+		{6CE0192F-C70D-4CC8-A47E-8F3D42873614}.Release|x86.ActiveCfg = Release|Any CPU
+		{6CE0192F-C70D-4CC8-A47E-8F3D42873614}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

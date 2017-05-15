@@ -701,17 +701,17 @@ var emu;
                 //    console.log("pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16));
                 //}
                 //tracebox.add("pc="+virtualMachine.cpu.regarray.pc.getValue().toString(16)+" sp=" +virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                //var sp = virtualMachine.cpu.regarray.sp.getValue();
+                var sp = emu.virtualMachine.cpu.regarray.sp.getValue();
                 //if (sp < 0x8000 && sp > 0x100)
                 //{
                 //    this.hlt();
                 //    return;
                 //}
-                //if (sp != Math.ceil(sp)) {
-                //    tracebox.add("sp="+sp.toString());
-                //    this.hlt();
-                //    return;
-                //}
+                if (sp != Math.ceil(sp)) {
+                    tracebox.add("sp=" + sp.toString());
+                    this.hlt();
+                    return;
+                }
                 //var sh = sp >> 8;
                 //if (sp < 0xc000 && Math.abs(sh-this.lastval) >=2) {
                 //    tracebox.add("sh=" + sh.toString(16) + " sp=" + sp.toString(16));
