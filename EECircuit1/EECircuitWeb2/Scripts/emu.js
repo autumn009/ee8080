@@ -688,7 +688,9 @@ var emu;
                         if (g2 == 0) {
                         }
                         else {
-                            this.notImplemented(machinCode1);
+                            // NO OPETATION
+                            this.hlt();
+                            return;
                         }
                     }
                     else if (g3 == 1) {

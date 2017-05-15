@@ -627,7 +627,10 @@
                             // NO OPETATION
                         }
                         else {
-                            this.notImplemented(machinCode1);
+                            // NO OPETATION
+                            this.hlt();
+                            return;
+                            //this.notImplemented(machinCode1);
                         }
                     }
                     else if (g3 == 1) // LXI or DAD
