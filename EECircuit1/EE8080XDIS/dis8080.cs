@@ -449,16 +449,37 @@ namespace EE8080XDIS
         }
         private void output()
         {
-            writer.Write("{0,0:X4} ", start);
+            writer.Write("{0,0:X4} ", start+offset);
             for (int i = 0; i < 3; i++)
             {
                 if (i < length) writer.Write("{0,0:X2} ", bytes[i]);
                 else writer.Write("   ");
             }
             writer.Write("{0} ", mnem);
-            if (arg1 != null) writer.Write("{0}", arg1);
-            if (arg2 != null) writer.Write(",{0}", arg2);
-            writer.WriteLine();
+            int len = mnem.Length;
+            if (arg1 != null)
+            {
+                writer.Write("{0}", arg1);
+                len += arg1.Length;
+            }
+            if (arg2 != null)
+            {
+                writer.Write(",{0}", arg2);
+                len += arg2.Length + 1;
+            }
+            for (int i = 0; i < 10 - len; i++)
+            {
+                writer.Write(" ");
+            }
+            writer.Write("\"");
+            for (int i = 0; i < length; i++)
+            {
+                if (bytes[i] >= 0x20)
+                    writer.Write((char)bytes[i]);
+                else
+                    writer.Write(".");
+            }
+            writer.WriteLine("\"");
         }
         public void Diassemble()
         {
