@@ -2,7 +2,7 @@
   "profiles": {
     "EE8080XDIS": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\delme\\cpmcom\\m80.com\" 100"
+      "commandLineArgs": "\"C:\\delme\\cpmcom\\m80.com\" 100 c:\\delme\\m80.asm"
     }
   }
 }
