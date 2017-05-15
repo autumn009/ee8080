@@ -532,6 +532,19 @@ next:
 	cpi	0
 	jnz	fail
 
+; test rnc again
+	mvi	a,80h
+	call	sub4
+	mov	a,b
+	cpi	2
+	jnz	fail
+
+	mvi	a,20h
+	call	sub4
+	mov	a,b
+	cpi	1
+	jnz	fail
+
 	jmp	success
 
 ;
@@ -575,6 +588,14 @@ sub3:
 	adi	80h
 	rc
 	mvi	a,1
+	ret
+
+;test rnc, if a >= 40h then return b=2 else return b=1
+sub4:
+	mvi	b,1
+	adi	80h
+	rnc
+	mvi	b,2
 	ret
 
 fail:

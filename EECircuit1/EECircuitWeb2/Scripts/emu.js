@@ -10,6 +10,25 @@ var emu;
     var waitingInput = false;
     var inputChars = "";
     var screenRefreshRequest = false;
+    var DelayedTraceBox = (function () {
+        function DelayedTraceBox() {
+            this.lines = [];
+        }
+        DelayedTraceBox.prototype.add = function (msg) {
+            this.lines.push(msg);
+            if (msg.length > 100) {
+                this.lines.shift();
+            }
+        };
+        DelayedTraceBox.prototype.dump = function () {
+            for (var i = 0; i < this.lines.length; i++) {
+                console.log(this.lines[i]);
+            }
+            this.lines = [];
+        };
+        return DelayedTraceBox;
+    }());
+    var tracebox = new DelayedTraceBox();
     function getVirtualMachine() {
         return emu.virtualMachine;
     }
@@ -650,6 +669,7 @@ var emu;
             emu.virtualMachine.update();
             this.setStopped();
             emu.setMonitor();
+            tracebox.dump();
         };
         i8080.prototype.runMain = function () {
             var _this = this;
@@ -679,6 +699,7 @@ var emu;
                 if (emu.trace) {
                     console.log("pc=" + emu.virtualMachine.cpu.regarray.pc.getValue().toString(16));
                 }
+                tracebox.add("pc=" + emu.virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + emu.virtualMachine.cpu.regarray.sp.getValue().toString(16));
                 var machinCode1 = this.fetchNextByte();
                 var g1 = machinCode1 >> 6;
                 var g2 = (machinCode1 >> 3) & 0x7;

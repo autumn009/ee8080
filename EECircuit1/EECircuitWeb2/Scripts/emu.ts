@@ -6,6 +6,24 @@
     var inputChars = "";
     var screenRefreshRequest = false;
 
+    class DelayedTraceBox {
+        private lines: string[] = [];
+        public add(msg: string) {
+            this.lines.push(msg);
+            if (msg.length > 100) {
+                this.lines.shift();
+            }
+        }
+        public dump() {
+            for (var i = 0; i < this.lines.length; i++) {
+                console.log(this.lines[i]);
+            }
+            this.lines = [];
+        }
+    }
+
+    var tracebox = new DelayedTraceBox();
+
     function getVirtualMachine() {
         return virtualMachine;
     }
@@ -588,6 +606,7 @@
             virtualMachine.update();
             this.setStopped();
             emu.setMonitor();
+            tracebox.dump();
         }
 
         public runMain() {
@@ -616,6 +635,7 @@
                 if (trace) {
                     console.log("pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16));
                 }
+                tracebox.add("pc="+virtualMachine.cpu.regarray.pc.getValue().toString(16)+" sp=" +virtualMachine.cpu.regarray.sp.getValue().toString(16));
 
                 var machinCode1 = this.fetchNextByte();
                 var g1 = machinCode1 >> 6;
