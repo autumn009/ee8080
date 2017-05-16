@@ -655,11 +655,10 @@
                 //    this.lastval = sh;
                 //}
 
-                //if (virtualMachine.cpu.regarray.pc.getValue() == 0x217d)
-                //{
-                //    this.hlt();
-                //    return;
-                //}
+                if (virtualMachine.cpu.regarray.pc.getValue() == 0x216f)
+                {
+                    tracebox.add("216f pc="+virtualMachine.cpu.regarray.pc.getValue().toString(16)+" sp=" +virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                }
 
                 var machinCode1 = this.fetchNextByte();
                 var g1 = machinCode1 >> 6;
@@ -884,18 +883,18 @@
                     if (g3 == 0) {  // Rxx
                         if (this.condCommon(g2)) {
                             this.regarray.pc.setValue(this.popCommon());
-                            tracebox.add("rxx pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                            //tracebox.add("rxx pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                     }
                     else if (g3 == 1) {
                         if ((g2 & 1) == 0) // POP
                         {
                             this.setRegisterPairBDHPSW(g2 & 6, this.popCommon());
-                            tracebox.add("pop pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                            //tracebox.add("pop pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 1) { // RET
                             this.regarray.pc.setValue(this.popCommon());
-                            tracebox.add("ret pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                            //tracebox.add("ret pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 5) // PCHL
                         {
@@ -937,7 +936,7 @@
                             var t = this.popCommon();
                             this.pushCommon(this.regarray.getRegisterPairValue(2));
                             this.regarray.setRegisterPairValue(2, t);
-                            tracebox.add("xthl pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                            //tracebox.add("xthl pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 5) // XCHG
                         {
@@ -970,13 +969,13 @@
                         {
                             var val = this.getRegisterPairBDHPSW(g2 & 6);
                             this.pushCommon(val);
-                            tracebox.add("push pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                            //tracebox.add("push pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 1)   // CALL
                         {
                             var oldpc = this.condJump(true);
                             this.pushCommon(oldpc);
-                            tracebox.add("call pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                            //tracebox.add("call pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else {
                             this.notImplemented(machinCode1);

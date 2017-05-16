@@ -717,11 +717,9 @@ var emu;
                 //    tracebox.add("sh=" + sh.toString(16) + " sp=" + sp.toString(16));
                 //    this.lastval = sh;
                 //}
-                //if (virtualMachine.cpu.regarray.pc.getValue() == 0x217d)
-                //{
-                //    this.hlt();
-                //    return;
-                //}
+                if (emu.virtualMachine.cpu.regarray.pc.getValue() == 0x216f) {
+                    tracebox.add("216f pc=" + emu.virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + emu.virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                }
                 var machinCode1 = this.fetchNextByte();
                 var g1 = machinCode1 >> 6;
                 var g2 = (machinCode1 >> 3) & 0x7;
@@ -912,17 +910,14 @@ var emu;
                     if (g3 == 0) {
                         if (this.condCommon(g2)) {
                             this.regarray.pc.setValue(this.popCommon());
-                            tracebox.add("rxx pc=" + emu.virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + emu.virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                     }
                     else if (g3 == 1) {
                         if ((g2 & 1) == 0) {
                             this.setRegisterPairBDHPSW(g2 & 6, this.popCommon());
-                            tracebox.add("pop pc=" + emu.virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + emu.virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 1) {
                             this.regarray.pc.setValue(this.popCommon());
-                            tracebox.add("ret pc=" + emu.virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + emu.virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 5) {
                             this.regarray.pc.setValue(this.regarray.getRegisterPairValue(2));
@@ -956,7 +951,6 @@ var emu;
                             var t = this.popCommon();
                             this.pushCommon(this.regarray.getRegisterPairValue(2));
                             this.regarray.setRegisterPairValue(2, t);
-                            tracebox.add("xthl pc=" + emu.virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + emu.virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 5) {
                             var t1 = this.regarray.l.getValue();
@@ -983,12 +977,10 @@ var emu;
                         if ((g2 & 1) == 0) {
                             var val = this.getRegisterPairBDHPSW(g2 & 6);
                             this.pushCommon(val);
-                            tracebox.add("push pc=" + emu.virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + emu.virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 1) {
                             var oldpc = this.condJump(true);
                             this.pushCommon(oldpc);
-                            tracebox.add("call pc=" + emu.virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + emu.virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else {
                             this.notImplemented(machinCode1);
