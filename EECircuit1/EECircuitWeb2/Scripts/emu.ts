@@ -5,20 +5,39 @@
     var waitingInput = false;
     var inputChars = "";
     var screenRefreshRequest = false;
+    var debugCounter = 0;
 
     class DelayedTraceBox {
         private lines: string[] = [];
+        private total = 0;
+        private pack = "";
+        private packCount = 0;
         public add(msg: string) {
             this.lines.push(msg);
-            if (this.lines.length > 100) {
+            if (this.lines.length > 900) {
                 this.lines.shift();
+            }
+            this.total++;
+        }
+        public addPacked(msg: string) {
+            this.pack += msg;
+            this.packCount++;
+            if (this.packCount >= 8)
+            {
+                this.add(this.pack);
+                this.pack = "";
+                this.packCount=0;
             }
         }
         public dump() {
+            if (this.packCount > 0) this.add(this.pack);
             for (var i = 0; i < this.lines.length; i++) {
                 console.log(this.lines[i]);
             }
+            console.log("total="+this.total);
             this.lines = [];
+            this.pack = "";
+            this.packCount = 0;
         }
     }
 
@@ -655,9 +674,17 @@
                 //    this.lastval = sh;
                 //}
 
-                if (virtualMachine.cpu.regarray.pc.getValue() == 0x216f)
+                if (virtualMachine.cpu.regarray.pc.getValue() == 0x2166)
                 {
-                    tracebox.add("216f pc="+virtualMachine.cpu.regarray.pc.getValue().toString(16)+" sp=" +virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                    debugCounter++;
+                    if (debugCounter == 2) {
+                        this.hlt();
+                        return;
+                    }
+                }
+                if (debugCounter == 1) {
+                    //tracebox.add("2166 pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                    tracebox.addPacked("[" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + ":" + virtualMachine.cpu.regarray.sp.getValue().toString(16) + "]");
                 }
 
                 var machinCode1 = this.fetchNextByte();
