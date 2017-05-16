@@ -153,9 +153,15 @@ next:
 	mvi	a,7fh
 	adi	1
 	jp	fail
+	jm	skipjm1
+	jmp	fail
+skipjm1:
 	mvi	a,7eh
 	adi	1
 	jm	fail
+	jp	skipjp1
+	jmp	fail
+skipjp1:
 
 ; test c-cond
 	mvi	a,0
@@ -545,6 +551,59 @@ next:
 	call	sub4
 	mov	a,b
 	cpi	1
+	jnz	fail
+
+; test pop psw again
+	mvi	a,55h
+	lxi	h,0
+	push	h
+	pop	psw
+	jm	fail
+	jc	fail
+	jz	fail
+	jpe	fail
+	cpi	0
+	jnz	fail
+
+	mvi	a,55h
+	lxi	h,0ffffh
+	push	h
+	pop	psw
+	jp	fail
+	jnc	fail
+	jnz	fail
+	jpo	fail
+	cpi	0ffh
+	jnz	fail
+
+; test push psw again
+	mvi	a,1
+	adi	2
+	push	psw
+	pop	h
+	mov	a,h
+	cpi	3
+	jnz	fail
+	mov	a,l
+	ani	1
+	jnz	fail
+	mov	a,l
+	ani	2
+	jz	fail
+	mov	a,l
+	ani	4
+	jz	fail
+	mov	a,l
+	ani	8
+	jnz	fail
+	mov	a,l
+	ani	32
+	jnz	fail
+ 	mov	a,l
+	ani	64
+	jnz	fail
+ 	mov	a,l
+	ani	128
 	jnz	fail
 
 	jmp	success

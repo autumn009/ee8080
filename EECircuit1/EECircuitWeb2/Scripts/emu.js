@@ -717,6 +717,11 @@ var emu;
                 //    tracebox.add("sh=" + sh.toString(16) + " sp=" + sp.toString(16));
                 //    this.lastval = sh;
                 //}
+                //if (virtualMachine.cpu.regarray.pc.getValue() == 0x217d)
+                //{
+                //    this.hlt();
+                //    return;
+                //}
                 var machinCode1 = this.fetchNextByte();
                 var g1 = machinCode1 >> 6;
                 var g2 = (machinCode1 >> 3) & 0x7;
