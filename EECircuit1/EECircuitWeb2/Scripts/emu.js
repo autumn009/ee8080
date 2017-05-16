@@ -11,6 +11,7 @@ var emu;
     var inputChars = "";
     var screenRefreshRequest = false;
     var debugCounter = 0;
+    var rightCount = 0;
     var DelayedTraceBox = (function () {
         function DelayedTraceBox() {
             this.lines = [];
@@ -41,6 +42,7 @@ var emu;
                 console.log(this.lines[i]);
             }
             console.log("total=" + this.total);
+            console.log("rightCount=" + rightCount);
             this.lines = [];
             this.pack = "";
             this.packCount = 0;
@@ -737,13 +739,17 @@ var emu;
                 //    this.lastval = sh;
                 //}
                 if (emu.virtualMachine.cpu.regarray.pc.getValue() == 0x2166) {
+                    //if (virtualMachine.cpu.regarray.sp.getValue() == 0xe3f7) {
+                    //    rightCount++;
+                    // }
+                    //else {
                     debugCounter++;
-                    if (debugCounter == 2) {
+                    if (debugCounter == 3) {
                         this.hlt();
                         return;
                     }
                 }
-                if (debugCounter == 1) {
+                if (debugCounter == 2) {
                     //tracebox.add("2166 pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                     tracebox.addPacked("[" + emu.virtualMachine.cpu.regarray.pc.getValue().toString(16) + ":" + emu.virtualMachine.cpu.regarray.sp.getValue().toString(16) + "]");
                 }
