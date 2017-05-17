@@ -1,5 +1,4 @@
 ﻿namespace emu {
-    export var virtualMachine: ee8080;
     export var superTrap: boolean = false;
     //export var trace: boolean = false;
     export var waitingInput = false;
@@ -227,7 +226,7 @@
         vdt.commonInputRowCode(r.charCodeAt(0));
     }
 
-    class ee8080 {
+    class vm {
         public memory = new MemoryUnit();
         public io = new IOUnit();
         public cpu: icpu = new org8080.i8080();
@@ -241,7 +240,7 @@
             this.update();
         }
     }
-    virtualMachine = new ee8080();
+    export var virtualMachine = new vm();
 
     function updateMonitorMemoryView() {
         var s = $("#memoryAddress").val();

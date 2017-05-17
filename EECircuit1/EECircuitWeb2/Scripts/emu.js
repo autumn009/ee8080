@@ -235,23 +235,23 @@ var emu;
         vdt.commonInputRowCode(r.charCodeAt(0));
     }
     emu.pushAutoTypeQueue = pushAutoTypeQueue;
-    var ee8080 = (function () {
-        function ee8080() {
+    var vm = (function () {
+        function vm() {
             this.memory = new MemoryUnit();
             this.io = new IOUnit();
             this.cpu = new org8080.i8080();
         }
-        ee8080.prototype.update = function () {
+        vm.prototype.update = function () {
             updateMonitorMemoryView();
             this.cpu.update();
         };
-        ee8080.prototype.reset = function () {
+        vm.prototype.reset = function () {
             this.memory.Bytes.clear();
             this.update();
         };
-        return ee8080;
+        return vm;
     }());
-    emu.virtualMachine = new ee8080();
+    emu.virtualMachine = new vm();
     function updateMonitorMemoryView() {
         var s = $("#memoryAddress").val();
         var addr = parseInt(s, 16);

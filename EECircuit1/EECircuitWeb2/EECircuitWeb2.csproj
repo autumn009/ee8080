@@ -321,6 +321,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\fast8080.ts" />
     <TypeScriptCompile Include="Scripts\common.ts" />
     <TypeScriptCompile Include="Scripts\counter.ts" />
     <TypeScriptCompile Include="Scripts\Default.ts" />
