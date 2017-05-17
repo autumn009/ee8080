@@ -239,7 +239,13 @@ var emu;
         function vm() {
             this.memory = new MemoryUnit();
             this.io = new IOUnit();
-            this.cpu = new org8080.i8080();
+            this.cpu = null;
+            if (arg["cpu"] == "Org8080")
+                this.cpu = new org8080.i8080();
+            else if (arg["cpu"] == "Fast8080")
+                this.cpu = new fast8080.i8080();
+            else if (arg["cpu"] == "Edu8080")
+                this.cpu = new org8080.i8080();
         }
         vm.prototype.update = function () {
             updateMonitorMemoryView();

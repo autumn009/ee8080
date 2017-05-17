@@ -846,6 +846,9 @@ var org8080;
         i8080.prototype.diskwrite = function () {
             return disk.write(this.regarray.b.getValue(), this.regarray.c.getValue(), this.regarray.e.getValue(), this.regarray.getRegisterPairValue(2));
         };
+        i8080.prototype.getName = function () {
+            return "i8080 emulator (Original) Ready\r\n";
+        };
         return i8080;
     }());
     org8080.i8080 = i8080;

@@ -855,5 +855,8 @@
                 this.regarray.e.getValue(),
                 this.regarray.getRegisterPairValue(2));
         }
+        public getName() {
+            return "i8080 emulator (Original) Ready\r\n";
+        }
     }
 }

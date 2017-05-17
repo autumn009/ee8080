@@ -374,6 +374,7 @@ var vdt;
         });
         clearScreen();
         outputString("Subset of ADM-3A Emulation Ready\r\n");
+        outputString(emu.virtualMachine.cpu.getName());
     });
 })(vdt || (vdt = {}));
 //# sourceMappingURL=vdt.js.map

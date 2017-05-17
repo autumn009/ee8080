@@ -34,8 +34,7 @@
     export function outputChar(charCode: number) {
         //console.log(charCode.toString(16));
         if (escapeMode == escapeModes.waiting2ndChar) {
-            if (charCode == "=".charCodeAt(0))
-            {
+            if (charCode == "=".charCodeAt(0)) {
                 escapeMode = escapeModes.waitingRow;
                 return;
             }
@@ -53,7 +52,7 @@
         }
         else if (escapeMode == escapeModes.waitingCol) {
             var col = charCode - 0x20;
-            locate(col,row);
+            locate(col, row);
             escapeMode = escapeModes.notMode;
         }
         else { // escapeModes.notMode
@@ -111,7 +110,7 @@
                 return;
             }
             //else if (charCode > 0x7f) {
-                //charCode = "?".charCodeAt(0);
+            //charCode = "?".charCodeAt(0);
             //}
             internalOutputChar(charCode);
             cursorNext();
@@ -148,8 +147,7 @@
         setCursorClass();
     }
 
-    function cursorNext()
-    {
+    function cursorNext() {
         cursorX++;
         if (cursorX >= 80) {
             cursorX = 0;
@@ -196,8 +194,7 @@
     }
 
     var requestToClear = false;
-    export function clear()
-    {
+    export function clear() {
         requestToClear = true;
     }
 
@@ -212,8 +209,7 @@
         };
     }
 
-    export function commonInputRowCode(code: number)
-    {
+    export function commonInputRowCode(code: number) {
         if ($("#con").css("display") == "none") return true;
         if (inputFunc) inputFunc(code);
         return false;
@@ -341,8 +337,7 @@
         setCursorClass();
     }
 
-    function homeScreen()
-    {
+    function homeScreen() {
         locate(0, 0);
         escapeMode = escapeModes.notMode;
     }
@@ -354,7 +349,7 @@
     }
 
     $(document).on("pagecreate", function () {
-        setKeyboardShiftState(false,false);
+        setKeyboardShiftState(false, false);
         $(document).keydown((evt) => {
             {
                 return commonInputRow(evt);
@@ -407,5 +402,6 @@
         });
         clearScreen();
         outputString("Subset of ADM-3A Emulation Ready\r\n");
+        outputString(emu.virtualMachine.cpu.getName());
     });
 }

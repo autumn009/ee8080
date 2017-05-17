@@ -97,4 +97,5 @@ interface icpu {
     update();
     diskread(): number;
     diskwrite(): number;
+    getName(): string;
 }

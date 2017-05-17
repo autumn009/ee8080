@@ -229,7 +229,7 @@
     class vm {
         public memory = new MemoryUnit();
         public io = new IOUnit();
-        public cpu: icpu = new org8080.i8080();
+        public cpu: icpu = null;
         public update() {
             updateMonitorMemoryView();
             this.cpu.update();
@@ -238,6 +238,12 @@
         public reset() {
             this.memory.Bytes.clear();
             this.update();
+        }
+
+        constructor() {
+            if (arg["cpu"] == "Org8080") this.cpu = new org8080.i8080();
+            else if (arg["cpu"] == "Fast8080") this.cpu = new fast8080.i8080();
+            else if (arg["cpu"] == "Edu8080") this.cpu = new org8080.i8080();
         }
     }
     export var virtualMachine = new vm();
