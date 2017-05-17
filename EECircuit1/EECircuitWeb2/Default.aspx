@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="EECircuitWeb2._Default" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <ul data-role="listview">
+    <ul data-role="listview" id="toplistview">
         <li data-role="collapsible" data-inset="false" data-iconpos="right">
             <h2>Logic Simlators</h2>
             <ul data-role="listview" data-theme="b">
@@ -12,12 +12,17 @@
             </ul>
         </li>
         <li><a href="/emu.aspx?cpm=" data-iconpos="right">CP/M</a></li>
-        <li data-role="collapsible" data-inset="false" data-iconpos="right">
-            <h2>Select CPUs</h2>
-            <ul data-role="listview" data-theme="b">
-                <li data-icon="check"><a href="#" id="selectOrg8080">org8080</a></li>
-                <li><a href="#" id="selectFast8080">fast8080</a></li>
-            </ul>
+        <li data-role="collapsible" data-corners="false" data-shadow="false" data-iconpos="right">
+            <h2>CPU</h2>
+            <fieldset data-role="controlgroup" data-type="horizontal">
+                <legend>CPU Emulators:</legend>
+                <input id="selectOrg8080" name="selectCPU" type="radio" checked="checked" value="Fast8080" />
+                <label for="selectOrg8080">i8080(fast)</label>
+                <input id="selectEdu8080" name="selectCPU" type="radio" value="Edu8080" />
+                <label for="selectEdu8080">i8080(educational)</label>
+                <input id="selectFast8080" name="selectCPU" type="radio" value="Org8080" />
+                <label for="selectFast8080">i8080(original)</label>
+            </fieldset>
         </li>
         <li data-role="collapsible" data-inset="false" data-iconpos="right">
             <h2>Misc</h2>
