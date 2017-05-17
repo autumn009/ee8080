@@ -11,7 +11,7 @@
                 <li><a href="/seripara.aspx">Serial/Parallel</a></li>
             </ul>
         </li>
-        <li><a href="/emu.aspx?cpm=" data-iconpos="right">CP/M</a></li>
+        <li><a id="cpm" href="#" data-iconpos="right">CP/M</a></li>
         <li data-role="collapsible" data-corners="false" data-shadow="false" data-iconpos="right">
             <h2>CPU</h2>
             <fieldset data-role="controlgroup" data-type="horizontal">
@@ -28,12 +28,11 @@
             <h2>Misc</h2>
             <ul data-role="listview" data-theme="b">
                 <li><a href="#" id="warnbutton">CP/M (with disk initialize)</a></li>
-                <li><a href="/emu.aspx">CPU Emulation</a></li>
-                <li><a href="/emu.aspx?cpmdev=">[BIOS dev]</a></li>
+                <li><a href="#" id="cpuemu">CPU Emulation</a></li>
+                <li><a href="#" id="cpmdev">BIOS development</a></li>
             </ul>
         </li>
     </ul>
     <script src="/Scripts/Default.js">
-
     </script>
 </asp:Content>
