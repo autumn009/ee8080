@@ -244,7 +244,6 @@ var emu;
         vdt.commonInputRowCode(r.charCodeAt(0));
     }
     emu.pushAutoTypeQueue = pushAutoTypeQueue;
-    var debugrepeat = 3;
     var DataBus = (function () {
         function DataBus() {
         }

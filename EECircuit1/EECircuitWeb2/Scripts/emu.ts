@@ -238,7 +238,6 @@
         vdt.commonInputRowCode(r.charCodeAt(0));
     }
 
-    var debugrepeat = 3;
     class DataBus {
 
     }
