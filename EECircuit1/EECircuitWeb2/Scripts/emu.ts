@@ -153,19 +153,8 @@
                 }
                 return "?".charCodeAt(0);
             }
-            if (addr == 0xf2) {
-                var hl = virtualMachine.cpu.regarray.getRegisterPairValue(2);
-                var r = disk.read(virtualMachine.cpu.regarray.b.getValue(),
-                    virtualMachine.cpu.regarray.c.getValue(),
-                    virtualMachine.cpu.regarray.e.getValue(),
-                    hl);
-                //alert(virtualMachine.memory.Bytes.read(hl));
-                return r;
-            }
-            if (addr == 0xf3) return disk.write(virtualMachine.cpu.regarray.b.getValue(),
-                virtualMachine.cpu.regarray.c.getValue(),
-                virtualMachine.cpu.regarray.e.getValue(),
-                virtualMachine.cpu.regarray.getRegisterPairValue(2));
+            if (addr == 0xf2) return virtualMachine.cpu.diskread();
+            if (addr == 0xf3) return virtualMachine.cpu.diskwrite();
             if (addr == 0xf4) {
                 return ((autoTypeQueue.length + inputChars.length) == 0) ? 0 : 0xff;
             }
@@ -241,7 +230,7 @@
     class ee8080 {
         public memory = new MemoryUnit();
         public io = new IOUnit();
-        public cpu = new org8080.i8080();
+        public cpu: icpu = new org8080.i8080();
         public update() {
             updateMonitorMemoryView();
             this.cpu.update();

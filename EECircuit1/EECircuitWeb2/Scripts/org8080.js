@@ -837,6 +837,15 @@ var org8080;
                 _this.runMain();
             }, 100);
         };
+        i8080.prototype.diskread = function () {
+            var hl = this.regarray.getRegisterPairValue(2);
+            var r = disk.read(this.regarray.b.getValue(), this.regarray.c.getValue(), this.regarray.e.getValue(), hl);
+            //alert(virtualMachine.memory.Bytes.read(hl));
+            return r;
+        };
+        i8080.prototype.diskwrite = function () {
+            return disk.write(this.regarray.b.getValue(), this.regarray.c.getValue(), this.regarray.e.getValue(), this.regarray.getRegisterPairValue(2));
+        };
         return i8080;
     }());
     org8080.i8080 = i8080;

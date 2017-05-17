@@ -91,3 +91,10 @@ for (var i = 0; pair[i]; i++) {
     arg[kv[0]] = kv[1];
 }
 
+interface icpu {
+    runMain();
+    reset();
+    update();
+    diskread(): number;
+    diskwrite(): number;
+}

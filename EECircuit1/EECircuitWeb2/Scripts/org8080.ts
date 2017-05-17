@@ -1,5 +1,4 @@
-﻿namespace org8080
-{
+﻿namespace org8080 {
     class DataBus {
 
     }
@@ -136,7 +135,7 @@
     class TimingAndControl {
 
     }
-    export class i8080 {
+    export class i8080 implements icpu {
         public halt = true;
         public accumulator = new Accumulator();
         public accumulatorLatch = new AccumulatorLatch();
@@ -839,6 +838,22 @@
             setTimeout(() => {
                 this.runMain();
             }, 100);
+        }
+
+        public diskread() {
+            var hl = this.regarray.getRegisterPairValue(2);
+            var r = disk.read(this.regarray.b.getValue(),
+                this.regarray.c.getValue(),
+                this.regarray.e.getValue(),
+                hl);
+            //alert(virtualMachine.memory.Bytes.read(hl));
+            return r;
+        }
+        public diskwrite() {
+            return disk.write(this.regarray.b.getValue(),
+                this.regarray.c.getValue(),
+                this.regarray.e.getValue(),
+                this.regarray.getRegisterPairValue(2));
         }
     }
 }

@@ -156,14 +156,10 @@ var emu;
                 }
                 return "?".charCodeAt(0);
             }
-            if (addr == 0xf2) {
-                var hl = emu.virtualMachine.cpu.regarray.getRegisterPairValue(2);
-                var r = disk.read(emu.virtualMachine.cpu.regarray.b.getValue(), emu.virtualMachine.cpu.regarray.c.getValue(), emu.virtualMachine.cpu.regarray.e.getValue(), hl);
-                //alert(virtualMachine.memory.Bytes.read(hl));
-                return r;
-            }
+            if (addr == 0xf2)
+                return emu.virtualMachine.cpu.diskread();
             if (addr == 0xf3)
-                return disk.write(emu.virtualMachine.cpu.regarray.b.getValue(), emu.virtualMachine.cpu.regarray.c.getValue(), emu.virtualMachine.cpu.regarray.e.getValue(), emu.virtualMachine.cpu.regarray.getRegisterPairValue(2));
+                return emu.virtualMachine.cpu.diskwrite();
             if (addr == 0xf4) {
                 return ((autoTypeQueue.length + emu.inputChars.length) == 0) ? 0 : 0xff;
             }
