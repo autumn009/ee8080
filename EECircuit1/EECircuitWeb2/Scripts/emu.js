@@ -10,8 +10,8 @@ var emu;
     var waitingInput = false;
     var inputChars = "";
     var screenRefreshRequest = false;
-    var debugCounter = 0;
-    var rightCount = 0;
+    //var debugCounter = 0;
+    //var rightCount = 0;
     var DelayedTraceBox = (function () {
         function DelayedTraceBox() {
             this.lines = [];
@@ -42,7 +42,7 @@ var emu;
                 console.log(this.lines[i]);
             }
             console.log("total=" + this.total);
-            console.log("rightCount=" + rightCount);
+            //console.log("rightCount=" + rightCount);
             this.lines = [];
             this.pack = "";
             this.packCount = 0;
@@ -590,11 +590,11 @@ var emu;
             this.flags.p = ((p & 1) == 0);
         };
         i8080.prototype.cmp = function (a, b) {
-            this.flags.z = (a == b);
-            this.flags.cy = (a < b);
-            this.setps(this.accumulator.getValue());
-            this.flags.ac = false;
-            //if (a == 0xe5 || b == 0xe5) this.hlt();
+            //this.flags.z = (a == b);
+            //this.flags.cy = (a < b);
+            //this.setps(this.accumulator.getValue());
+            //this.flags.ac = false;
+            this.sub(a, b);
         };
         i8080.prototype.add = function (a, b, cyUnchange, c) {
             if (cyUnchange === void 0) { cyUnchange = false; }
@@ -738,21 +738,22 @@ var emu;
                 //    tracebox.add("sh=" + sh.toString(16) + " sp=" + sp.toString(16));
                 //    this.lastval = sh;
                 //}
-                if (emu.virtualMachine.cpu.regarray.pc.getValue() == 0x2166) {
-                    //if (virtualMachine.cpu.regarray.sp.getValue() == 0xe3f7) {
-                    //    rightCount++;
-                    // }
-                    //else {
-                    debugCounter++;
-                    if (debugCounter == 3) {
-                        this.hlt();
-                        return;
-                    }
-                }
-                if (debugCounter == 2) {
-                    //tracebox.add("2166 pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                    tracebox.addPacked("[" + emu.virtualMachine.cpu.regarray.pc.getValue().toString(16) + ":" + emu.virtualMachine.cpu.regarray.sp.getValue().toString(16) + "]");
-                }
+                //if (virtualMachine.cpu.regarray.pc.getValue() == 0x2166) {
+                //if (virtualMachine.cpu.regarray.sp.getValue() == 0xe3f7) {
+                //    rightCount++;
+                // }
+                //else {
+                //debugCounter++;
+                //if (debugCounter == 3) {
+                //    this.hlt();
+                //    return;
+                //}
+                //}
+                //}
+                //if (debugCounter == 2) {
+                //tracebox.add("2166 pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                //tracebox.addPacked("[" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + ":" + virtualMachine.cpu.regarray.sp.getValue().toString(16) + "]");
+                //}
                 var machinCode1 = this.fetchNextByte();
                 var g1 = machinCode1 >> 6;
                 var g2 = (machinCode1 >> 3) & 0x7;
