@@ -1,9 +1,9 @@
 ﻿function run(uri: string)
 {
     var cpu = "";
-    if ($("#selectOrg8080").prop("cecked")) cpu = "Org8080";
-    else if ($("#selectFast8080").prop("cecked")) cpu = "Fast8080";
-    else if ($("#selectEdu8080").prop("cecked")) cpu = "Edu8080";
+    if ($("#selectOrg8080").prop("checked")) cpu = "Org8080";
+    else if ($("#selectFast8080").prop("checked")) cpu = "Fast8080";
+    else if ($("#selectEdu8080").prop("checked")) cpu = "Edu8080";
     if (uri.indexOf("?")>=0)
         location.href = uri + "&cpu=" + cpu;
     else
