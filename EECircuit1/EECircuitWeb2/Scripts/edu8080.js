@@ -8,19 +8,20 @@ var edu8080;
     var OperationCode;
     (function (OperationCode) {
         OperationCode[OperationCode["LXI"] = 0] = "LXI";
-        OperationCode[OperationCode["ADD"] = 1] = "ADD";
-        OperationCode[OperationCode["SUB"] = 2] = "SUB";
-        OperationCode[OperationCode["CMP"] = 3] = "CMP";
-        OperationCode[OperationCode["AND"] = 4] = "AND";
-        OperationCode[OperationCode["OR"] = 5] = "OR";
-        OperationCode[OperationCode["XOR"] = 6] = "XOR";
-        OperationCode[OperationCode["NOT"] = 7] = "NOT";
-        OperationCode[OperationCode["RLC"] = 8] = "RLC";
-        OperationCode[OperationCode["RRC"] = 9] = "RRC";
-        OperationCode[OperationCode["RAL"] = 10] = "RAL";
-        OperationCode[OperationCode["RAR"] = 11] = "RAR";
-        OperationCode[OperationCode["NOP"] = 12] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 13] = "OTHER";
+        OperationCode[OperationCode["DAD"] = 1] = "DAD";
+        OperationCode[OperationCode["ADD"] = 2] = "ADD";
+        OperationCode[OperationCode["SUB"] = 3] = "SUB";
+        OperationCode[OperationCode["CMP"] = 4] = "CMP";
+        OperationCode[OperationCode["AND"] = 5] = "AND";
+        OperationCode[OperationCode["OR"] = 6] = "OR";
+        OperationCode[OperationCode["XOR"] = 7] = "XOR";
+        OperationCode[OperationCode["NOT"] = 8] = "NOT";
+        OperationCode[OperationCode["RLC"] = 9] = "RLC";
+        OperationCode[OperationCode["RRC"] = 10] = "RRC";
+        OperationCode[OperationCode["RAL"] = 11] = "RAL";
+        OperationCode[OperationCode["RAR"] = 12] = "RAR";
+        OperationCode[OperationCode["NOP"] = 13] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 14] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -230,15 +231,11 @@ var edu8080;
                 else if (g3 == 1) {
                     if ((g2 & 1) == 0) {
                         this.operationCode = OperationCode.LXI;
-                        this.registerSelect16 = g2 >> 1;
                     }
                     else {
-                        var t1 = this.chip.regarray.getRegisterPairValue(2);
-                        var t2 = this.chip.regarray.getRegisterPairValue(g2 >> 1);
-                        var s = t1 + t2;
-                        this.chip.flags.cy = (s >= 0x10000) ? true : false;
-                        this.chip.regarray.setRegisterPairValue(2, s & 0xffff);
+                        this.operationCode = OperationCode.DAD;
                     }
+                    this.registerSelect16 = g2 >> 1;
                 }
                 else if (g3 == 2) {
                     if ((g2 & 0x5) == 0x0) {
@@ -646,6 +643,13 @@ var edu8080;
                     var dword = this.chip.timingAndControl.fetchNextWord();
                     this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
                     this.chip.regarray.setSelectedRegisterPairValue(dword);
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.DAD) {
+                    var t1 = this.chip.regarray.getRegisterPairValue(2);
+                    var t2 = this.chip.regarray.getRegisterPairValue(this.chip.instructonDecoder.registerSelect16);
+                    var s = t1 + t2;
+                    this.chip.flags.cy = (s >= 0x10000) ? true : false;
+                    this.chip.regarray.setRegisterPairValue(2, s & 0xffff);
                 }
                 else {
                 }

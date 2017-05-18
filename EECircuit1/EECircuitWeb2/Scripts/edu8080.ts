@@ -1,7 +1,7 @@
 ﻿namespace edu8080
 {
     enum OperationCode {
-        LXI, ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, NOP, OTHER
+        LXI, DAD, ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
         b = 0, c, d, e, h, l, m, a
@@ -137,16 +137,12 @@
                     if ((g2 & 1) == 0) // LXI
                     {
                         this.operationCode = OperationCode.LXI;
-                        this.registerSelect16 = g2 >> 1;
                     }
                     else // DAD
                     {
-                        var t1 = this.chip.regarray.getRegisterPairValue(2);
-                        var t2 = this.chip.regarray.getRegisterPairValue(g2 >> 1);
-                        var s = t1 + t2;
-                        this.chip.flags.cy = (s >= 0x10000) ? true : false;
-                        this.chip.regarray.setRegisterPairValue(2, s & 0xffff);
+                        this.operationCode = OperationCode.DAD;
                     }
+                    this.registerSelect16 = g2 >> 1;
                 }
                 else if (g3 == 2) {
                     if ((g2 & 0x5) == 0x0)  // STAX
@@ -614,6 +610,14 @@
                     var dword = this.chip.timingAndControl.fetchNextWord();
                     this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
                     this.chip.regarray.setSelectedRegisterPairValue(dword);
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.DAD)
+                {
+                    var t1 = this.chip.regarray.getRegisterPairValue(2);
+                    var t2 = this.chip.regarray.getRegisterPairValue(this.chip.instructonDecoder.registerSelect16);
+                    var s = t1 + t2;
+                    this.chip.flags.cy = (s >= 0x10000) ? true : false;
+                    this.chip.regarray.setRegisterPairValue(2, s & 0xffff);
                 }
                 else {
                     // TBW
