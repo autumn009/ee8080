@@ -243,7 +243,7 @@
         constructor() {
             if (arg["cpu"] == "Org8080") this.cpu = new org8080.i8080();
             else if (arg["cpu"] == "Fast8080") this.cpu = new fast8080.i8080();
-            else if (arg["cpu"] == "Edu8080") this.cpu = new org8080.i8080();
+            else if (arg["cpu"] == "Edu8080") this.cpu = new edu8080.i8080();
         }
     }
     export var virtualMachine = new vm();
