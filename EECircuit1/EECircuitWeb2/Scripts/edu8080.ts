@@ -1,13 +1,13 @@
 ﻿namespace edu8080
 {
     enum OperationCode {
-        ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, NOP, OTHER
+        LXI, ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
         b = 0, c, d, e, h, l, m, a
     }
     enum RegisterSelect16 {
-        bc = 0, de, hl, sp, pc, latch
+        bc = 0, de = 1, hl = 2, sp = 3, pc, latch
     }
     class DataBus {
 
@@ -108,6 +108,12 @@
         constructor(thischip: i8080) {
             this.chip = thischip;
         }
+        public g1 = 0;
+        public g2 = 0;
+        public g3 = 0;
+        public operationCode: OperationCode;
+        public registerSelect16 = 0;
+        public registerSelect8 = 0;
         public Decode() {
             var machinCode1 = this.chip.insutructionRegister.getValue();
             var g1 = machinCode1 >> 6;
@@ -130,14 +136,8 @@
                 {
                     if ((g2 & 1) == 0) // LXI
                     {
-                        if (g2 == 0x6) {    // LXI SP,
-                            var sp = this.chip.timingAndControl.fetchNextWord();
-                            this.chip.regarray.sp.setValue(sp);
-                        }
-                        else {  // LXI B/D/H,
-                            this.chip.setRegister(g2 + 1, this.chip.timingAndControl.fetchNextByte());
-                            this.chip.setRegister(g2, this.chip.timingAndControl.fetchNextByte());
-                        }
+                        this.operationCode = OperationCode.LXI;
+                        this.registerSelect16 = g2 >> 1;
                     }
                     else // DAD
                     {
@@ -480,12 +480,12 @@
             }
             return false;
         }
-        public g1 = 0;
-        public g2 = 0;
-        public g3 = 0;
-        public operationCode: OperationCode;
     }
     class RegisterArray {
+        private chip: i8080;
+        constructor(thischip: i8080) {
+            this.chip = thischip;
+        }
         public w = new Register8();
         public z = new Register8();
         public b = new Register8();
@@ -533,6 +533,22 @@
                     break;
                 default:
                     alert(n + " is not a register pair number in setRegisterPairValue.");
+                    break;
+            }
+        }
+        public setSelectedRegisterPairValue(v: number) {
+            switch (this.chip.registerSelect16) {
+                case RegisterSelect16.bc:
+                case RegisterSelect16.de:
+                case RegisterSelect16.hl:
+                case RegisterSelect16.sp:
+                    this.setRegisterPairValue(this.chip.registerSelect16, v);
+                    break;
+                case RegisterSelect16.pc:
+                    this.pc.setValue(v);
+                    break;
+                default:    // IncrementerDecrementerAddressLatch
+                    this.incrementerDecrementerAddressLatch.setValue(v);
                     break;
             }
         }
@@ -593,6 +609,12 @@
                 {
                     // do nothing
                 }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.LXI)
+                {
+                    var dword = this.chip.timingAndControl.fetchNextWord();
+                    this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
+                    this.chip.regarray.setSelectedRegisterPairValue(dword);
+                }
                 else {
                     // TBW
                 }
@@ -604,7 +626,7 @@
         public accumulator = new Accumulator();
         public accumulatorLatch = new AccumulatorLatch();
         public tempReg = new TempReg();
-        public regarray = new RegisterArray();
+        public regarray = new RegisterArray(this);
         public flags = new FlagFlipFlop();
         public timingAndControl = new TimingAndControl(this);
         public dataBusBufferLatch = new DataBusBufferLatch();

@@ -7,19 +7,20 @@ var edu8080;
 (function (edu8080) {
     var OperationCode;
     (function (OperationCode) {
-        OperationCode[OperationCode["ADD"] = 0] = "ADD";
-        OperationCode[OperationCode["SUB"] = 1] = "SUB";
-        OperationCode[OperationCode["CMP"] = 2] = "CMP";
-        OperationCode[OperationCode["AND"] = 3] = "AND";
-        OperationCode[OperationCode["OR"] = 4] = "OR";
-        OperationCode[OperationCode["XOR"] = 5] = "XOR";
-        OperationCode[OperationCode["NOT"] = 6] = "NOT";
-        OperationCode[OperationCode["RLC"] = 7] = "RLC";
-        OperationCode[OperationCode["RRC"] = 8] = "RRC";
-        OperationCode[OperationCode["RAL"] = 9] = "RAL";
-        OperationCode[OperationCode["RAR"] = 10] = "RAR";
-        OperationCode[OperationCode["NOP"] = 11] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 12] = "OTHER";
+        OperationCode[OperationCode["LXI"] = 0] = "LXI";
+        OperationCode[OperationCode["ADD"] = 1] = "ADD";
+        OperationCode[OperationCode["SUB"] = 2] = "SUB";
+        OperationCode[OperationCode["CMP"] = 3] = "CMP";
+        OperationCode[OperationCode["AND"] = 4] = "AND";
+        OperationCode[OperationCode["OR"] = 5] = "OR";
+        OperationCode[OperationCode["XOR"] = 6] = "XOR";
+        OperationCode[OperationCode["NOT"] = 7] = "NOT";
+        OperationCode[OperationCode["RLC"] = 8] = "RLC";
+        OperationCode[OperationCode["RRC"] = 9] = "RRC";
+        OperationCode[OperationCode["RAL"] = 10] = "RAL";
+        OperationCode[OperationCode["RAR"] = 11] = "RAR";
+        OperationCode[OperationCode["NOP"] = 12] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 13] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -204,6 +205,8 @@ var edu8080;
             this.g1 = 0;
             this.g2 = 0;
             this.g3 = 0;
+            this.registerSelect16 = 0;
+            this.registerSelect8 = 0;
             this.chip = thischip;
         }
         InstructionDecoderAndMachineCycleEncoding.prototype.Decode = function () {
@@ -226,14 +229,8 @@ var edu8080;
                 }
                 else if (g3 == 1) {
                     if ((g2 & 1) == 0) {
-                        if (g2 == 0x6) {
-                            var sp = this.chip.timingAndControl.fetchNextWord();
-                            this.chip.regarray.sp.setValue(sp);
-                        }
-                        else {
-                            this.chip.setRegister(g2 + 1, this.chip.timingAndControl.fetchNextByte());
-                            this.chip.setRegister(g2, this.chip.timingAndControl.fetchNextByte());
-                        }
+                        this.operationCode = OperationCode.LXI;
+                        this.registerSelect16 = g2 >> 1;
                     }
                     else {
                         var t1 = this.chip.regarray.getRegisterPairValue(2);
@@ -520,7 +517,7 @@ var edu8080;
         return InstructionDecoderAndMachineCycleEncoding;
     }());
     var RegisterArray = (function () {
-        function RegisterArray() {
+        function RegisterArray(thischip) {
             this.w = new Register8();
             this.z = new Register8();
             this.b = new Register8();
@@ -532,6 +529,7 @@ var edu8080;
             this.sp = new Register16();
             this.pc = new Register16();
             this.incrementerDecrementerAddressLatch = new Register16();
+            this.chip = thischip;
         }
         // n: 0=BC, 1=DE, 2=HL, 3=SP
         RegisterArray.prototype.getRegisterPairValue = function (n) {
@@ -569,6 +567,22 @@ var edu8080;
                     break;
                 default:
                     alert(n + " is not a register pair number in setRegisterPairValue.");
+                    break;
+            }
+        };
+        RegisterArray.prototype.setSelectedRegisterPairValue = function (v) {
+            switch (this.chip.registerSelect16) {
+                case RegisterSelect16.bc:
+                case RegisterSelect16.de:
+                case RegisterSelect16.hl:
+                case RegisterSelect16.sp:
+                    this.setRegisterPairValue(this.chip.registerSelect16, v);
+                    break;
+                case RegisterSelect16.pc:
+                    this.pc.setValue(v);
+                    break;
+                default:
+                    this.incrementerDecrementerAddressLatch.setValue(v);
                     break;
             }
         };
@@ -628,6 +642,11 @@ var edu8080;
                     return;
                 if (this.chip.instructonDecoder.operationCode == OperationCode.NOP) {
                 }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.LXI) {
+                    var dword = this.chip.timingAndControl.fetchNextWord();
+                    this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
+                    this.chip.regarray.setSelectedRegisterPairValue(dword);
+                }
                 else {
                 }
             }
@@ -640,7 +659,7 @@ var edu8080;
             this.accumulator = new Accumulator();
             this.accumulatorLatch = new AccumulatorLatch();
             this.tempReg = new TempReg();
-            this.regarray = new RegisterArray();
+            this.regarray = new RegisterArray(this);
             this.flags = new FlagFlipFlop();
             this.timingAndControl = new TimingAndControl(this);
             this.dataBusBufferLatch = new DataBusBufferLatch();
