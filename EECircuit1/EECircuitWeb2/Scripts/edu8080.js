@@ -18,7 +18,8 @@ var edu8080;
         OperationCode[OperationCode["RRC"] = 8] = "RRC";
         OperationCode[OperationCode["RAL"] = 9] = "RAL";
         OperationCode[OperationCode["RAR"] = 10] = "RAR";
-        OperationCode[OperationCode["OTHER"] = 11] = "OTHER";
+        OperationCode[OperationCode["NOP"] = 11] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 12] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -210,24 +211,23 @@ var edu8080;
             var g1 = machinCode1 >> 6;
             var g2 = (machinCode1 >> 3) & 0x7;
             var g3 = machinCode1 & 0x7;
+            this.g1 = g1;
+            this.g2 = g2;
+            this.g3 = g3;
+            this.operationCode = OperationCode.NOP;
             if (g1 == 0) {
                 if (g3 == 0) {
                     if (g2 == 0) {
+                        this.operationCode = OperationCode.NOP;
                     }
                     else {
-                        // NO OPETATION
-                        this.chip.hlt();
-                        return true;
+                        this.chip.notImplemented(machinCode1);
                     }
                 }
                 else if (g3 == 1) {
                     if ((g2 & 1) == 0) {
                         if (g2 == 0x6) {
                             var sp = this.chip.timingAndControl.fetchNextWord();
-                            //if (sp != Math.ceil(sp)) {
-                            //    this.chip.hlt();
-                            //    return true;
-                            //}
                             this.chip.regarray.sp.setValue(sp);
                         }
                         else {
@@ -626,6 +626,10 @@ var edu8080;
                 this.instructionFetch();
                 if (this.chip.instructonDecoder.Decode())
                     return;
+                if (this.chip.instructonDecoder.operationCode == OperationCode.NOP) {
+                }
+                else {
+                }
             }
         };
         return TimingAndControl;

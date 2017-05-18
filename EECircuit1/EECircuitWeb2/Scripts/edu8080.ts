@@ -1,7 +1,7 @@
 ﻿namespace edu8080
 {
     enum OperationCode {
-        ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, OTHER
+        ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
         b = 0, c, d, e, h, l, m, a
@@ -113,16 +113,17 @@
             var g1 = machinCode1 >> 6;
             var g2 = (machinCode1 >> 3) & 0x7;
             var g3 = machinCode1 & 0x7;
+            this.g1 = g1;
+            this.g2 = g2;
+            this.g3 = g3;
+            this.operationCode = OperationCode.NOP;
             if (g1 == 0) {
                 if (g3 == 0) {
                     if (g2 == 0) { // NOP
-                        // NO OPETATION
+                        this.operationCode = OperationCode.NOP;
                     }
                     else {
-                        // NO OPETATION
-                        this.chip.hlt();
-                        return true;
-                        //this.chip.notImplemented(machinCode1);
+                        this.chip.notImplemented(machinCode1);
                     }
                 }
                 else if (g3 == 1) // LXI or DAD
@@ -131,12 +132,7 @@
                     {
                         if (g2 == 0x6) {    // LXI SP,
                             var sp = this.chip.timingAndControl.fetchNextWord();
-                            //if (sp != Math.ceil(sp)) {
-                            //    this.chip.hlt();
-                            //    return true;
-                            //}
                             this.chip.regarray.sp.setValue(sp);
-                            //tracebox.add("lxi pc="+virtualMachine.cpu.regarray.pc.getValue().toString(16)+" sp=" +virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else {  // LXI B/D/H,
                             this.chip.setRegister(g2 + 1, this.chip.timingAndControl.fetchNextByte());
@@ -593,6 +589,13 @@
 
                 this.instructionFetch();
                 if (this.chip.instructonDecoder.Decode()) return;
+                if (this.chip.instructonDecoder.operationCode == OperationCode.NOP)
+                {
+                    // do nothing
+                }
+                else {
+                    // TBW
+                }
             }
         }
     }
