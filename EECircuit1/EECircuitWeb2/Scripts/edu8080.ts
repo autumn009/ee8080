@@ -74,7 +74,93 @@
     class AccumulatorLatch extends Register8 { }
     class TempReg extends Register8 { }
     class ArithmeticLogicUnit {
+        private chip: i8080;
+        constructor(thischip: i8080) {
+            this.chip = thischip;
+        }
+        public result: Register8 = new Register8();
+        private setps(a: number) {
+            this.chip.flags.s = ((a & 0x80) != 0);
+            var p = 0;
+            var x = a;
+            for (var i = 0; i < 8; i++) {
+                if (x & 1) p++;
+                x >>= 1;
+            }
+            this.chip.flags.p = ((p & 1) == 0);
+        }
 
+        public cmp(a: number, b: number) {
+            var a = this.chip.accumulatorLatch.getValue();
+            var b = this.chip.tempReg.getValue();
+            this.sub(a, b);
+        }
+        private addraw(cyUnchange: boolean = false, cyOnlyChange = false, c: boolean = false) {
+            var a = this.chip.accumulatorLatch.getValue();
+            var b = this.chip.tempReg.getValue();
+            var r = a + b + (c ? 1 : 0);
+            var r0 = r & 255;
+            var rc = (r >> 8) != 0;
+            if (!cyUnchange) this.chip.flags.cy = rc;
+            if (!cyOnlyChange) {
+                this.chip.flags.z = (r0 == 0);
+                this.setps(r0);
+                this.chip.flags.ac = ((a & 0x8) & (b & 0x8)) != 0;
+            }
+            this.result.setValue(r0);
+        }
+        public add(cyUnchange: boolean = false, cyOnlyChange = false) {
+            this.addraw(cyUnchange, cyOnlyChange, false);
+        }
+        public adc(cyUnchange: boolean = false, cyOnlyChange = false) {
+            this.addraw(cyUnchange, cyOnlyChange, this.chip.flags.cy);
+        }
+        private subraw(cyUnchange: boolean = false, c: boolean = false) {
+            var a = this.chip.accumulatorLatch.getValue();
+            var b = this.chip.tempReg.getValue();
+            var r = a - b - (c ? 1 : 0);
+            var r0 = r & 255;
+            var rc = (r >> 8) != 0;
+            this.chip.flags.z = (r0 == 0);
+            if (!cyUnchange) this.chip.flags.cy = rc;
+            this.setps(r0);
+            this.chip.flags.ac = false;
+            this.result.setValue(r0);
+        }
+        public sub(a: number, b: number, cyUnchange: boolean = false, c: boolean = false) {
+            this.subraw(cyUnchange, false);
+        }
+        public sbb(a: number, b: number, cyUnchange: boolean = false, c: boolean = false) {
+            this.subraw(cyUnchange, this.chip.flags.cy);
+        }
+
+        private setlogicFlags(v: number, ac: boolean) {
+            this.chip.flags.z = (v == 0);
+            this.chip.flags.cy = false;
+            this.setps(v);
+            this.chip.flags.ac = ac;
+        }
+        public and() {
+            var a = this.chip.accumulatorLatch.getValue();
+            var b = this.chip.tempReg.getValue();
+            var r = a & b;
+            this.setlogicFlags(r, true);
+            this.result.setValue(r);
+        }
+        public or() {
+            var a = this.chip.accumulatorLatch.getValue();
+            var b = this.chip.tempReg.getValue();
+            var r = a | b;
+            this.setlogicFlags(r, false);
+            this.result.setValue(r);
+        }
+        public xor() {
+            var a = this.chip.accumulatorLatch.getValue();
+            var b = this.chip.tempReg.getValue();
+            var r = a ^ b;
+            this.setlogicFlags(r, false);
+            this.result.setValue(r);
+        }
     }
     class FlagFlipFlop {
         public z: boolean = false;
@@ -615,6 +701,7 @@
                 {
                     var t1 = this.chip.regarray.getRegisterPairValue(2);
                     var t2 = this.chip.regarray.getRegisterPairValue(this.chip.instructonDecoder.registerSelect16);
+                    // NEED TO REWRITE
                     var s = t1 + t2;
                     this.chip.flags.cy = (s >= 0x10000) ? true : false;
                     this.chip.regarray.setRegisterPairValue(2, s & 0xffff);
@@ -639,6 +726,7 @@
         public registerSelect8: RegisterSelect8 = 0;
         public insutructionRegister = new InstructionRegister();
         public instructonDecoder = new InstructionDecoderAndMachineCycleEncoding(this);
+        public alu = new ArithmeticLogicUnit(this);
         
         public memoryRead()
         {
@@ -782,6 +870,7 @@
             alert(n.toString(16) + " is not implemented");
         }
 
+        // will remove
         public setps(a: number) {
             this.flags.s = ((a & 0x80) != 0);
             var p = 0;
@@ -793,6 +882,7 @@
             this.flags.p = ((p & 1) == 0);
         }
 
+        // will remove
         public cmp(a: number, b: number) {
             //this.flags.z = (a == b);
             //this.flags.cy = (a < b);
@@ -801,6 +891,7 @@
             this.sub(a, b);
         }
 
+        // will remove
         public add(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
             var r = a + b + (c ? 1 : 0);
             var r0 = r & 255;
@@ -811,6 +902,7 @@
             this.flags.ac = ((a & 0x8) & (b & 0x8)) != 0;
             return r0;
         }
+        // will remove
         public sub(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
             var r = a - b - (c ? 1 : 0);
             var r0 = r & 255;
@@ -822,6 +914,7 @@
             return r0;
         }
 
+        // will remove
         public setlogicFlags(v: number, ac: boolean) {
             this.flags.z = (v == 0);
             this.flags.cy = false;
@@ -829,16 +922,19 @@
             this.flags.ac = ac;
         }
 
+        // will remove
         public and(a: number, b: number): number {
             var r = a & b;
             this.setlogicFlags(r, true);
             return r;
         }
+        // will remove
         public or(a: number, b: number): number {
             var r = a | b;
             this.setlogicFlags(r, false);
             return r;
         }
+        // will remove
         public xor(a: number, b: number): number {
             var r = a ^ b;
             this.setlogicFlags(r, false);

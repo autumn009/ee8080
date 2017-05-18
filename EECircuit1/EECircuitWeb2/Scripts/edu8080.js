@@ -154,8 +154,106 @@ var edu8080;
         return TempReg;
     }(Register8));
     var ArithmeticLogicUnit = (function () {
-        function ArithmeticLogicUnit() {
+        function ArithmeticLogicUnit(thischip) {
+            this.result = new Register8();
+            this.chip = thischip;
         }
+        ArithmeticLogicUnit.prototype.setps = function (a) {
+            this.chip.flags.s = ((a & 0x80) != 0);
+            var p = 0;
+            var x = a;
+            for (var i = 0; i < 8; i++) {
+                if (x & 1)
+                    p++;
+                x >>= 1;
+            }
+            this.chip.flags.p = ((p & 1) == 0);
+        };
+        ArithmeticLogicUnit.prototype.cmp = function (a, b) {
+            var a = this.chip.accumulatorLatch.getValue();
+            var b = this.chip.tempReg.getValue();
+            this.sub(a, b);
+        };
+        ArithmeticLogicUnit.prototype.addraw = function (cyUnchange, cyOnlyChange, c) {
+            if (cyUnchange === void 0) { cyUnchange = false; }
+            if (cyOnlyChange === void 0) { cyOnlyChange = false; }
+            if (c === void 0) { c = false; }
+            var a = this.chip.accumulatorLatch.getValue();
+            var b = this.chip.tempReg.getValue();
+            var r = a + b + (c ? 1 : 0);
+            var r0 = r & 255;
+            var rc = (r >> 8) != 0;
+            if (!cyUnchange)
+                this.chip.flags.cy = rc;
+            if (!cyOnlyChange) {
+                this.chip.flags.z = (r0 == 0);
+                this.setps(r0);
+                this.chip.flags.ac = ((a & 0x8) & (b & 0x8)) != 0;
+            }
+            this.result.setValue(r0);
+        };
+        ArithmeticLogicUnit.prototype.add = function (cyUnchange, cyOnlyChange) {
+            if (cyUnchange === void 0) { cyUnchange = false; }
+            if (cyOnlyChange === void 0) { cyOnlyChange = false; }
+            this.addraw(cyUnchange, cyOnlyChange, false);
+        };
+        ArithmeticLogicUnit.prototype.adc = function (cyUnchange, cyOnlyChange) {
+            if (cyUnchange === void 0) { cyUnchange = false; }
+            if (cyOnlyChange === void 0) { cyOnlyChange = false; }
+            this.addraw(cyUnchange, cyOnlyChange, this.chip.flags.cy);
+        };
+        ArithmeticLogicUnit.prototype.subraw = function (cyUnchange, c) {
+            if (cyUnchange === void 0) { cyUnchange = false; }
+            if (c === void 0) { c = false; }
+            var a = this.chip.accumulatorLatch.getValue();
+            var b = this.chip.tempReg.getValue();
+            var r = a - b - (c ? 1 : 0);
+            var r0 = r & 255;
+            var rc = (r >> 8) != 0;
+            this.chip.flags.z = (r0 == 0);
+            if (!cyUnchange)
+                this.chip.flags.cy = rc;
+            this.setps(r0);
+            this.chip.flags.ac = false;
+            this.result.setValue(r0);
+        };
+        ArithmeticLogicUnit.prototype.sub = function (a, b, cyUnchange, c) {
+            if (cyUnchange === void 0) { cyUnchange = false; }
+            if (c === void 0) { c = false; }
+            this.subraw(cyUnchange, false);
+        };
+        ArithmeticLogicUnit.prototype.sbb = function (a, b, cyUnchange, c) {
+            if (cyUnchange === void 0) { cyUnchange = false; }
+            if (c === void 0) { c = false; }
+            this.subraw(cyUnchange, this.chip.flags.cy);
+        };
+        ArithmeticLogicUnit.prototype.setlogicFlags = function (v, ac) {
+            this.chip.flags.z = (v == 0);
+            this.chip.flags.cy = false;
+            this.setps(v);
+            this.chip.flags.ac = ac;
+        };
+        ArithmeticLogicUnit.prototype.and = function () {
+            var a = this.chip.accumulatorLatch.getValue();
+            var b = this.chip.tempReg.getValue();
+            var r = a & b;
+            this.setlogicFlags(r, true);
+            this.result.setValue(r);
+        };
+        ArithmeticLogicUnit.prototype.or = function () {
+            var a = this.chip.accumulatorLatch.getValue();
+            var b = this.chip.tempReg.getValue();
+            var r = a | b;
+            this.setlogicFlags(r, false);
+            this.result.setValue(r);
+        };
+        ArithmeticLogicUnit.prototype.xor = function () {
+            var a = this.chip.accumulatorLatch.getValue();
+            var b = this.chip.tempReg.getValue();
+            var r = a ^ b;
+            this.setlogicFlags(r, false);
+            this.result.setValue(r);
+        };
         return ArithmeticLogicUnit;
     }());
     var FlagFlipFlop = (function () {
@@ -647,6 +745,7 @@ var edu8080;
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.DAD) {
                     var t1 = this.chip.regarray.getRegisterPairValue(2);
                     var t2 = this.chip.regarray.getRegisterPairValue(this.chip.instructonDecoder.registerSelect16);
+                    // NEED TO REWRITE
                     var s = t1 + t2;
                     this.chip.flags.cy = (s >= 0x10000) ? true : false;
                     this.chip.regarray.setRegisterPairValue(2, s & 0xffff);
@@ -672,6 +771,7 @@ var edu8080;
             this.registerSelect8 = 0;
             this.insutructionRegister = new InstructionRegister();
             this.instructonDecoder = new InstructionDecoderAndMachineCycleEncoding(this);
+            this.alu = new ArithmeticLogicUnit(this);
             this.lastval = 65536;
         }
         i8080.prototype.memoryRead = function () {
@@ -803,6 +903,7 @@ var edu8080;
         i8080.prototype.notImplemented = function (n) {
             alert(n.toString(16) + " is not implemented");
         };
+        // will remove
         i8080.prototype.setps = function (a) {
             this.flags.s = ((a & 0x80) != 0);
             var p = 0;
@@ -814,6 +915,7 @@ var edu8080;
             }
             this.flags.p = ((p & 1) == 0);
         };
+        // will remove
         i8080.prototype.cmp = function (a, b) {
             //this.flags.z = (a == b);
             //this.flags.cy = (a < b);
@@ -821,6 +923,7 @@ var edu8080;
             //this.flags.ac = false;
             this.sub(a, b);
         };
+        // will remove
         i8080.prototype.add = function (a, b, cyUnchange, c) {
             if (cyUnchange === void 0) { cyUnchange = false; }
             if (c === void 0) { c = false; }
@@ -834,6 +937,7 @@ var edu8080;
             this.flags.ac = ((a & 0x8) & (b & 0x8)) != 0;
             return r0;
         };
+        // will remove
         i8080.prototype.sub = function (a, b, cyUnchange, c) {
             if (cyUnchange === void 0) { cyUnchange = false; }
             if (c === void 0) { c = false; }
@@ -847,22 +951,26 @@ var edu8080;
             this.flags.ac = false;
             return r0;
         };
+        // will remove
         i8080.prototype.setlogicFlags = function (v, ac) {
             this.flags.z = (v == 0);
             this.flags.cy = false;
             this.setps(v);
             this.flags.ac = ac;
         };
+        // will remove
         i8080.prototype.and = function (a, b) {
             var r = a & b;
             this.setlogicFlags(r, true);
             return r;
         };
+        // will remove
         i8080.prototype.or = function (a, b) {
             var r = a | b;
             this.setlogicFlags(r, false);
             return r;
         };
+        // will remove
         i8080.prototype.xor = function (a, b) {
             var r = a ^ b;
             this.setlogicFlags(r, false);
