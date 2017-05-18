@@ -134,7 +134,409 @@
         }
     }
     class TimingAndControl {
+        private chip: i8080;
+        constructor(thischip: i8080) {
+            this.chip = thischip;
+        }
+        public runMain() {
+            vdt.inputFunc = (num) => {
+                emu.inputChars += String.fromCharCode(num);
+                if (vdt.inputFuncAfter) vdt.inputFuncAfter();
+            };
+            for (; ;) {
+                if (emu.waitingInput) {
+                    emu.waitingInput = false;
+                    vdt.inputFuncAfter = () => {
+                        vdt.inputFuncAfter = null;
+                        setTimeout(() => {
+                            this.chip.runMain();
+                        }, 0);
+                    };
+                    return;
+                }
+                if (emu.screenRefreshRequest) {
+                    emu.screenRefreshRequest = false;
+                    setTimeout(() => {
+                        this.chip.runMain();
+                    }, 0);
+                    return;
+                }
 
+                var machinCode1 = this.chip.fetchNextByte();
+                var g1 = machinCode1 >> 6;
+                var g2 = (machinCode1 >> 3) & 0x7;
+                var g3 = machinCode1 & 0x7;
+                if (g1 == 0) {
+                    if (g3 == 0) {
+                        if (g2 == 0) { // NOP
+                            // NO OPETATION
+                        }
+                        else {
+                            // NO OPETATION
+                            this.chip.hlt();
+                            return;
+                            //this.chip.notImplemented(machinCode1);
+                        }
+                    }
+                    else if (g3 == 1) // LXI or DAD
+                    {
+                        if ((g2 & 1) == 0) // LXI
+                        {
+                            if (g2 == 0x6) {    // LXI SP,
+                                var sp = this.chip.fetchNextWord();
+                                //if (sp != Math.ceil(sp)) {
+                                //    this.chip.hlt();
+                                //    return;
+                                //}
+                                this.chip.regarray.sp.setValue(sp);
+                                //tracebox.add("lxi pc="+virtualMachine.cpu.regarray.pc.getValue().toString(16)+" sp=" +virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                            }
+                            else {  // LXI B/D/H,
+                                this.chip.setRegister(g2 + 1, this.chip.fetchNextByte());
+                                this.chip.setRegister(g2, this.chip.fetchNextByte());
+                            }
+                        }
+                        else // DAD
+                        {
+                            var t1 = this.chip.regarray.getRegisterPairValue(2);
+                            var t2 = this.chip.regarray.getRegisterPairValue(g2 >> 1);
+                            var s = t1 + t2;
+                            this.chip.flags.cy = (s >= 0x10000) ? true : false;
+                            this.chip.regarray.setRegisterPairValue(2, s & 0xffff);
+                        }
+                    }
+                    else if (g3 == 2) {
+                        if ((g2 & 0x5) == 0x0)  // STAX
+                        {
+                            emu.virtualMachine.memory.Bytes.write(this.chip.regarray.getRegisterPairValue(g2 >> 1), this.chip.accumulator.getValue());
+                        }
+                        else if ((g2 & 0x5) == 0x1)  // LDAX
+                        {
+                            this.chip.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(
+                                this.chip.regarray.getRegisterPairValue(g2 >> 1)
+                            ));
+                        }
+                        else if (g2 == 4)  // SHLD
+                        {
+                            var addr = this.chip.fetchNextWord();
+                            emu.virtualMachine.memory.Bytes.write(addr, this.chip.regarray.l.getValue());
+                            addr = incrementAddress(addr);
+                            emu.virtualMachine.memory.Bytes.write(addr, this.chip.regarray.h.getValue());
+                        }
+                        else if (g2 == 5)  // LHLD
+                        {
+                            var addr = this.chip.fetchNextWord();
+                            this.chip.regarray.l.setValue(emu.virtualMachine.memory.Bytes.read(addr));
+                            addr = incrementAddress(addr);
+                            this.chip.regarray.h.setValue(emu.virtualMachine.memory.Bytes.read(addr));
+                        }
+                        else if (g2 == 6) // STA
+                        {
+                            emu.virtualMachine.memory.Bytes.write(this.chip.fetchNextWord(), this.chip.accumulator.getValue());
+                        }
+                        else if (g2 == 7) { // LDA
+                            this.chip.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(this.chip.fetchNextWord()));
+                        }
+                        else {
+                            this.chip.notImplemented(machinCode1);
+                        }
+                    }
+                    else if (g3 == 3) {
+                        var hl = this.chip.regarray.getRegisterPairValue(g2 >> 1);
+                        if ((g2 & 1) == 0) // INX
+                            hl++;
+                        else // DEX
+                            hl--;
+                        this.chip.regarray.setRegisterPairValue(g2 >> 1, hl & 0xffff);
+                        //if ((g2 >> 1) == 3)
+                        //{
+                        //tracebox.add("inx/dex pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                        //}
+                    }
+                    else if (g3 == 4) { // INR
+                        var val = this.chip.getRegister(g2);
+                        val = this.chip.add(val, 1, true);
+                        this.chip.setRegister(g2, val);
+                    }
+                    else if (g3 == 5) { // DCR
+                        var val = this.chip.getRegister(g2);
+                        val = this.chip.sub(val, 1, true);
+                        this.chip.setRegister(g2, val);
+                    }
+                    else if (g3 == 6)    // MVI r,x
+                    {
+                        this.chip.setRegister(g2, this.chip.fetchNextByte());
+                    }
+                    else if (g3 == 7) {
+                        if (g2 == 0)    // RLC
+                        {
+                            var r = this.chip.accumulator.getValue();
+                            r <<= 1;
+                            var over = (r & 0x100) != 0;
+                            this.chip.accumulator.setValue((r & 255) + (over ? 1 : 0));
+                            this.chip.flags.cy = over;
+                        }
+                        else if (g2 == 1)    // RRC
+                        {
+                            var r = this.chip.accumulator.getValue();
+                            var over = (r & 1) != 0;
+                            r >>= 1;
+                            this.chip.accumulator.setValue((r & 255) + (over ? 0x80 : 0));
+                            this.chip.flags.cy = over;
+                        }
+                        else if (g2 == 2)    // RAL
+                        {
+                            var r = this.chip.accumulator.getValue();
+                            r <<= 1;
+                            this.chip.accumulator.setValue((r & 255) + (this.chip.flags.cy ? 1 : 0));
+                            this.chip.flags.cy = (r & 0x100) != 0;
+                        }
+                        else if (g2 == 3)    // RAR
+                        {
+                            var r = this.chip.accumulator.getValue();
+                            var over = (r & 1) != 0;
+                            r >>= 1;
+                            this.chip.accumulator.setValue((r & 255) + (this.chip.flags.cy ? 0x80 : 0));
+                            this.chip.flags.cy = over;
+                        }
+                        else if (g2 == 4)    // DAA
+                        {
+                            var a = this.chip.accumulator.getValue();
+                            var al4 = a & 15;
+                            if (al4 > 9 || this.chip.flags.ac) a += 6;
+                            var ah4 = (a >> 4) & 15;
+                            if (ah4 > 9 || this.chip.flags.cy) a += 0x60;
+                            var r0 = a & 255;
+                            this.chip.accumulator.setValue(r0);
+                            var rc = (a >> 8) != 0;
+                            this.chip.flags.z = (a == 0);
+                            this.chip.flags.cy = rc;
+                            this.chip.setps(r0);
+                            this.chip.flags.ac = false;
+                        }
+                        else if (g2 == 5)    // CMA
+                        {
+                            this.chip.accumulator.setValue((~this.chip.accumulator.getValue()) & 255);
+                        }
+                        else if (g2 == 6)    // STC
+                        {
+                            this.chip.flags.cy = true;
+                        }
+                        else if (g2 == 7)    // CMC
+                        {
+                            this.chip.flags.cy = !this.chip.flags.cy;
+                        }
+                        else {
+                            this.chip.notImplemented(machinCode1);
+                        }
+                    }
+                    else {
+                        this.chip.notImplemented(machinCode1);
+                    }
+                }
+                else if (g1 == 1) {
+                    if (g2 == 6 && g3 == 6)    // HLT
+                    {
+                        this.chip.hlt();
+                        return;
+                    }
+                    else {  // MOV
+                        this.chip.setRegister(g2, this.chip.getRegister(g3));
+                    }
+                }
+                else if (g1 == 2) {
+                    if (g2 == 0)    // ADD
+                    {
+                        this.chip.accumulator.setValue(this.chip.add(this.chip.accumulator.getValue(), this.chip.getRegister(g3)));
+                    }
+                    else if (g2 == 1)    // ADC
+                    {
+                        this.chip.accumulator.setValue(this.chip.add(this.chip.accumulator.getValue(), this.chip.getRegister(g3), false, this.chip.flags.cy));
+                    }
+                    else if (g2 == 2)    // SUB
+                    {
+                        this.chip.accumulator.setValue(this.chip.sub(this.chip.accumulator.getValue(), this.chip.getRegister(g3)));
+                    }
+                    else if (g2 == 3)    // SBB
+                    {
+                        this.chip.accumulator.setValue(this.chip.sub(this.chip.accumulator.getValue(), this.chip.getRegister(g3), false, this.chip.flags.cy));
+                    }
+                    else if (g2 == 4)    // AND
+                    {
+                        this.chip.accumulator.setValue(this.chip.and(this.chip.accumulator.getValue(), this.chip.getRegister(g3)));
+                    }
+                    else if (g2 == 5)    // XRA
+                    {
+                        this.chip.accumulator.setValue(this.chip.xor(this.chip.accumulator.getValue(), this.chip.getRegister(g3)));
+                    }
+                    else if (g2 == 6)    // ORA
+                    {
+                        this.chip.accumulator.setValue(this.chip.or(this.chip.accumulator.getValue(), this.chip.getRegister(g3)));
+                    }
+                    else if (g2 == 7)    // CMP
+                    {
+                        this.chip.cmp(this.chip.accumulator.getValue(), this.chip.getRegister(g3));
+                    }
+                    else {
+                        this.chip.notImplemented(machinCode1);
+                    }
+                }
+                else {
+                    if (g3 == 0) {  // Rxx
+                        if (this.chip.condCommon(g2)) {
+                            this.chip.regarray.pc.setValue(this.chip.popCommon());
+                            //tracebox.add("rxx pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                        }
+                    }
+                    else if (g3 == 1) {
+                        if ((g2 & 1) == 0) // POP
+                        {
+                            this.chip.setRegisterPairBDHPSW(g2 & 6, this.chip.popCommon());
+                            //tracebox.add("pop pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                        }
+                        else if (g2 == 1) { // RET
+                            this.chip.regarray.pc.setValue(this.chip.popCommon());
+                            //tracebox.add("ret pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                        }
+                        else if (g2 == 5) // PCHL
+                        {
+                            this.chip.regarray.pc.setValue(this.chip.regarray.getRegisterPairValue(2));
+                        }
+                        else if (g2 == 7) // SPHL
+                        {
+                            this.chip.regarray.sp.setValue(this.chip.regarray.getRegisterPairValue(2));
+                            //tracebox.add("sphl pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                        }
+                        else {
+                            this.chip.notImplemented(machinCode1);
+                        }
+                    }
+                    else if (g3 == 2)   // Jxx
+                    {
+                        this.chip.condJump(this.chip.condCommon(g2));
+                    }
+                    else if (g3 == 3) {
+                        if (g2 == 0) // JMP
+                        {
+                            var n = this.chip.fetchNextWord();
+                            this.chip.regarray.pc.setValue(n);
+                        }
+                        else if (g2 == 3) // IN
+                        {
+                            var port = this.chip.fetchNextByte();
+                            var r = emu.virtualMachine.io.in(port);
+                            this.chip.setRegister(7, r);
+                        }
+                        else if (g2 == 2) // OUT
+                        {
+                            var port = this.chip.fetchNextByte();
+                            var v = this.chip.getRegister(7);
+                            emu.virtualMachine.io.out(port, v);
+                        }
+                        else if (g2 == 4)   // XTHL
+                        {
+                            var t = this.chip.popCommon();
+                            this.chip.pushCommon(this.chip.regarray.getRegisterPairValue(2));
+                            this.chip.regarray.setRegisterPairValue(2, t);
+                            //tracebox.add("xthl pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                        }
+                        else if (g2 == 5) // XCHG
+                        {
+                            var t1 = this.chip.regarray.l.getValue();
+                            var t2 = this.chip.regarray.h.getValue();
+                            this.chip.regarray.l.setValue(this.chip.regarray.e.getValue());
+                            this.chip.regarray.h.setValue(this.chip.regarray.d.getValue());
+                            this.chip.regarray.e.setValue(t1);
+                            this.chip.regarray.d.setValue(t2);
+                        }
+                        else if (g2 == 6) // DI
+                        {
+                            // ASSUMED AS NOP
+                        }
+                        else if (g2 == 7) // EI
+                        {
+                            // ASSUMED AS NOP
+                        }
+                        else {
+                            this.chip.notImplemented(machinCode1);
+                        }
+                    }
+                    else if (g3 == 4)   // Cxx
+                    {
+                        var oldpc = this.chip.condJump(this.chip.condCommon(g2));
+                        if (oldpc != null) this.chip.pushCommon(oldpc);
+                    }
+                    else if (g3 == 5) {
+                        if ((g2 & 1) == 0) // PUSH
+                        {
+                            var val = this.chip.getRegisterPairBDHPSW(g2 & 6);
+                            this.chip.pushCommon(val);
+                            //tracebox.add("push pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                        }
+                        else if (g2 == 1)   // CALL
+                        {
+                            var oldpc = this.chip.condJump(true);
+                            this.chip.pushCommon(oldpc);
+                            //tracebox.add("call pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                        }
+                        else {
+                            this.chip.notImplemented(machinCode1);
+                        }
+                    }
+                    else if (g3 == 6) {
+                        if (g2 == 0) // ADI
+                        {
+                            this.chip.accumulator.setValue(this.chip.add(this.chip.accumulator.getValue(), this.chip.fetchNextByte()));
+                        }
+                        else if (g2 == 1) // ACI
+                        {
+                            this.chip.accumulator.setValue(this.chip.add(this.chip.accumulator.getValue(), this.chip.fetchNextByte(), false, this.chip.flags.cy));
+                        }
+                        else if (g2 == 2) // SUI
+                        {
+                            this.chip.accumulator.setValue(this.chip.sub(this.chip.accumulator.getValue(), this.chip.fetchNextByte()));
+                        }
+                        else if (g2 == 3) // SBI
+                        {
+                            this.chip.accumulator.setValue(this.chip.sub(this.chip.accumulator.getValue(), this.chip.fetchNextByte(), false, this.chip.flags.cy));
+                        }
+                        else if (g2 == 4) // ANI
+                        {
+                            this.chip.accumulator.setValue(this.chip.and(this.chip.accumulator.getValue(), this.chip.fetchNextByte()));
+                        }
+                        else if (g2 == 5) // XRI
+                        {
+                            this.chip.accumulator.setValue(this.chip.xor(this.chip.accumulator.getValue(), this.chip.fetchNextByte()));
+                        }
+                        else if (g2 == 6) // ORI
+                        {
+                            this.chip.accumulator.setValue(this.chip.or(this.chip.accumulator.getValue(), this.chip.fetchNextByte()));
+                        }
+                        else if (g2 == 7) // CPI
+                        {
+                            this.chip.cmp(this.chip.accumulator.getValue(), this.chip.fetchNextByte());
+                        }
+                        else {
+                            this.chip.notImplemented(machinCode1);
+                        }
+                    }
+                    else if (g3 == 7)   // RST
+                    {
+                        var oldpc = this.chip.regarray.pc.getValue();
+                        if (emu.superTrap && g2 == 7) {
+                            this.chip.hlt();
+                            emu.setMonitor();
+                            return;
+                        }
+                        this.chip.regarray.pc.setValue(g2 << 3);
+                        this.chip.pushCommon(oldpc);
+                    }
+                    else {
+                        this.chip.notImplemented(machinCode1);
+                    }
+                }
+            }
+        }
     }
     export class i8080 implements icpu {
         public halt = true;
@@ -143,6 +545,7 @@
         public tempReg = new TempReg();
         public regarray = new RegisterArray();
         public flags = new FlagFlipFlop();
+        public timingAndControl = new TimingAndControl(this);
         public update() {
             $("#regA").text(dec2hex(this.accumulator.getValue(), 2));
             $("#regBC").text(dec2hex(this.regarray.b.getValue(), 2) + dec2hex(this.regarray.c.getValue(), 2));
@@ -264,15 +667,15 @@
             $("#runStopStatus").text("STOP");
         }
 
-        private undefinedInstuction(n: number) {
+        public undefinedInstuction(n: number) {
             alert(n.toString(16) + " is not undefined machine code");
         }
 
-        private notImplemented(n: number) {
+        public notImplemented(n: number) {
             alert(n.toString(16) + " is not implemented");
         }
 
-        private setps(a: number) {
+        public setps(a: number) {
             this.flags.s = ((a & 0x80) != 0);
             var p = 0;
             var x = a;
@@ -283,7 +686,7 @@
             this.flags.p = ((p & 1) == 0);
         }
 
-        private cmp(a: number, b: number) {
+        public cmp(a: number, b: number) {
             //this.flags.z = (a == b);
             //this.flags.cy = (a < b);
             //this.setps(this.accumulator.getValue());
@@ -291,7 +694,7 @@
             this.sub(a, b);
         }
 
-        private add(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
+        public add(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
             var r = a + b + (c ? 1 : 0);
             var r0 = r & 255;
             var rc = (r >> 8) != 0;
@@ -301,7 +704,7 @@
             this.flags.ac = ((a & 0x8) & (b & 0x8)) != 0;
             return r0;
         }
-        private sub(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
+        public sub(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
             var r = a - b - (c ? 1 : 0);
             var r0 = r & 255;
             var rc = (r >> 8) != 0;
@@ -312,30 +715,30 @@
             return r0;
         }
 
-        private setlogicFlags(v: number, ac: boolean) {
+        public setlogicFlags(v: number, ac: boolean) {
             this.flags.z = (v == 0);
             this.flags.cy = false;
             this.setps(v);
             this.flags.ac = ac;
         }
 
-        private and(a: number, b: number): number {
+        public and(a: number, b: number): number {
             var r = a & b;
             this.setlogicFlags(r, true);
             return r;
         }
-        private or(a: number, b: number): number {
+        public or(a: number, b: number): number {
             var r = a | b;
             this.setlogicFlags(r, false);
             return r;
         }
-        private xor(a: number, b: number): number {
+        public xor(a: number, b: number): number {
             var r = a ^ b;
             this.setlogicFlags(r, false);
             return r;
         }
 
-        private condJump(cond: boolean): number {
+        public condJump(cond: boolean): number {
             var tgt = this.fetchNextWord();
             if (cond) {
                 var oldpc = this.regarray.pc.getValue();
@@ -346,7 +749,7 @@
                 return null;
         }
 
-        private condCommon(g2: number): boolean {
+        public condCommon(g2: number): boolean {
             switch (g2) {
                 case 0: // NZ
                     return !this.flags.z;
@@ -367,7 +770,7 @@
             }
         }
 
-        private popCommon(): number {
+        public popCommon(): number {
             var l = emu.virtualMachine.memory.Bytes.read(this.regarray.sp.getValue());
             this.regarray.sp.Increment();
             var h = emu.virtualMachine.memory.Bytes.read(this.regarray.sp.getValue());
@@ -375,14 +778,14 @@
             return h * 256 + l;
         }
 
-        private pushCommon(val: number) {
+        public pushCommon(val: number) {
             this.regarray.sp.Decrement();
             emu.virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val >> 8);
             this.regarray.sp.Decrement();
             emu.virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val & 255);
         }
 
-        private hlt() {
+        public hlt() {
             this.halt = true;
             emu.virtualMachine.update();
             this.setStopped();
@@ -392,442 +795,9 @@
         private lastval = 65536;
 
         public runMain() {
-            vdt.inputFunc = (num) => {
-                emu.inputChars += String.fromCharCode(num);
-                if (vdt.inputFuncAfter) vdt.inputFuncAfter();
-            };
-            for (; ;) {
-                if (emu.waitingInput) {
-                    emu.waitingInput = false;
-                    vdt.inputFuncAfter = () => {
-                        vdt.inputFuncAfter = null;
-                        setTimeout(() => {
-                            this.runMain();
-                        }, 0);
-                    };
-                    return;
-                }
-                if (emu.screenRefreshRequest) {
-                    emu.screenRefreshRequest = false;
-                    setTimeout(() => {
-                        this.runMain();
-                    }, 0);
-                    return;
-                }
-                //if (trace) {
-                //    console.log("pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16));
-                //}
-                //tracebox.add("pc="+virtualMachine.cpu.regarray.pc.getValue().toString(16)+" sp=" +virtualMachine.cpu.regarray.sp.getValue().toString(16));
-
-                //var sp = virtualMachine.cpu.regarray.sp.getValue();
-                //if (sp < 0x8000 && sp > 0x100)
-                //{
-                //    this.hlt();
-                //    return;
-                //}
-                //if (sp != Math.ceil(sp)) {
-                //    tracebox.add("sp="+sp.toString());
-                //    this.hlt();
-                //    return;
-                //}
-                //var sh = sp >> 8;
-                //if (sp < 0xc000 && Math.abs(sh-this.lastval) >=2) {
-                //    tracebox.add("sh=" + sh.toString(16) + " sp=" + sp.toString(16));
-                //    this.lastval = sh;
-                //}
-
-                //if (virtualMachine.cpu.regarray.pc.getValue() == 0x2166) {
-                //if (virtualMachine.cpu.regarray.sp.getValue() == 0xe3f7) {
-                //    rightCount++;
-                // }
-                //else {
-                //debugCounter++;
-                //if (debugCounter == 3) {
-                //    this.hlt();
-                //    return;
-                //}
-                //}
-                //}
-                //if (debugCounter == 2) {
-                //tracebox.add("2166 pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                //tracebox.addPacked("[" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + ":" + virtualMachine.cpu.regarray.sp.getValue().toString(16) + "]");
-                //}
-
-                var machinCode1 = this.fetchNextByte();
-                var g1 = machinCode1 >> 6;
-                var g2 = (machinCode1 >> 3) & 0x7;
-                var g3 = machinCode1 & 0x7;
-                if (g1 == 0) {
-                    if (g3 == 0) {
-                        if (g2 == 0) { // NOP
-                            // NO OPETATION
-                        }
-                        else {
-                            // NO OPETATION
-                            this.hlt();
-                            return;
-                            //this.notImplemented(machinCode1);
-                        }
-                    }
-                    else if (g3 == 1) // LXI or DAD
-                    {
-                        if ((g2 & 1) == 0) // LXI
-                        {
-                            if (g2 == 0x6) {    // LXI SP,
-                                var sp = this.fetchNextWord();
-                                //if (sp != Math.ceil(sp)) {
-                                //    this.hlt();
-                                //    return;
-                                //}
-                                this.regarray.sp.setValue(sp);
-                                //tracebox.add("lxi pc="+virtualMachine.cpu.regarray.pc.getValue().toString(16)+" sp=" +virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                            }
-                            else {  // LXI B/D/H,
-                                this.setRegister(g2 + 1, this.fetchNextByte());
-                                this.setRegister(g2, this.fetchNextByte());
-                            }
-                        }
-                        else // DAD
-                        {
-                            var t1 = this.regarray.getRegisterPairValue(2);
-                            var t2 = this.regarray.getRegisterPairValue(g2 >> 1);
-                            var s = t1 + t2;
-                            this.flags.cy = (s >= 0x10000) ? true : false;
-                            this.regarray.setRegisterPairValue(2, s & 0xffff);
-                        }
-                    }
-                    else if (g3 == 2) {
-                        if ((g2 & 0x5) == 0x0)  // STAX
-                        {
-                            emu.virtualMachine.memory.Bytes.write(this.regarray.getRegisterPairValue(g2 >> 1), this.accumulator.getValue());
-                        }
-                        else if ((g2 & 0x5) == 0x1)  // LDAX
-                        {
-                            this.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(
-                                this.regarray.getRegisterPairValue(g2 >> 1)
-                            ));
-                        }
-                        else if (g2 == 4)  // SHLD
-                        {
-                            var addr = this.fetchNextWord();
-                            emu.virtualMachine.memory.Bytes.write(addr, this.regarray.l.getValue());
-                            addr = incrementAddress(addr);
-                            emu.virtualMachine.memory.Bytes.write(addr, this.regarray.h.getValue());
-                        }
-                        else if (g2 == 5)  // LHLD
-                        {
-                            var addr = this.fetchNextWord();
-                            this.regarray.l.setValue(emu.virtualMachine.memory.Bytes.read(addr));
-                            addr = incrementAddress(addr);
-                            this.regarray.h.setValue(emu.virtualMachine.memory.Bytes.read(addr));
-                        }
-                        else if (g2 == 6) // STA
-                        {
-                            emu.virtualMachine.memory.Bytes.write(this.fetchNextWord(), this.accumulator.getValue());
-                        }
-                        else if (g2 == 7) { // LDA
-                            this.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(this.fetchNextWord()));
-                        }
-                        else {
-                            this.notImplemented(machinCode1);
-                        }
-                    }
-                    else if (g3 == 3) {
-                        var hl = this.regarray.getRegisterPairValue(g2 >> 1);
-                        if ((g2 & 1) == 0) // INX
-                            hl++;
-                        else // DEX
-                            hl--;
-                        this.regarray.setRegisterPairValue(g2 >> 1, hl & 0xffff);
-                        //if ((g2 >> 1) == 3)
-                        //{
-                        //tracebox.add("inx/dex pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                        //}
-                    }
-                    else if (g3 == 4) { // INR
-                        var val = this.getRegister(g2);
-                        val = this.add(val, 1, true);
-                        this.setRegister(g2, val);
-                    }
-                    else if (g3 == 5) { // DCR
-                        var val = this.getRegister(g2);
-                        val = this.sub(val, 1, true);
-                        this.setRegister(g2, val);
-                    }
-                    else if (g3 == 6)    // MVI r,x
-                    {
-                        this.setRegister(g2, this.fetchNextByte());
-                    }
-                    else if (g3 == 7) {
-                        if (g2 == 0)    // RLC
-                        {
-                            var r = this.accumulator.getValue();
-                            r <<= 1;
-                            var over = (r & 0x100) != 0;
-                            this.accumulator.setValue((r & 255) + (over ? 1 : 0));
-                            this.flags.cy = over;
-                        }
-                        else if (g2 == 1)    // RRC
-                        {
-                            var r = this.accumulator.getValue();
-                            var over = (r & 1) != 0;
-                            r >>= 1;
-                            this.accumulator.setValue((r & 255) + (over ? 0x80 : 0));
-                            this.flags.cy = over;
-                        }
-                        else if (g2 == 2)    // RAL
-                        {
-                            var r = this.accumulator.getValue();
-                            r <<= 1;
-                            this.accumulator.setValue((r & 255) + (this.flags.cy ? 1 : 0));
-                            this.flags.cy = (r & 0x100) != 0;
-                        }
-                        else if (g2 == 3)    // RAR
-                        {
-                            var r = this.accumulator.getValue();
-                            var over = (r & 1) != 0;
-                            r >>= 1;
-                            this.accumulator.setValue((r & 255) + (this.flags.cy ? 0x80 : 0));
-                            this.flags.cy = over;
-                        }
-                        else if (g2 == 4)    // DAA
-                        {
-                            var a = this.accumulator.getValue();
-                            var al4 = a & 15;
-                            if (al4 > 9 || this.flags.ac) a += 6;
-                            var ah4 = (a >> 4) & 15;
-                            if (ah4 > 9 || this.flags.cy) a += 0x60;
-                            var r0 = a & 255;
-                            this.accumulator.setValue(r0);
-                            var rc = (a >> 8) != 0;
-                            this.flags.z = (a == 0);
-                            this.flags.cy = rc;
-                            this.setps(r0);
-                            this.flags.ac = false;
-                        }
-                        else if (g2 == 5)    // CMA
-                        {
-                            this.accumulator.setValue((~this.accumulator.getValue()) & 255);
-                        }
-                        else if (g2 == 6)    // STC
-                        {
-                            this.flags.cy = true;
-                        }
-                        else if (g2 == 7)    // CMC
-                        {
-                            this.flags.cy = !this.flags.cy;
-                        }
-                        else {
-                            this.notImplemented(machinCode1);
-                        }
-                    }
-                    else {
-                        this.notImplemented(machinCode1);
-                    }
-                }
-                else if (g1 == 1) {
-                    if (g2 == 6 && g3 == 6)    // HLT
-                    {
-                        this.hlt();
-                        return;
-                    }
-                    else {  // MOV
-                        this.setRegister(g2, this.getRegister(g3));
-                    }
-                }
-                else if (g1 == 2) {
-                    if (g2 == 0)    // ADD
-                    {
-                        this.accumulator.setValue(this.add(this.accumulator.getValue(), this.getRegister(g3)));
-                    }
-                    else if (g2 == 1)    // ADC
-                    {
-                        this.accumulator.setValue(this.add(this.accumulator.getValue(), this.getRegister(g3), false, this.flags.cy));
-                    }
-                    else if (g2 == 2)    // SUB
-                    {
-                        this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.getRegister(g3)));
-                    }
-                    else if (g2 == 3)    // SBB
-                    {
-                        this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.getRegister(g3), false, this.flags.cy));
-                    }
-                    else if (g2 == 4)    // AND
-                    {
-                        this.accumulator.setValue(this.and(this.accumulator.getValue(), this.getRegister(g3)));
-                    }
-                    else if (g2 == 5)    // XRA
-                    {
-                        this.accumulator.setValue(this.xor(this.accumulator.getValue(), this.getRegister(g3)));
-                    }
-                    else if (g2 == 6)    // ORA
-                    {
-                        this.accumulator.setValue(this.or(this.accumulator.getValue(), this.getRegister(g3)));
-                    }
-                    else if (g2 == 7)    // CMP
-                    {
-                        this.cmp(this.accumulator.getValue(), this.getRegister(g3));
-                    }
-                    else {
-                        this.notImplemented(machinCode1);
-                    }
-                }
-                else {
-                    if (g3 == 0) {  // Rxx
-                        if (this.condCommon(g2)) {
-                            this.regarray.pc.setValue(this.popCommon());
-                            //tracebox.add("rxx pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                        }
-                    }
-                    else if (g3 == 1) {
-                        if ((g2 & 1) == 0) // POP
-                        {
-                            this.setRegisterPairBDHPSW(g2 & 6, this.popCommon());
-                            //tracebox.add("pop pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                        }
-                        else if (g2 == 1) { // RET
-                            this.regarray.pc.setValue(this.popCommon());
-                            //tracebox.add("ret pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                        }
-                        else if (g2 == 5) // PCHL
-                        {
-                            this.regarray.pc.setValue(this.regarray.getRegisterPairValue(2));
-                        }
-                        else if (g2 == 7) // SPHL
-                        {
-                            this.regarray.sp.setValue(this.regarray.getRegisterPairValue(2));
-                            //tracebox.add("sphl pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                        }
-                        else {
-                            this.notImplemented(machinCode1);
-                        }
-                    }
-                    else if (g3 == 2)   // Jxx
-                    {
-                        this.condJump(this.condCommon(g2));
-                    }
-                    else if (g3 == 3) {
-                        if (g2 == 0) // JMP
-                        {
-                            var n = this.fetchNextWord();
-                            this.regarray.pc.setValue(n);
-                        }
-                        else if (g2 == 3) // IN
-                        {
-                            var port = this.fetchNextByte();
-                            var r = emu.virtualMachine.io.in(port);
-                            this.setRegister(7, r);
-                        }
-                        else if (g2 == 2) // OUT
-                        {
-                            var port = this.fetchNextByte();
-                            var v = this.getRegister(7);
-                            emu.virtualMachine.io.out(port, v);
-                        }
-                        else if (g2 == 4)   // XTHL
-                        {
-                            var t = this.popCommon();
-                            this.pushCommon(this.regarray.getRegisterPairValue(2));
-                            this.regarray.setRegisterPairValue(2, t);
-                            //tracebox.add("xthl pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                        }
-                        else if (g2 == 5) // XCHG
-                        {
-                            var t1 = this.regarray.l.getValue();
-                            var t2 = this.regarray.h.getValue();
-                            this.regarray.l.setValue(this.regarray.e.getValue());
-                            this.regarray.h.setValue(this.regarray.d.getValue());
-                            this.regarray.e.setValue(t1);
-                            this.regarray.d.setValue(t2);
-                        }
-                        else if (g2 == 6) // DI
-                        {
-                            // ASSUMED AS NOP
-                        }
-                        else if (g2 == 7) // EI
-                        {
-                            // ASSUMED AS NOP
-                        }
-                        else {
-                            this.notImplemented(machinCode1);
-                        }
-                    }
-                    else if (g3 == 4)   // Cxx
-                    {
-                        var oldpc = this.condJump(this.condCommon(g2));
-                        if (oldpc != null) this.pushCommon(oldpc);
-                    }
-                    else if (g3 == 5) {
-                        if ((g2 & 1) == 0) // PUSH
-                        {
-                            var val = this.getRegisterPairBDHPSW(g2 & 6);
-                            this.pushCommon(val);
-                            //tracebox.add("push pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                        }
-                        else if (g2 == 1)   // CALL
-                        {
-                            var oldpc = this.condJump(true);
-                            this.pushCommon(oldpc);
-                            //tracebox.add("call pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                        }
-                        else {
-                            this.notImplemented(machinCode1);
-                        }
-                    }
-                    else if (g3 == 6) {
-                        if (g2 == 0) // ADI
-                        {
-                            this.accumulator.setValue(this.add(this.accumulator.getValue(), this.fetchNextByte()));
-                        }
-                        else if (g2 == 1) // ACI
-                        {
-                            this.accumulator.setValue(this.add(this.accumulator.getValue(), this.fetchNextByte(), false, this.flags.cy));
-                        }
-                        else if (g2 == 2) // SUI
-                        {
-                            this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.fetchNextByte()));
-                        }
-                        else if (g2 == 3) // SBI
-                        {
-                            this.accumulator.setValue(this.sub(this.accumulator.getValue(), this.fetchNextByte(), false, this.flags.cy));
-                        }
-                        else if (g2 == 4) // ANI
-                        {
-                            this.accumulator.setValue(this.and(this.accumulator.getValue(), this.fetchNextByte()));
-                        }
-                        else if (g2 == 5) // XRI
-                        {
-                            this.accumulator.setValue(this.xor(this.accumulator.getValue(), this.fetchNextByte()));
-                        }
-                        else if (g2 == 6) // ORI
-                        {
-                            this.accumulator.setValue(this.or(this.accumulator.getValue(), this.fetchNextByte()));
-                        }
-                        else if (g2 == 7) // CPI
-                        {
-                            this.cmp(this.accumulator.getValue(), this.fetchNextByte());
-                        }
-                        else {
-                            this.notImplemented(machinCode1);
-                        }
-                    }
-                    else if (g3 == 7)   // RST
-                    {
-                        var oldpc = this.regarray.pc.getValue();
-                        if (emu.superTrap && g2 == 7) {
-                            this.hlt();
-                            emu.setMonitor();
-                            return;
-                        }
-                        this.regarray.pc.setValue(g2 << 3);
-                        this.pushCommon(oldpc);
-                    }
-                    else {
-                        this.notImplemented(machinCode1);
-                    }
-                }
-            }
+            this.timingAndControl.runMain();
         }
+
         public reset() {
             // TBW
             //this.regarray.b.setValue(255);  // DEBUG
