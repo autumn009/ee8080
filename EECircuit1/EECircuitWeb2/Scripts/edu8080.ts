@@ -1,16 +1,38 @@
 ﻿namespace edu8080
 {
+    enum RegisterSelect8 {
+        b = 0, c, d, e, h, l, m, a
+    }
+    enum RegisterSelect16 {
+        bc = 0, de, hl, sp, pc, latch
+    }
     class DataBus {
 
     }
     class AddressBus {
-
     }
     class AddressBuffer {
-
-    }
-    class DataBusBufferLatch {
-
+        private chip: i8080;
+        constructor(thischip: i8080) {
+            this.chip = thischip;
+        }
+        public getAddress(): number {
+            switch (this.chip.registerSelect16)
+            {
+                case RegisterSelect16.bc:
+                    return this.chip.regarray.getRegisterPairValue(0);
+                case RegisterSelect16.de:
+                    return this.chip.regarray.getRegisterPairValue(1);
+                case RegisterSelect16.hl:
+                    return this.chip.regarray.getRegisterPairValue(2);
+                case RegisterSelect16.sp:
+                    return this.chip.regarray.sp.getValue();
+                case RegisterSelect16.pc:
+                    return this.chip.regarray.pc.getValue();
+                default:
+                    return this.chip.regarray.incrementerDecrementerAddressLatch.getValue();
+            }
+        }
     }
     class InternalDataBus {
 
@@ -41,6 +63,8 @@
     }
     class Register8 extends Register {
         protected upperLimit = 255;
+    }
+    class DataBusBufferLatch extends Register8 {
     }
     class Register16 extends Register { }
     class Accumulator extends Register8 { }
@@ -75,7 +99,7 @@
     class DecimalAdjust {
 
     }
-    class InstructionRegister {
+    class InstructionRegister extends Register8 {
 
     }
     class InstructionDecoderAndMachineCycleEncoding {
@@ -138,6 +162,27 @@
         constructor(thischip: i8080) {
             this.chip = thischip;
         }
+        public fetchNextByte() {
+            this.chip.registerSelect16 = RegisterSelect16.pc;
+            this.chip.memoryRead();
+            this.chip.regarray.pc.Increment();
+            // TBW with to remove
+            return this.chip.dataBusBufferLatch.getValue();
+        }
+        public fetchNextWord() {
+            this.fetchNextByte();
+            var l = this.chip.dataBusBufferLatch.getValue();
+            this.fetchNextByte();
+            var h = this.chip.dataBusBufferLatch.getValue();
+            var hl = h * 256 + l;
+            return hl;
+        }
+        private instructionFetch()
+        {
+            this.fetchNextByte();
+            var data = this.chip.dataBusBufferLatch.getValue();
+            this.chip.insutructionRegister.setValue(data);
+        }
         public runMain() {
             vdt.inputFunc = (num) => {
                 emu.inputChars += String.fromCharCode(num);
@@ -162,7 +207,8 @@
                     return;
                 }
 
-                var machinCode1 = this.chip.fetchNextByte();
+                this.instructionFetch();
+                var machinCode1 = this.chip.insutructionRegister.getValue();
                 var g1 = machinCode1 >> 6;
                 var g2 = (machinCode1 >> 3) & 0x7;
                 var g3 = machinCode1 & 0x7;
@@ -183,7 +229,7 @@
                         if ((g2 & 1) == 0) // LXI
                         {
                             if (g2 == 0x6) {    // LXI SP,
-                                var sp = this.chip.fetchNextWord();
+                                var sp = this.fetchNextWord();
                                 //if (sp != Math.ceil(sp)) {
                                 //    this.chip.hlt();
                                 //    return;
@@ -192,8 +238,8 @@
                                 //tracebox.add("lxi pc="+virtualMachine.cpu.regarray.pc.getValue().toString(16)+" sp=" +virtualMachine.cpu.regarray.sp.getValue().toString(16));
                             }
                             else {  // LXI B/D/H,
-                                this.chip.setRegister(g2 + 1, this.chip.fetchNextByte());
-                                this.chip.setRegister(g2, this.chip.fetchNextByte());
+                                this.chip.setRegister(g2 + 1, this.fetchNextByte());
+                                this.chip.setRegister(g2, this.fetchNextByte());
                             }
                         }
                         else // DAD
@@ -218,24 +264,24 @@
                         }
                         else if (g2 == 4)  // SHLD
                         {
-                            var addr = this.chip.fetchNextWord();
+                            var addr = this.fetchNextWord();
                             emu.virtualMachine.memory.Bytes.write(addr, this.chip.regarray.l.getValue());
                             addr = incrementAddress(addr);
                             emu.virtualMachine.memory.Bytes.write(addr, this.chip.regarray.h.getValue());
                         }
                         else if (g2 == 5)  // LHLD
                         {
-                            var addr = this.chip.fetchNextWord();
+                            var addr = this.fetchNextWord();
                             this.chip.regarray.l.setValue(emu.virtualMachine.memory.Bytes.read(addr));
                             addr = incrementAddress(addr);
                             this.chip.regarray.h.setValue(emu.virtualMachine.memory.Bytes.read(addr));
                         }
                         else if (g2 == 6) // STA
                         {
-                            emu.virtualMachine.memory.Bytes.write(this.chip.fetchNextWord(), this.chip.accumulator.getValue());
+                            emu.virtualMachine.memory.Bytes.write(this.fetchNextWord(), this.chip.accumulator.getValue());
                         }
                         else if (g2 == 7) { // LDA
-                            this.chip.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(this.chip.fetchNextWord()));
+                            this.chip.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(this.fetchNextWord()));
                         }
                         else {
                             this.chip.notImplemented(machinCode1);
@@ -265,7 +311,7 @@
                     }
                     else if (g3 == 6)    // MVI r,x
                     {
-                        this.chip.setRegister(g2, this.chip.fetchNextByte());
+                        this.chip.setRegister(g2, this.fetchNextByte());
                     }
                     else if (g3 == 7) {
                         if (g2 == 0)    // RLC
@@ -418,18 +464,18 @@
                     else if (g3 == 3) {
                         if (g2 == 0) // JMP
                         {
-                            var n = this.chip.fetchNextWord();
+                            var n = this.fetchNextWord();
                             this.chip.regarray.pc.setValue(n);
                         }
                         else if (g2 == 3) // IN
                         {
-                            var port = this.chip.fetchNextByte();
+                            var port = this.fetchNextByte();
                             var r = emu.virtualMachine.io.in(port);
                             this.chip.setRegister(7, r);
                         }
                         else if (g2 == 2) // OUT
                         {
-                            var port = this.chip.fetchNextByte();
+                            var port = this.fetchNextByte();
                             var v = this.chip.getRegister(7);
                             emu.virtualMachine.io.out(port, v);
                         }
@@ -486,35 +532,35 @@
                     else if (g3 == 6) {
                         if (g2 == 0) // ADI
                         {
-                            this.chip.accumulator.setValue(this.chip.add(this.chip.accumulator.getValue(), this.chip.fetchNextByte()));
+                            this.chip.accumulator.setValue(this.chip.add(this.chip.accumulator.getValue(), this.fetchNextByte()));
                         }
                         else if (g2 == 1) // ACI
                         {
-                            this.chip.accumulator.setValue(this.chip.add(this.chip.accumulator.getValue(), this.chip.fetchNextByte(), false, this.chip.flags.cy));
+                            this.chip.accumulator.setValue(this.chip.add(this.chip.accumulator.getValue(), this.fetchNextByte(), false, this.chip.flags.cy));
                         }
                         else if (g2 == 2) // SUI
                         {
-                            this.chip.accumulator.setValue(this.chip.sub(this.chip.accumulator.getValue(), this.chip.fetchNextByte()));
+                            this.chip.accumulator.setValue(this.chip.sub(this.chip.accumulator.getValue(), this.fetchNextByte()));
                         }
                         else if (g2 == 3) // SBI
                         {
-                            this.chip.accumulator.setValue(this.chip.sub(this.chip.accumulator.getValue(), this.chip.fetchNextByte(), false, this.chip.flags.cy));
+                            this.chip.accumulator.setValue(this.chip.sub(this.chip.accumulator.getValue(), this.fetchNextByte(), false, this.chip.flags.cy));
                         }
                         else if (g2 == 4) // ANI
                         {
-                            this.chip.accumulator.setValue(this.chip.and(this.chip.accumulator.getValue(), this.chip.fetchNextByte()));
+                            this.chip.accumulator.setValue(this.chip.and(this.chip.accumulator.getValue(), this.fetchNextByte()));
                         }
                         else if (g2 == 5) // XRI
                         {
-                            this.chip.accumulator.setValue(this.chip.xor(this.chip.accumulator.getValue(), this.chip.fetchNextByte()));
+                            this.chip.accumulator.setValue(this.chip.xor(this.chip.accumulator.getValue(), this.fetchNextByte()));
                         }
                         else if (g2 == 6) // ORI
                         {
-                            this.chip.accumulator.setValue(this.chip.or(this.chip.accumulator.getValue(), this.chip.fetchNextByte()));
+                            this.chip.accumulator.setValue(this.chip.or(this.chip.accumulator.getValue(), this.fetchNextByte()));
                         }
                         else if (g2 == 7) // CPI
                         {
-                            this.chip.cmp(this.chip.accumulator.getValue(), this.chip.fetchNextByte());
+                            this.chip.cmp(this.chip.accumulator.getValue(), this.fetchNextByte());
                         }
                         else {
                             this.chip.notImplemented(machinCode1);
@@ -546,6 +592,37 @@
         public regarray = new RegisterArray();
         public flags = new FlagFlipFlop();
         public timingAndControl = new TimingAndControl(this);
+        public dataBusBufferLatch = new DataBusBufferLatch();
+        public addressBuffer = new AddressBuffer(this);
+        public registerSelect16: RegisterSelect16 = 0;
+        public registerSelect8: RegisterSelect8 = 0;
+        public insutructionRegister = new InstructionRegister();
+        
+        public memoryRead()
+        {
+            var addr = this.addressBuffer.getAddress();
+            var data = emu.virtualMachine.memory.Bytes.read(addr);
+            this.dataBusBufferLatch.setValue(data);
+        }
+
+        public memoryWrite() {
+            var addr = this.addressBuffer.getAddress();
+            var data = this.dataBusBufferLatch.getValue();
+            emu.virtualMachine.memory.Bytes.write(addr, data);
+        }
+
+        public ioRead() {
+            var addr = this.addressBuffer.getAddress();
+            var data = emu.virtualMachine.io.in(addr);
+            this.dataBusBufferLatch.setValue(data);
+        }
+
+        public ioWrite() {
+            var addr = this.addressBuffer.getAddress();
+            var data = this.dataBusBufferLatch.getValue();
+            emu.virtualMachine.io.out(addr, data);
+        }
+
         public update() {
             $("#regA").text(dec2hex(this.accumulator.getValue(), 2));
             $("#regBC").text(dec2hex(this.regarray.b.getValue(), 2) + dec2hex(this.regarray.c.getValue(), 2));
@@ -642,18 +719,6 @@
             }
         }
 
-        public fetchNextByte() {
-            var pc = this.regarray.pc.getValue();
-            var m = emu.virtualMachine.memory.Bytes.read(Math.floor(pc));
-            this.regarray.pc.Increment();
-            return m;
-        }
-        public fetchNextWord() {
-            var l = this.fetchNextByte();
-            var h = this.fetchNextByte();
-            var hl = h * 256 + l;
-            return hl;
-        }
         public setRuning() {
             $("#runStopStatus").removeClass("stop");
             $("#runStopStatus").removeClass("run");
@@ -739,7 +804,7 @@
         }
 
         public condJump(cond: boolean): number {
-            var tgt = this.fetchNextWord();
+            var tgt = this.timingAndControl.fetchNextWord();
             if (cond) {
                 var oldpc = this.regarray.pc.getValue();
                 this.regarray.pc.setValue(tgt);

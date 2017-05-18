@@ -5,6 +5,26 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var edu8080;
 (function (edu8080) {
+    var RegisterSelect8;
+    (function (RegisterSelect8) {
+        RegisterSelect8[RegisterSelect8["b"] = 0] = "b";
+        RegisterSelect8[RegisterSelect8["c"] = 1] = "c";
+        RegisterSelect8[RegisterSelect8["d"] = 2] = "d";
+        RegisterSelect8[RegisterSelect8["e"] = 3] = "e";
+        RegisterSelect8[RegisterSelect8["h"] = 4] = "h";
+        RegisterSelect8[RegisterSelect8["l"] = 5] = "l";
+        RegisterSelect8[RegisterSelect8["m"] = 6] = "m";
+        RegisterSelect8[RegisterSelect8["a"] = 7] = "a";
+    })(RegisterSelect8 || (RegisterSelect8 = {}));
+    var RegisterSelect16;
+    (function (RegisterSelect16) {
+        RegisterSelect16[RegisterSelect16["bc"] = 0] = "bc";
+        RegisterSelect16[RegisterSelect16["de"] = 1] = "de";
+        RegisterSelect16[RegisterSelect16["hl"] = 2] = "hl";
+        RegisterSelect16[RegisterSelect16["sp"] = 3] = "sp";
+        RegisterSelect16[RegisterSelect16["pc"] = 4] = "pc";
+        RegisterSelect16[RegisterSelect16["latch"] = 5] = "latch";
+    })(RegisterSelect16 || (RegisterSelect16 = {}));
     var DataBus = (function () {
         function DataBus() {
         }
@@ -16,14 +36,26 @@ var edu8080;
         return AddressBus;
     }());
     var AddressBuffer = (function () {
-        function AddressBuffer() {
+        function AddressBuffer(thischip) {
+            this.chip = thischip;
         }
+        AddressBuffer.prototype.getAddress = function () {
+            switch (this.chip.registerSelect16) {
+                case RegisterSelect16.bc:
+                    return this.chip.regarray.getRegisterPairValue(0);
+                case RegisterSelect16.de:
+                    return this.chip.regarray.getRegisterPairValue(1);
+                case RegisterSelect16.hl:
+                    return this.chip.regarray.getRegisterPairValue(2);
+                case RegisterSelect16.sp:
+                    return this.chip.regarray.sp.getValue();
+                case RegisterSelect16.pc:
+                    return this.chip.regarray.pc.getValue();
+                default:
+                    return this.chip.regarray.incrementerDecrementerAddressLatch.getValue();
+            }
+        };
         return AddressBuffer;
-    }());
-    var DataBusBufferLatch = (function () {
-        function DataBusBufferLatch() {
-        }
-        return DataBusBufferLatch;
     }());
     var InternalDataBus = (function () {
         function InternalDataBus() {
@@ -68,6 +100,13 @@ var edu8080;
         }
         return Register8;
     }(Register));
+    var DataBusBufferLatch = (function (_super) {
+        __extends(DataBusBufferLatch, _super);
+        function DataBusBufferLatch() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        return DataBusBufferLatch;
+    }(Register8));
     var Register16 = (function (_super) {
         __extends(Register16, _super);
         function Register16() {
@@ -137,11 +176,13 @@ var edu8080;
         }
         return DecimalAdjust;
     }());
-    var InstructionRegister = (function () {
+    var InstructionRegister = (function (_super) {
+        __extends(InstructionRegister, _super);
         function InstructionRegister() {
+            return _super !== null && _super.apply(this, arguments) || this;
         }
         return InstructionRegister;
-    }());
+    }(Register8));
     var InstructionDecoderAndMachineCycleEncoding = (function () {
         function InstructionDecoderAndMachineCycleEncoding() {
         }
@@ -206,6 +247,26 @@ var edu8080;
         function TimingAndControl(thischip) {
             this.chip = thischip;
         }
+        TimingAndControl.prototype.fetchNextByte = function () {
+            this.chip.registerSelect16 = RegisterSelect16.pc;
+            this.chip.memoryRead();
+            this.chip.regarray.pc.Increment();
+            // TBW with to remove
+            return this.chip.dataBusBufferLatch.getValue();
+        };
+        TimingAndControl.prototype.fetchNextWord = function () {
+            this.fetchNextByte();
+            var l = this.chip.dataBusBufferLatch.getValue();
+            this.fetchNextByte();
+            var h = this.chip.dataBusBufferLatch.getValue();
+            var hl = h * 256 + l;
+            return hl;
+        };
+        TimingAndControl.prototype.instructionFetch = function () {
+            this.fetchNextByte();
+            var data = this.chip.dataBusBufferLatch.getValue();
+            this.chip.insutructionRegister.setValue(data);
+        };
         TimingAndControl.prototype.runMain = function () {
             var _this = this;
             vdt.inputFunc = function (num) {
@@ -231,7 +292,8 @@ var edu8080;
                     }, 0);
                     return;
                 }
-                var machinCode1 = this.chip.fetchNextByte();
+                this.instructionFetch();
+                var machinCode1 = this.chip.insutructionRegister.getValue();
                 var g1 = machinCode1 >> 6;
                 var g2 = (machinCode1 >> 3) & 0x7;
                 var g3 = machinCode1 & 0x7;
@@ -248,7 +310,7 @@ var edu8080;
                     else if (g3 == 1) {
                         if ((g2 & 1) == 0) {
                             if (g2 == 0x6) {
-                                var sp = this.chip.fetchNextWord();
+                                var sp = this.fetchNextWord();
                                 //if (sp != Math.ceil(sp)) {
                                 //    this.chip.hlt();
                                 //    return;
@@ -256,8 +318,8 @@ var edu8080;
                                 this.chip.regarray.sp.setValue(sp);
                             }
                             else {
-                                this.chip.setRegister(g2 + 1, this.chip.fetchNextByte());
-                                this.chip.setRegister(g2, this.chip.fetchNextByte());
+                                this.chip.setRegister(g2 + 1, this.fetchNextByte());
+                                this.chip.setRegister(g2, this.fetchNextByte());
                             }
                         }
                         else {
@@ -276,22 +338,22 @@ var edu8080;
                             this.chip.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(this.chip.regarray.getRegisterPairValue(g2 >> 1)));
                         }
                         else if (g2 == 4) {
-                            var addr = this.chip.fetchNextWord();
+                            var addr = this.fetchNextWord();
                             emu.virtualMachine.memory.Bytes.write(addr, this.chip.regarray.l.getValue());
                             addr = incrementAddress(addr);
                             emu.virtualMachine.memory.Bytes.write(addr, this.chip.regarray.h.getValue());
                         }
                         else if (g2 == 5) {
-                            var addr = this.chip.fetchNextWord();
+                            var addr = this.fetchNextWord();
                             this.chip.regarray.l.setValue(emu.virtualMachine.memory.Bytes.read(addr));
                             addr = incrementAddress(addr);
                             this.chip.regarray.h.setValue(emu.virtualMachine.memory.Bytes.read(addr));
                         }
                         else if (g2 == 6) {
-                            emu.virtualMachine.memory.Bytes.write(this.chip.fetchNextWord(), this.chip.accumulator.getValue());
+                            emu.virtualMachine.memory.Bytes.write(this.fetchNextWord(), this.chip.accumulator.getValue());
                         }
                         else if (g2 == 7) {
-                            this.chip.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(this.chip.fetchNextWord()));
+                            this.chip.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(this.fetchNextWord()));
                         }
                         else {
                             this.chip.notImplemented(machinCode1);
@@ -316,7 +378,7 @@ var edu8080;
                         this.chip.setRegister(g2, val);
                     }
                     else if (g3 == 6) {
-                        this.chip.setRegister(g2, this.chip.fetchNextByte());
+                        this.chip.setRegister(g2, this.fetchNextByte());
                     }
                     else if (g3 == 7) {
                         if (g2 == 0) {
@@ -445,16 +507,16 @@ var edu8080;
                     }
                     else if (g3 == 3) {
                         if (g2 == 0) {
-                            var n = this.chip.fetchNextWord();
+                            var n = this.fetchNextWord();
                             this.chip.regarray.pc.setValue(n);
                         }
                         else if (g2 == 3) {
-                            var port = this.chip.fetchNextByte();
+                            var port = this.fetchNextByte();
                             var r = emu.virtualMachine.io.in(port);
                             this.chip.setRegister(7, r);
                         }
                         else if (g2 == 2) {
-                            var port = this.chip.fetchNextByte();
+                            var port = this.fetchNextByte();
                             var v = this.chip.getRegister(7);
                             emu.virtualMachine.io.out(port, v);
                         }
@@ -499,28 +561,28 @@ var edu8080;
                     }
                     else if (g3 == 6) {
                         if (g2 == 0) {
-                            this.chip.accumulator.setValue(this.chip.add(this.chip.accumulator.getValue(), this.chip.fetchNextByte()));
+                            this.chip.accumulator.setValue(this.chip.add(this.chip.accumulator.getValue(), this.fetchNextByte()));
                         }
                         else if (g2 == 1) {
-                            this.chip.accumulator.setValue(this.chip.add(this.chip.accumulator.getValue(), this.chip.fetchNextByte(), false, this.chip.flags.cy));
+                            this.chip.accumulator.setValue(this.chip.add(this.chip.accumulator.getValue(), this.fetchNextByte(), false, this.chip.flags.cy));
                         }
                         else if (g2 == 2) {
-                            this.chip.accumulator.setValue(this.chip.sub(this.chip.accumulator.getValue(), this.chip.fetchNextByte()));
+                            this.chip.accumulator.setValue(this.chip.sub(this.chip.accumulator.getValue(), this.fetchNextByte()));
                         }
                         else if (g2 == 3) {
-                            this.chip.accumulator.setValue(this.chip.sub(this.chip.accumulator.getValue(), this.chip.fetchNextByte(), false, this.chip.flags.cy));
+                            this.chip.accumulator.setValue(this.chip.sub(this.chip.accumulator.getValue(), this.fetchNextByte(), false, this.chip.flags.cy));
                         }
                         else if (g2 == 4) {
-                            this.chip.accumulator.setValue(this.chip.and(this.chip.accumulator.getValue(), this.chip.fetchNextByte()));
+                            this.chip.accumulator.setValue(this.chip.and(this.chip.accumulator.getValue(), this.fetchNextByte()));
                         }
                         else if (g2 == 5) {
-                            this.chip.accumulator.setValue(this.chip.xor(this.chip.accumulator.getValue(), this.chip.fetchNextByte()));
+                            this.chip.accumulator.setValue(this.chip.xor(this.chip.accumulator.getValue(), this.fetchNextByte()));
                         }
                         else if (g2 == 6) {
-                            this.chip.accumulator.setValue(this.chip.or(this.chip.accumulator.getValue(), this.chip.fetchNextByte()));
+                            this.chip.accumulator.setValue(this.chip.or(this.chip.accumulator.getValue(), this.fetchNextByte()));
                         }
                         else if (g2 == 7) {
-                            this.chip.cmp(this.chip.accumulator.getValue(), this.chip.fetchNextByte());
+                            this.chip.cmp(this.chip.accumulator.getValue(), this.fetchNextByte());
                         }
                         else {
                             this.chip.notImplemented(machinCode1);
@@ -553,8 +615,33 @@ var edu8080;
             this.regarray = new RegisterArray();
             this.flags = new FlagFlipFlop();
             this.timingAndControl = new TimingAndControl(this);
+            this.dataBusBufferLatch = new DataBusBufferLatch();
+            this.addressBuffer = new AddressBuffer(this);
+            this.registerSelect16 = 0;
+            this.registerSelect8 = 0;
+            this.insutructionRegister = new InstructionRegister();
             this.lastval = 65536;
         }
+        i8080.prototype.memoryRead = function () {
+            var addr = this.addressBuffer.getAddress();
+            var data = emu.virtualMachine.memory.Bytes.read(addr);
+            this.dataBusBufferLatch.setValue(data);
+        };
+        i8080.prototype.memoryWrite = function () {
+            var addr = this.addressBuffer.getAddress();
+            var data = this.dataBusBufferLatch.getValue();
+            emu.virtualMachine.memory.Bytes.write(addr, data);
+        };
+        i8080.prototype.ioRead = function () {
+            var addr = this.addressBuffer.getAddress();
+            var data = emu.virtualMachine.io.in(addr);
+            this.dataBusBufferLatch.setValue(data);
+        };
+        i8080.prototype.ioWrite = function () {
+            var addr = this.addressBuffer.getAddress();
+            var data = this.dataBusBufferLatch.getValue();
+            emu.virtualMachine.io.out(addr, data);
+        };
         i8080.prototype.update = function () {
             $("#regA").text(dec2hex(this.accumulator.getValue(), 2));
             $("#regBC").text(dec2hex(this.regarray.b.getValue(), 2) + dec2hex(this.regarray.c.getValue(), 2));
@@ -646,18 +733,6 @@ var edu8080;
                     break;
             }
         };
-        i8080.prototype.fetchNextByte = function () {
-            var pc = this.regarray.pc.getValue();
-            var m = emu.virtualMachine.memory.Bytes.read(Math.floor(pc));
-            this.regarray.pc.Increment();
-            return m;
-        };
-        i8080.prototype.fetchNextWord = function () {
-            var l = this.fetchNextByte();
-            var h = this.fetchNextByte();
-            var hl = h * 256 + l;
-            return hl;
-        };
         i8080.prototype.setRuning = function () {
             $("#runStopStatus").removeClass("stop");
             $("#runStopStatus").removeClass("run");
@@ -742,7 +817,7 @@ var edu8080;
             return r;
         };
         i8080.prototype.condJump = function (cond) {
-            var tgt = this.fetchNextWord();
+            var tgt = this.timingAndControl.fetchNextWord();
             if (cond) {
                 var oldpc = this.regarray.pc.getValue();
                 this.regarray.pc.setValue(tgt);
