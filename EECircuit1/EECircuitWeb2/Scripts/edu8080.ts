@@ -2,7 +2,7 @@
 {
     enum OperationCode {
         LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
-        INX, DEX, INR, DCR,
+        INX, DEX, INR, DCR, MVI, 
         ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
@@ -266,10 +266,7 @@
                 }
                 else if (g3 == 4) this.operationCode = OperationCode.INR;
                 else if (g3 == 5) this.operationCode = OperationCode.DCR;
-                else if (g3 == 6)    // MVI r,x
-                {
-                    this.chip.setRegister(g2, this.chip.timingAndControl.fetchNextByte());
-                }
+                else if (g3 == 6) this.operationCode = OperationCode.MVI;
                 else if (g3 == 7) {
                     if (g2 == 0)    // RLC
                     {
@@ -658,6 +655,10 @@
             var hl = h * 256 + l;
             return hl;
         }
+        private fetchNextByteAndSetDataLatch() {
+            var d = this.chip.timingAndControl.fetchNextByte();
+            this.chip.dataBusBufferLatch.setValue(d);
+        }
         private fetchNextWordAndSetAddressLatch() {
             var l = this.chip.timingAndControl.fetchNextByte();
             var h = this.chip.timingAndControl.fetchNextByte();
@@ -774,7 +775,10 @@
                     this.chip.alu.dec();
                     this.chip.setRegisterFromAlu(this.chip.instructonDecoder.g2);
                 }
-
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.MVI) {
+                    this.fetchNextByteAndSetDataLatch();
+                    this.chip.setRegisterFromDataLatch(this.chip.instructonDecoder.g2);
+                }
 
                 else {
                     // TBW
@@ -892,7 +896,10 @@
             var val = this.alu.result.getValue();
             this.setRegister(reg8,val);
         }
-
+        public setRegisterFromDataLatch(reg8: number) {
+            var val = this.dataBusBufferLatch.getValue();
+            this.setRegister(reg8, val);
+        }
         public getRegisterPairBDHPSW(n: number): number {
             switch (n) {
                 case 0:
