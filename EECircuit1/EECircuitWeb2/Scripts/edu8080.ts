@@ -2,8 +2,9 @@
 {
     enum OperationCode {
         LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
-        INX, DEX, INR, DCR, MVI, DAA, CMA, STC, CMC, HLT,MOV,
-        ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, NOP, OTHER
+        INX, DEX, INR, DCR, MVI, DAA, CMA, STC, CMC, HLT, MOV,
+        ADD,ADC,SUB,SBB,AND,XRA,ORA,CMP,
+        RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
         b = 0, c, d, e, h, l, m, a
@@ -95,10 +96,8 @@
             this.chip.flags.p = ((p & 1) == 0);
         }
 
-        public cmp(a: number, b: number) {
-            var a = this.chip.accumulatorLatch.getValue();
-            var b = this.chip.tempReg.getValue();
-            this.sub(a, b);
+        public cmp() {
+            this.sub();
         }
         private addbase(a: number, b: number, cyUnchange: boolean = false, cyOnlyChange = false, c: boolean = false) {
             var r = a + b + (c ? 1 : 0);
@@ -134,7 +133,7 @@
             var r0 = this.subbase(b, 1, true);
             this.result.setValue(r0);
         }
-        private subbase(a: number, b: number, cyUnchange: boolean = false, cyOnlyChange = false, c: boolean = false) {
+        private subbase(a: number, b: number, cyUnchange: boolean = false, c: boolean = false) {
             var r = a - b - (c ? 1 : 0);
             var r0 = r & 255;
             var rc = (r >> 8) != 0;
@@ -150,10 +149,10 @@
             var r0 = this.subbase(a, b, cyUnchange, c);
             this.result.setValue(r0);
         }
-        public sub(a: number, b: number, cyUnchange: boolean = false, c: boolean = false) {
+        public sub(cyUnchange: boolean = false, c: boolean = false) {
             this.subraw(cyUnchange, false);
         }
-        public sbb(a: number, b: number, cyUnchange: boolean = false, c: boolean = false) {
+        public sbb(cyUnchange: boolean = false, c: boolean = false) {
             this.subraw(cyUnchange, this.chip.flags.cy);
         }
         private setlogicFlags(v: number, ac: boolean) {
@@ -335,41 +334,8 @@
                 else this.operationCode = OperationCode.MOV;
             }
             else if (g1 == 2) {
-                if (g2 == 0)    // ADD
-                {
-                    this.chip.accumulator.setValue(this.chip.add(this.chip.accumulator.getValue(), this.chip.getRegister(g3)));
-                }
-                else if (g2 == 1)    // ADC
-                {
-                    this.chip.accumulator.setValue(this.chip.add(this.chip.accumulator.getValue(), this.chip.getRegister(g3), false, this.chip.flags.cy));
-                }
-                else if (g2 == 2)    // SUB
-                {
-                    this.chip.accumulator.setValue(this.chip.sub(this.chip.accumulator.getValue(), this.chip.getRegister(g3)));
-                }
-                else if (g2 == 3)    // SBB
-                {
-                    this.chip.accumulator.setValue(this.chip.sub(this.chip.accumulator.getValue(), this.chip.getRegister(g3), false, this.chip.flags.cy));
-                }
-                else if (g2 == 4)    // AND
-                {
-                    this.chip.accumulator.setValue(this.chip.and(this.chip.accumulator.getValue(), this.chip.getRegister(g3)));
-                }
-                else if (g2 == 5)    // XRA
-                {
-                    this.chip.accumulator.setValue(this.chip.xor(this.chip.accumulator.getValue(), this.chip.getRegister(g3)));
-                }
-                else if (g2 == 6)    // ORA
-                {
-                    this.chip.accumulator.setValue(this.chip.or(this.chip.accumulator.getValue(), this.chip.getRegister(g3)));
-                }
-                else if (g2 == 7)    // CMP
-                {
-                    this.chip.cmp(this.chip.accumulator.getValue(), this.chip.getRegister(g3));
-                }
-                else {
-                    this.chip.notImplemented(machinCode1);
-                }
+                // this is a trick of ADD,ADC,SUB,SBB,AND,XRA,ORA,CMP
+                this.operationCode = OperationCode.ADD + g2;
             }
             else {
                 if (g3 == 0) {  // Rxx
@@ -682,6 +648,38 @@
             this.chip.accumulator.setValue(this.chip.alu.result.getValue());
         }
 
+        private aluWithAccAndTemp(operationCode: OperationCode, reg8: number) {
+            this.chip.accumulatorLatch.setValue(this.chip.accumulator.getValue());
+            this.chip.getRegisterToTempReg(reg8);
+            switch (operationCode) {
+                case OperationCode.ADD:
+                    this.chip.alu.add();
+                    break;
+                case OperationCode.ADC:
+                    this.chip.alu.adc();
+                    break;
+                case OperationCode.SUB:
+                    this.chip.alu.sub();
+                    break;
+                case OperationCode.SBB:
+                    this.chip.alu.sbb();
+                    break;
+                case OperationCode.AND:
+                    this.chip.alu.and();
+                    break;
+                case OperationCode.XRA:
+                    this.chip.alu.xor();
+                    break;
+                case OperationCode.ORA:
+                    this.chip.alu.or();
+                    break;
+                case OperationCode.CMP:
+                    this.chip.alu.cmp();
+                    return;
+            }
+            this.chip.setRegisterFromAlu(7);    //save acc if not CMP
+        }
+
         public runMain() {
             vdt.inputFunc = (num) => {
                 emu.inputChars += String.fromCharCode(num);
@@ -812,6 +810,10 @@
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.MOV) {
                     this.chip.getRegisterToTempReg(this.chip.instructonDecoder.g3);
                     this.chip.setRegisterFromTempReg(this.chip.instructonDecoder.g2);
+                }
+                else if (this.chip.instructonDecoder.operationCode >= OperationCode.ADD
+                    && this.chip.instructonDecoder.operationCode <= OperationCode.CMP) {
+                    this.aluWithAccAndTemp(this.chip.instructonDecoder.operationCode, this.chip.instructonDecoder.g3);
                 }
 
 
