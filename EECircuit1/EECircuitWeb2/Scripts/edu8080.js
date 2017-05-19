@@ -24,19 +24,20 @@ var edu8080;
         OperationCode[OperationCode["CMA"] = 14] = "CMA";
         OperationCode[OperationCode["STC"] = 15] = "STC";
         OperationCode[OperationCode["CMC"] = 16] = "CMC";
-        OperationCode[OperationCode["ADD"] = 17] = "ADD";
-        OperationCode[OperationCode["SUB"] = 18] = "SUB";
-        OperationCode[OperationCode["CMP"] = 19] = "CMP";
-        OperationCode[OperationCode["AND"] = 20] = "AND";
-        OperationCode[OperationCode["OR"] = 21] = "OR";
-        OperationCode[OperationCode["XOR"] = 22] = "XOR";
-        OperationCode[OperationCode["NOT"] = 23] = "NOT";
-        OperationCode[OperationCode["RLC"] = 24] = "RLC";
-        OperationCode[OperationCode["RRC"] = 25] = "RRC";
-        OperationCode[OperationCode["RAL"] = 26] = "RAL";
-        OperationCode[OperationCode["RAR"] = 27] = "RAR";
-        OperationCode[OperationCode["NOP"] = 28] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 29] = "OTHER";
+        OperationCode[OperationCode["HLT"] = 17] = "HLT";
+        OperationCode[OperationCode["ADD"] = 18] = "ADD";
+        OperationCode[OperationCode["SUB"] = 19] = "SUB";
+        OperationCode[OperationCode["CMP"] = 20] = "CMP";
+        OperationCode[OperationCode["AND"] = 21] = "AND";
+        OperationCode[OperationCode["OR"] = 22] = "OR";
+        OperationCode[OperationCode["XOR"] = 23] = "XOR";
+        OperationCode[OperationCode["NOT"] = 24] = "NOT";
+        OperationCode[OperationCode["RLC"] = 25] = "RLC";
+        OperationCode[OperationCode["RRC"] = 26] = "RRC";
+        OperationCode[OperationCode["RAL"] = 27] = "RAL";
+        OperationCode[OperationCode["RAR"] = 28] = "RAR";
+        OperationCode[OperationCode["NOP"] = 29] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 30] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -478,10 +479,8 @@ var edu8080;
                     this.chip.notImplemented(machinCode1);
             }
             else if (g1 == 1) {
-                if (g2 == 6 && g3 == 6) {
-                    this.chip.hlt();
-                    return true;
-                }
+                if (g2 == 6 && g3 == 6)
+                    this.operationCode = OperationCode.HLT;
                 else {
                     this.chip.setRegister(g2, this.chip.getRegister(g3));
                 }
@@ -913,6 +912,10 @@ var edu8080;
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.CMC) {
                     this.chip.flags.cy = !this.chip.flags.cy;
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.HLT) {
+                    this.chip.hlt();
+                    return;
                 }
                 else {
                 }

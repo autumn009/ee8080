@@ -2,7 +2,7 @@
 {
     enum OperationCode {
         LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
-        INX, DEX, INR, DCR, MVI, DAA, CMA, STC, CMC,
+        INX, DEX, INR, DCR, MVI, DAA, CMA, STC, CMC, HLT,
         ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
@@ -331,11 +331,7 @@
 
             }
             else if (g1 == 1) {
-                if (g2 == 6 && g3 == 6)    // HLT
-                {
-                    this.chip.hlt();
-                    return true;
-                }
+                if (g2 == 6 && g3 == 6) this.operationCode = OperationCode.HLT;
                 else {  // MOV
                     this.chip.setRegister(g2, this.chip.getRegister(g3));
                 }
@@ -810,6 +806,10 @@
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.CMC) {
                     this.chip.flags.cy = !this.chip.flags.cy;
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.HLT) {
+                    this.chip.hlt();
+                    return;
                 }
 
 
