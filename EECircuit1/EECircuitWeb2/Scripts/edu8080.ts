@@ -2,7 +2,7 @@
 {
     enum OperationCode {
         LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
-        INX, DEX, INR, DCR, MVI, DAA, CMA, STC, CMC, HLT,
+        INX, DEX, INR, DCR, MVI, DAA, CMA, STC, CMC, HLT,MOV,
         ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
@@ -332,9 +332,7 @@
             }
             else if (g1 == 1) {
                 if (g2 == 6 && g3 == 6) this.operationCode = OperationCode.HLT;
-                else {  // MOV
-                    this.chip.setRegister(g2, this.chip.getRegister(g3));
-                }
+                else this.operationCode = OperationCode.MOV;
             }
             else if (g1 == 2) {
                 if (g2 == 0)    // ADD
@@ -811,6 +809,10 @@
                     this.chip.hlt();
                     return;
                 }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.MOV) {
+                    this.chip.getRegisterToTempReg(this.chip.instructonDecoder.g3);
+                    this.chip.setRegisterFromTempReg(this.chip.instructonDecoder.g2);
+                }
 
 
 
@@ -927,6 +929,10 @@
         public getRegisterToTempReg(reg8: number) {
             var val = this.getRegister(reg8);
             this.tempReg.setValue(val);
+        }
+        public setRegisterFromTempReg(reg8: number) {
+            var val = this.tempReg.getValue();
+            this.setRegister(reg8, val);
         }
         public setRegisterFromAlu(reg8: number) {
             var val = this.alu.result.getValue();

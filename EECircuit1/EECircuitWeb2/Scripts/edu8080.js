@@ -25,19 +25,20 @@ var edu8080;
         OperationCode[OperationCode["STC"] = 15] = "STC";
         OperationCode[OperationCode["CMC"] = 16] = "CMC";
         OperationCode[OperationCode["HLT"] = 17] = "HLT";
-        OperationCode[OperationCode["ADD"] = 18] = "ADD";
-        OperationCode[OperationCode["SUB"] = 19] = "SUB";
-        OperationCode[OperationCode["CMP"] = 20] = "CMP";
-        OperationCode[OperationCode["AND"] = 21] = "AND";
-        OperationCode[OperationCode["OR"] = 22] = "OR";
-        OperationCode[OperationCode["XOR"] = 23] = "XOR";
-        OperationCode[OperationCode["NOT"] = 24] = "NOT";
-        OperationCode[OperationCode["RLC"] = 25] = "RLC";
-        OperationCode[OperationCode["RRC"] = 26] = "RRC";
-        OperationCode[OperationCode["RAL"] = 27] = "RAL";
-        OperationCode[OperationCode["RAR"] = 28] = "RAR";
-        OperationCode[OperationCode["NOP"] = 29] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 30] = "OTHER";
+        OperationCode[OperationCode["MOV"] = 18] = "MOV";
+        OperationCode[OperationCode["ADD"] = 19] = "ADD";
+        OperationCode[OperationCode["SUB"] = 20] = "SUB";
+        OperationCode[OperationCode["CMP"] = 21] = "CMP";
+        OperationCode[OperationCode["AND"] = 22] = "AND";
+        OperationCode[OperationCode["OR"] = 23] = "OR";
+        OperationCode[OperationCode["XOR"] = 24] = "XOR";
+        OperationCode[OperationCode["NOT"] = 25] = "NOT";
+        OperationCode[OperationCode["RLC"] = 26] = "RLC";
+        OperationCode[OperationCode["RRC"] = 27] = "RRC";
+        OperationCode[OperationCode["RAL"] = 28] = "RAL";
+        OperationCode[OperationCode["RAR"] = 29] = "RAR";
+        OperationCode[OperationCode["NOP"] = 30] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 31] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -481,9 +482,8 @@ var edu8080;
             else if (g1 == 1) {
                 if (g2 == 6 && g3 == 6)
                     this.operationCode = OperationCode.HLT;
-                else {
-                    this.chip.setRegister(g2, this.chip.getRegister(g3));
-                }
+                else
+                    this.operationCode = OperationCode.MOV;
             }
             else if (g1 == 2) {
                 if (g2 == 0) {
@@ -917,6 +917,10 @@ var edu8080;
                     this.chip.hlt();
                     return;
                 }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.MOV) {
+                    this.chip.getRegisterToTempReg(this.chip.instructonDecoder.g3);
+                    this.chip.setRegisterFromTempReg(this.chip.instructonDecoder.g2);
+                }
                 else {
                 }
             }
@@ -1022,6 +1026,10 @@ var edu8080;
         i8080.prototype.getRegisterToTempReg = function (reg8) {
             var val = this.getRegister(reg8);
             this.tempReg.setValue(val);
+        };
+        i8080.prototype.setRegisterFromTempReg = function (reg8) {
+            var val = this.tempReg.getValue();
+            this.setRegister(reg8, val);
         };
         i8080.prototype.setRegisterFromAlu = function (reg8) {
             var val = this.alu.result.getValue();
