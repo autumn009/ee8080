@@ -11,19 +11,21 @@ var edu8080;
         OperationCode[OperationCode["DAD"] = 1] = "DAD";
         OperationCode[OperationCode["LDAX"] = 2] = "LDAX";
         OperationCode[OperationCode["STAX"] = 3] = "STAX";
-        OperationCode[OperationCode["ADD"] = 4] = "ADD";
-        OperationCode[OperationCode["SUB"] = 5] = "SUB";
-        OperationCode[OperationCode["CMP"] = 6] = "CMP";
-        OperationCode[OperationCode["AND"] = 7] = "AND";
-        OperationCode[OperationCode["OR"] = 8] = "OR";
-        OperationCode[OperationCode["XOR"] = 9] = "XOR";
-        OperationCode[OperationCode["NOT"] = 10] = "NOT";
-        OperationCode[OperationCode["RLC"] = 11] = "RLC";
-        OperationCode[OperationCode["RRC"] = 12] = "RRC";
-        OperationCode[OperationCode["RAL"] = 13] = "RAL";
-        OperationCode[OperationCode["RAR"] = 14] = "RAR";
-        OperationCode[OperationCode["NOP"] = 15] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 16] = "OTHER";
+        OperationCode[OperationCode["LHLD"] = 4] = "LHLD";
+        OperationCode[OperationCode["SHLD"] = 5] = "SHLD";
+        OperationCode[OperationCode["ADD"] = 6] = "ADD";
+        OperationCode[OperationCode["SUB"] = 7] = "SUB";
+        OperationCode[OperationCode["CMP"] = 8] = "CMP";
+        OperationCode[OperationCode["AND"] = 9] = "AND";
+        OperationCode[OperationCode["OR"] = 10] = "OR";
+        OperationCode[OperationCode["XOR"] = 11] = "XOR";
+        OperationCode[OperationCode["NOT"] = 12] = "NOT";
+        OperationCode[OperationCode["RLC"] = 13] = "RLC";
+        OperationCode[OperationCode["RRC"] = 14] = "RRC";
+        OperationCode[OperationCode["RAL"] = 15] = "RAL";
+        OperationCode[OperationCode["RAR"] = 16] = "RAR";
+        OperationCode[OperationCode["NOP"] = 17] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 18] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -87,6 +89,9 @@ var edu8080;
             this.upperLimit = 65535;
             this.value = 0;
         }
+        Register.prototype.setValueHL = function (l, h) {
+            this.setValue(h * 256 + l);
+        };
         Register.prototype.setValue = function (n) {
             if (n < 0 || n > this.upperLimit) {
                 throw Error("value is out of range n=" + n);
@@ -347,16 +352,10 @@ var edu8080;
                         this.registerSelect16 = g2 >> 1;
                     }
                     else if (g2 == 4) {
-                        var addr = this.chip.timingAndControl.fetchNextWord();
-                        emu.virtualMachine.memory.Bytes.write(addr, this.chip.regarray.l.getValue());
-                        addr = incrementAddress(addr);
-                        emu.virtualMachine.memory.Bytes.write(addr, this.chip.regarray.h.getValue());
+                        this.operationCode = OperationCode.SHLD;
                     }
                     else if (g2 == 5) {
-                        var addr = this.chip.timingAndControl.fetchNextWord();
-                        this.chip.regarray.l.setValue(emu.virtualMachine.memory.Bytes.read(addr));
-                        addr = incrementAddress(addr);
-                        this.chip.regarray.h.setValue(emu.virtualMachine.memory.Bytes.read(addr));
+                        this.operationCode = OperationCode.LHLD;
                     }
                     else if (g2 == 6) {
                         emu.virtualMachine.memory.Bytes.write(this.chip.timingAndControl.fetchNextWord(), this.chip.accumulator.getValue());
@@ -767,6 +766,28 @@ var edu8080;
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.STAX) {
                     this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
                     this.chip.dataBusBufferLatch.setValue(this.chip.accumulator.getValue());
+                    this.chip.memoryWrite();
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.LHLD) {
+                    var l = this.chip.timingAndControl.fetchNextByte();
+                    var h = this.chip.timingAndControl.fetchNextByte();
+                    this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
+                    this.chip.registerSelect16 = RegisterSelect16.latch;
+                    this.chip.memoryRead();
+                    this.chip.regarray.l.setValue(this.chip.dataBusBufferLatch.getValue());
+                    this.chip.regarray.incrementerDecrementerAddressLatch.Increment();
+                    this.chip.memoryRead();
+                    this.chip.regarray.h.setValue(this.chip.dataBusBufferLatch.getValue());
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.SHLD) {
+                    var l = this.chip.timingAndControl.fetchNextByte();
+                    var h = this.chip.timingAndControl.fetchNextByte();
+                    this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
+                    this.chip.registerSelect16 = RegisterSelect16.latch;
+                    this.chip.dataBusBufferLatch.setValue(this.chip.regarray.l.getValue());
+                    this.chip.memoryWrite();
+                    this.chip.regarray.incrementerDecrementerAddressLatch.Increment();
+                    this.chip.dataBusBufferLatch.setValue(this.chip.regarray.h.getValue());
                     this.chip.memoryWrite();
                 }
                 else {

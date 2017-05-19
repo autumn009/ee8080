@@ -1,7 +1,8 @@
 ﻿namespace edu8080
 {
     enum OperationCode {
-        LXI, DAD, LDAX, STAX, ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, NOP, OTHER
+        LXI, DAD, LDAX, STAX,LHLD, SHLD,
+        ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
         b = 0, c, d, e, h, l, m, a
@@ -43,6 +44,9 @@
     class Register {
         protected upperLimit = 65535;
         private value = 0;
+        public setValueHL(l: number, h: number) {
+            this.setValue(h * 256 + l);
+        }
         public setValue(n: number) {
             if (n < 0 || n > this.upperLimit) {
                 throw Error("value is out of range n=" + n);
@@ -235,29 +239,27 @@
                     {
                         this.operationCode = OperationCode.STAX;
                         this.registerSelect16 = g2 >> 1;
-                        //emu.virtualMachine.memory.Bytes.write(this.chip.regarray.getRegisterPairValue(g2 >> 1), this.chip.accumulator.getValue());
                     }
                     else if ((g2 & 0x5) == 0x1)  // LDAX
                     {
                         this.operationCode = OperationCode.LDAX;
                         this.registerSelect16 = g2 >> 1;
-                        //this.chip.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(
-                        //    this.chip.regarray.getRegisterPairValue(g2 >> 1)
-                        //));
                     }
                     else if (g2 == 4)  // SHLD
                     {
-                        var addr = this.chip.timingAndControl.fetchNextWord();
-                        emu.virtualMachine.memory.Bytes.write(addr, this.chip.regarray.l.getValue());
-                        addr = incrementAddress(addr);
-                        emu.virtualMachine.memory.Bytes.write(addr, this.chip.regarray.h.getValue());
+                        this.operationCode = OperationCode.SHLD;
+                        //var addr = this.chip.timingAndControl.fetchNextWord();
+                        //emu.virtualMachine.memory.Bytes.write(addr, this.chip.regarray.l.getValue());
+                        //addr = incrementAddress(addr);
+                        //emu.virtualMachine.memory.Bytes.write(addr, this.chip.regarray.h.getValue());
                     }
                     else if (g2 == 5)  // LHLD
                     {
-                        var addr = this.chip.timingAndControl.fetchNextWord();
-                        this.chip.regarray.l.setValue(emu.virtualMachine.memory.Bytes.read(addr));
-                        addr = incrementAddress(addr);
-                        this.chip.regarray.h.setValue(emu.virtualMachine.memory.Bytes.read(addr));
+                        this.operationCode = OperationCode.LHLD;
+                        //var addr = this.chip.timingAndControl.fetchNextWord();
+                        //this.chip.regarray.l.setValue(emu.virtualMachine.memory.Bytes.read(addr));
+                        //addr = incrementAddress(addr);
+                        //this.chip.regarray.h.setValue(emu.virtualMachine.memory.Bytes.read(addr));
                     }
                     else if (g2 == 6) // STA
                     {
@@ -721,6 +723,32 @@
                     this.chip.dataBusBufferLatch.setValue(this.chip.accumulator.getValue());
                     this.chip.memoryWrite();
                 }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.LHLD) {
+                    var l = this.chip.timingAndControl.fetchNextByte();
+                    var h = this.chip.timingAndControl.fetchNextByte();
+                    this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
+                    this.chip.registerSelect16 = RegisterSelect16.latch;
+                    this.chip.memoryRead();
+                    this.chip.regarray.l.setValue(this.chip.dataBusBufferLatch.getValue());
+                    this.chip.regarray.incrementerDecrementerAddressLatch.Increment();
+                    this.chip.memoryRead();
+                    this.chip.regarray.h.setValue(this.chip.dataBusBufferLatch.getValue());
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.SHLD) {
+                    var l = this.chip.timingAndControl.fetchNextByte();
+                    var h = this.chip.timingAndControl.fetchNextByte();
+                    this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
+                    this.chip.registerSelect16 = RegisterSelect16.latch;
+                    this.chip.dataBusBufferLatch.setValue(this.chip.regarray.l.getValue());
+                    this.chip.memoryWrite();
+                    this.chip.regarray.incrementerDecrementerAddressLatch.Increment();
+                    this.chip.dataBusBufferLatch.setValue(this.chip.regarray.h.getValue());
+                    this.chip.memoryWrite();
+                }
+
+
+
+
                 else {
                     // TBW
                 }
