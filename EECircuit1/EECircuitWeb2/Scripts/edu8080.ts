@@ -2,6 +2,7 @@
 {
     enum OperationCode {
         LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
+        INX, DEX,
         ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
@@ -242,16 +243,9 @@
                     else this.chip.notImplemented(machinCode1);
                 }
                 else if (g3 == 3) {
-                    var hl = this.chip.regarray.getRegisterPairValue(g2 >> 1);
-                    if ((g2 & 1) == 0) // INX
-                        hl++;
-                    else // DEX
-                        hl--;
-                    this.chip.regarray.setRegisterPairValue(g2 >> 1, hl & 0xffff);
-                    //if ((g2 >> 1) == 3)
-                    //{
-                    //tracebox.add("inx/dex pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                    //}
+                    this.registerSelect16 = g2 >> 1;
+                    if ((g2 & 1) == 0) this.operationCode = OperationCode.INX;
+                    else this.operationCode = OperationCode.DEX;
                 }
                 else if (g3 == 4) { // INR
                     var val = this.chip.getRegister(g2);
@@ -593,6 +587,20 @@
                     break;
             }
         }
+        public getSelectedRegisterPairValue() {
+            switch (this.chip.registerSelect16) {
+                case RegisterSelect16.bc:
+                case RegisterSelect16.de:
+                case RegisterSelect16.hl:
+                case RegisterSelect16.sp:
+                    return this.getRegisterPairValue(this.chip.registerSelect16);
+                case RegisterSelect16.pc:
+                    return this.pc.getValue();
+                default:    // IncrementerDecrementerAddressLatch
+                    return this.incrementerDecrementerAddressLatch.getValue();
+            }
+        }
+
         public setSelectedRegisterPairValue(v: number) {
             switch (this.chip.registerSelect16) {
                 case RegisterSelect16.bc:
@@ -609,6 +617,17 @@
                     break;
             }
         }
+
+        public transferSelectedRefgister16toAddressLatch() {
+            var hl = this.getSelectedRegisterPairValue();
+            this.incrementerDecrementerAddressLatch.setValue(hl);
+        }
+        public transferSelectedRefgister16fromAddressLatch() {
+            var hl = this.incrementerDecrementerAddressLatch.getValue();
+            this.setSelectedRegisterPairValue(hl);
+        }
+
+
     }
     class TimingAndControl {
         private chip: i8080;
@@ -723,6 +742,18 @@
                     this.fetchNextWordAndSetAddressLatch();
                     this.chip.dataBusBufferLatch.setValue(this.chip.accumulator.getValue());
                     this.chip.memoryWrite();
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.INX) {
+                    this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
+                    this.chip.regarray.transferSelectedRefgister16toAddressLatch();
+                    this.chip.regarray.incrementerDecrementerAddressLatch.Increment();
+                    this.chip.regarray.transferSelectedRefgister16fromAddressLatch();
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.DEX) {
+                    this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
+                    this.chip.regarray.transferSelectedRefgister16toAddressLatch();
+                    this.chip.regarray.incrementerDecrementerAddressLatch.Decrement();
+                    this.chip.regarray.transferSelectedRefgister16fromAddressLatch();
                 }
 
 

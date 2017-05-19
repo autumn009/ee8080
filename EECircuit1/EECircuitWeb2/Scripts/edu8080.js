@@ -15,19 +15,21 @@ var edu8080;
         OperationCode[OperationCode["SHLD"] = 5] = "SHLD";
         OperationCode[OperationCode["LDA"] = 6] = "LDA";
         OperationCode[OperationCode["STA"] = 7] = "STA";
-        OperationCode[OperationCode["ADD"] = 8] = "ADD";
-        OperationCode[OperationCode["SUB"] = 9] = "SUB";
-        OperationCode[OperationCode["CMP"] = 10] = "CMP";
-        OperationCode[OperationCode["AND"] = 11] = "AND";
-        OperationCode[OperationCode["OR"] = 12] = "OR";
-        OperationCode[OperationCode["XOR"] = 13] = "XOR";
-        OperationCode[OperationCode["NOT"] = 14] = "NOT";
-        OperationCode[OperationCode["RLC"] = 15] = "RLC";
-        OperationCode[OperationCode["RRC"] = 16] = "RRC";
-        OperationCode[OperationCode["RAL"] = 17] = "RAL";
-        OperationCode[OperationCode["RAR"] = 18] = "RAR";
-        OperationCode[OperationCode["NOP"] = 19] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 20] = "OTHER";
+        OperationCode[OperationCode["INX"] = 8] = "INX";
+        OperationCode[OperationCode["DEX"] = 9] = "DEX";
+        OperationCode[OperationCode["ADD"] = 10] = "ADD";
+        OperationCode[OperationCode["SUB"] = 11] = "SUB";
+        OperationCode[OperationCode["CMP"] = 12] = "CMP";
+        OperationCode[OperationCode["AND"] = 13] = "AND";
+        OperationCode[OperationCode["OR"] = 14] = "OR";
+        OperationCode[OperationCode["XOR"] = 15] = "XOR";
+        OperationCode[OperationCode["NOT"] = 16] = "NOT";
+        OperationCode[OperationCode["RLC"] = 17] = "RLC";
+        OperationCode[OperationCode["RRC"] = 18] = "RRC";
+        OperationCode[OperationCode["RAL"] = 19] = "RAL";
+        OperationCode[OperationCode["RAR"] = 20] = "RAR";
+        OperationCode[OperationCode["NOP"] = 21] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 22] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -361,12 +363,11 @@ var edu8080;
                         this.chip.notImplemented(machinCode1);
                 }
                 else if (g3 == 3) {
-                    var hl = this.chip.regarray.getRegisterPairValue(g2 >> 1);
+                    this.registerSelect16 = g2 >> 1;
                     if ((g2 & 1) == 0)
-                        hl++;
+                        this.operationCode = OperationCode.INX;
                     else
-                        hl--;
-                    this.chip.regarray.setRegisterPairValue(g2 >> 1, hl & 0xffff);
+                        this.operationCode = OperationCode.DEX;
                 }
                 else if (g3 == 4) {
                     var val = this.chip.getRegister(g2);
@@ -661,6 +662,19 @@ var edu8080;
                     break;
             }
         };
+        RegisterArray.prototype.getSelectedRegisterPairValue = function () {
+            switch (this.chip.registerSelect16) {
+                case RegisterSelect16.bc:
+                case RegisterSelect16.de:
+                case RegisterSelect16.hl:
+                case RegisterSelect16.sp:
+                    return this.getRegisterPairValue(this.chip.registerSelect16);
+                case RegisterSelect16.pc:
+                    return this.pc.getValue();
+                default:
+                    return this.incrementerDecrementerAddressLatch.getValue();
+            }
+        };
         RegisterArray.prototype.setSelectedRegisterPairValue = function (v) {
             switch (this.chip.registerSelect16) {
                 case RegisterSelect16.bc:
@@ -676,6 +690,14 @@ var edu8080;
                     this.incrementerDecrementerAddressLatch.setValue(v);
                     break;
             }
+        };
+        RegisterArray.prototype.transferSelectedRefgister16toAddressLatch = function () {
+            var hl = this.getSelectedRegisterPairValue();
+            this.incrementerDecrementerAddressLatch.setValue(hl);
+        };
+        RegisterArray.prototype.transferSelectedRefgister16fromAddressLatch = function () {
+            var hl = this.incrementerDecrementerAddressLatch.getValue();
+            this.setSelectedRegisterPairValue(hl);
         };
         return RegisterArray;
     }());
@@ -792,6 +814,18 @@ var edu8080;
                     this.fetchNextWordAndSetAddressLatch();
                     this.chip.dataBusBufferLatch.setValue(this.chip.accumulator.getValue());
                     this.chip.memoryWrite();
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.INX) {
+                    this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
+                    this.chip.regarray.transferSelectedRefgister16toAddressLatch();
+                    this.chip.regarray.incrementerDecrementerAddressLatch.Increment();
+                    this.chip.regarray.transferSelectedRefgister16fromAddressLatch();
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.DEX) {
+                    this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
+                    this.chip.regarray.transferSelectedRefgister16toAddressLatch();
+                    this.chip.regarray.incrementerDecrementerAddressLatch.Decrement();
+                    this.chip.regarray.transferSelectedRefgister16fromAddressLatch();
                 }
                 else {
                 }
