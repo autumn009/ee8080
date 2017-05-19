@@ -17,19 +17,21 @@ var edu8080;
         OperationCode[OperationCode["STA"] = 7] = "STA";
         OperationCode[OperationCode["INX"] = 8] = "INX";
         OperationCode[OperationCode["DEX"] = 9] = "DEX";
-        OperationCode[OperationCode["ADD"] = 10] = "ADD";
-        OperationCode[OperationCode["SUB"] = 11] = "SUB";
-        OperationCode[OperationCode["CMP"] = 12] = "CMP";
-        OperationCode[OperationCode["AND"] = 13] = "AND";
-        OperationCode[OperationCode["OR"] = 14] = "OR";
-        OperationCode[OperationCode["XOR"] = 15] = "XOR";
-        OperationCode[OperationCode["NOT"] = 16] = "NOT";
-        OperationCode[OperationCode["RLC"] = 17] = "RLC";
-        OperationCode[OperationCode["RRC"] = 18] = "RRC";
-        OperationCode[OperationCode["RAL"] = 19] = "RAL";
-        OperationCode[OperationCode["RAR"] = 20] = "RAR";
-        OperationCode[OperationCode["NOP"] = 21] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 22] = "OTHER";
+        OperationCode[OperationCode["INR"] = 10] = "INR";
+        OperationCode[OperationCode["DCR"] = 11] = "DCR";
+        OperationCode[OperationCode["ADD"] = 12] = "ADD";
+        OperationCode[OperationCode["SUB"] = 13] = "SUB";
+        OperationCode[OperationCode["CMP"] = 14] = "CMP";
+        OperationCode[OperationCode["AND"] = 15] = "AND";
+        OperationCode[OperationCode["OR"] = 16] = "OR";
+        OperationCode[OperationCode["XOR"] = 17] = "XOR";
+        OperationCode[OperationCode["NOT"] = 18] = "NOT";
+        OperationCode[OperationCode["RLC"] = 19] = "RLC";
+        OperationCode[OperationCode["RRC"] = 20] = "RRC";
+        OperationCode[OperationCode["RAL"] = 21] = "RAL";
+        OperationCode[OperationCode["RAR"] = 22] = "RAR";
+        OperationCode[OperationCode["NOP"] = 23] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 24] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -185,12 +187,10 @@ var edu8080;
             var b = this.chip.tempReg.getValue();
             this.sub(a, b);
         };
-        ArithmeticLogicUnit.prototype.addraw = function (cyUnchange, cyOnlyChange, c) {
+        ArithmeticLogicUnit.prototype.addbase = function (a, b, cyUnchange, cyOnlyChange, c) {
             if (cyUnchange === void 0) { cyUnchange = false; }
             if (cyOnlyChange === void 0) { cyOnlyChange = false; }
             if (c === void 0) { c = false; }
-            var a = this.chip.accumulatorLatch.getValue();
-            var b = this.chip.tempReg.getValue();
             var r = a + b + (c ? 1 : 0);
             var r0 = r & 255;
             var rc = (r >> 8) != 0;
@@ -201,6 +201,15 @@ var edu8080;
                 this.setps(r0);
                 this.chip.flags.ac = ((a & 0x8) & (b & 0x8)) != 0;
             }
+            return r0;
+        };
+        ArithmeticLogicUnit.prototype.addraw = function (cyUnchange, cyOnlyChange, c) {
+            if (cyUnchange === void 0) { cyUnchange = false; }
+            if (cyOnlyChange === void 0) { cyOnlyChange = false; }
+            if (c === void 0) { c = false; }
+            var a = this.chip.accumulatorLatch.getValue();
+            var b = this.chip.tempReg.getValue();
+            var r0 = this.addbase(a, b, cyUnchange, cyOnlyChange, c);
             this.result.setValue(r0);
         };
         ArithmeticLogicUnit.prototype.add = function (cyUnchange, cyOnlyChange) {
@@ -213,11 +222,20 @@ var edu8080;
             if (cyOnlyChange === void 0) { cyOnlyChange = false; }
             this.addraw(cyUnchange, cyOnlyChange, this.chip.flags.cy);
         };
-        ArithmeticLogicUnit.prototype.subraw = function (cyUnchange, c) {
-            if (cyUnchange === void 0) { cyUnchange = false; }
-            if (c === void 0) { c = false; }
-            var a = this.chip.accumulatorLatch.getValue();
+        ArithmeticLogicUnit.prototype.inc = function () {
             var b = this.chip.tempReg.getValue();
+            var r0 = this.addbase(b, 1, true);
+            this.result.setValue(r0);
+        };
+        ArithmeticLogicUnit.prototype.dec = function () {
+            var b = this.chip.tempReg.getValue();
+            var r0 = this.subbase(b, 1, true);
+            this.result.setValue(r0);
+        };
+        ArithmeticLogicUnit.prototype.subbase = function (a, b, cyUnchange, cyOnlyChange, c) {
+            if (cyUnchange === void 0) { cyUnchange = false; }
+            if (cyOnlyChange === void 0) { cyOnlyChange = false; }
+            if (c === void 0) { c = false; }
             var r = a - b - (c ? 1 : 0);
             var r0 = r & 255;
             var rc = (r >> 8) != 0;
@@ -226,6 +244,14 @@ var edu8080;
                 this.chip.flags.cy = rc;
             this.setps(r0);
             this.chip.flags.ac = false;
+            return r0;
+        };
+        ArithmeticLogicUnit.prototype.subraw = function (cyUnchange, c) {
+            if (cyUnchange === void 0) { cyUnchange = false; }
+            if (c === void 0) { c = false; }
+            var a = this.chip.accumulatorLatch.getValue();
+            var b = this.chip.tempReg.getValue();
+            var r0 = this.subbase(a, b, cyUnchange, c);
             this.result.setValue(r0);
         };
         ArithmeticLogicUnit.prototype.sub = function (a, b, cyUnchange, c) {
@@ -369,16 +395,10 @@ var edu8080;
                     else
                         this.operationCode = OperationCode.DEX;
                 }
-                else if (g3 == 4) {
-                    var val = this.chip.getRegister(g2);
-                    val = this.chip.add(val, 1, true);
-                    this.chip.setRegister(g2, val);
-                }
-                else if (g3 == 5) {
-                    var val = this.chip.getRegister(g2);
-                    val = this.chip.sub(val, 1, true);
-                    this.chip.setRegister(g2, val);
-                }
+                else if (g3 == 4)
+                    this.operationCode = OperationCode.INR;
+                else if (g3 == 5)
+                    this.operationCode = OperationCode.DCR;
                 else if (g3 == 6) {
                     this.chip.setRegister(g2, this.chip.timingAndControl.fetchNextByte());
                 }
@@ -827,6 +847,16 @@ var edu8080;
                     this.chip.regarray.incrementerDecrementerAddressLatch.Decrement();
                     this.chip.regarray.transferSelectedRefgister16fromAddressLatch();
                 }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.INR) {
+                    this.chip.getRegisterToTempReg(this.chip.instructonDecoder.g2);
+                    this.chip.alu.inc();
+                    this.chip.setRegisterFromAlu(this.chip.instructonDecoder.g2);
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.DCR) {
+                    this.chip.getRegisterToTempReg(this.chip.instructonDecoder.g2);
+                    this.chip.alu.dec();
+                    this.chip.setRegisterFromAlu(this.chip.instructonDecoder.g2);
+                }
                 else {
                 }
             }
@@ -927,6 +957,14 @@ var edu8080;
             }
             else
                 return r.getValue();
+        };
+        i8080.prototype.getRegisterToTempReg = function (reg8) {
+            var val = this.getRegister(reg8);
+            this.tempReg.setValue(val);
+        };
+        i8080.prototype.setRegisterFromAlu = function (reg8) {
+            var val = this.alu.result.getValue();
+            this.setRegister(reg8, val);
         };
         i8080.prototype.getRegisterPairBDHPSW = function (n) {
             switch (n) {

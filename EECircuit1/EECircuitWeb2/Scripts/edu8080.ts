@@ -2,7 +2,7 @@
 {
     enum OperationCode {
         LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
-        INX, DEX,
+        INX, DEX, INR, DCR,
         ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
@@ -100,9 +100,7 @@
             var b = this.chip.tempReg.getValue();
             this.sub(a, b);
         }
-        private addraw(cyUnchange: boolean = false, cyOnlyChange = false, c: boolean = false) {
-            var a = this.chip.accumulatorLatch.getValue();
-            var b = this.chip.tempReg.getValue();
+        private addbase(a:number, b:number, cyUnchange: boolean = false, cyOnlyChange = false, c: boolean = false) {
             var r = a + b + (c ? 1 : 0);
             var r0 = r & 255;
             var rc = (r >> 8) != 0;
@@ -112,6 +110,12 @@
                 this.setps(r0);
                 this.chip.flags.ac = ((a & 0x8) & (b & 0x8)) != 0;
             }
+            return r0;
+        }
+        private addraw(cyUnchange: boolean = false, cyOnlyChange = false, c: boolean = false) {
+            var a = this.chip.accumulatorLatch.getValue();
+            var b = this.chip.tempReg.getValue();
+            var r0 = this.addbase(a, b, cyUnchange, cyOnlyChange, c);
             this.result.setValue(r0);
         }
         public add(cyUnchange: boolean = false, cyOnlyChange = false) {
@@ -120,9 +124,17 @@
         public adc(cyUnchange: boolean = false, cyOnlyChange = false) {
             this.addraw(cyUnchange, cyOnlyChange, this.chip.flags.cy);
         }
-        private subraw(cyUnchange: boolean = false, c: boolean = false) {
-            var a = this.chip.accumulatorLatch.getValue();
+        public inc() {
             var b = this.chip.tempReg.getValue();
+            var r0 = this.addbase(b, 1, true);
+            this.result.setValue(r0);
+        }
+        public dec() {
+            var b = this.chip.tempReg.getValue();
+            var r0 = this.subbase(b, 1, true);
+            this.result.setValue(r0);
+        }
+        private subbase(a: number, b: number, cyUnchange: boolean = false, cyOnlyChange = false, c: boolean = false) {
             var r = a - b - (c ? 1 : 0);
             var r0 = r & 255;
             var rc = (r >> 8) != 0;
@@ -130,6 +142,12 @@
             if (!cyUnchange) this.chip.flags.cy = rc;
             this.setps(r0);
             this.chip.flags.ac = false;
+            return r0;
+        }
+        private subraw(cyUnchange: boolean = false, c: boolean = false) {
+            var a = this.chip.accumulatorLatch.getValue();
+            var b = this.chip.tempReg.getValue();
+            var r0 = this.subbase(a, b, cyUnchange, c);
             this.result.setValue(r0);
         }
         public sub(a: number, b: number, cyUnchange: boolean = false, c: boolean = false) {
@@ -138,7 +156,6 @@
         public sbb(a: number, b: number, cyUnchange: boolean = false, c: boolean = false) {
             this.subraw(cyUnchange, this.chip.flags.cy);
         }
-
         private setlogicFlags(v: number, ac: boolean) {
             this.chip.flags.z = (v == 0);
             this.chip.flags.cy = false;
@@ -247,16 +264,8 @@
                     if ((g2 & 1) == 0) this.operationCode = OperationCode.INX;
                     else this.operationCode = OperationCode.DEX;
                 }
-                else if (g3 == 4) { // INR
-                    var val = this.chip.getRegister(g2);
-                    val = this.chip.add(val, 1, true);
-                    this.chip.setRegister(g2, val);
-                }
-                else if (g3 == 5) { // DCR
-                    var val = this.chip.getRegister(g2);
-                    val = this.chip.sub(val, 1, true);
-                    this.chip.setRegister(g2, val);
-                }
+                else if (g3 == 4) this.operationCode = OperationCode.INR;
+                else if (g3 == 5) this.operationCode = OperationCode.DCR;
                 else if (g3 == 6)    // MVI r,x
                 {
                     this.chip.setRegister(g2, this.chip.timingAndControl.fetchNextByte());
@@ -755,6 +764,16 @@
                     this.chip.regarray.incrementerDecrementerAddressLatch.Decrement();
                     this.chip.regarray.transferSelectedRefgister16fromAddressLatch();
                 }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.INR) {
+                    this.chip.getRegisterToTempReg(this.chip.instructonDecoder.g2);
+                    this.chip.alu.inc();
+                    this.chip.setRegisterFromAlu(this.chip.instructonDecoder.g2);
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.DCR) {
+                    this.chip.getRegisterToTempReg(this.chip.instructonDecoder.g2);
+                    this.chip.alu.dec();
+                    this.chip.setRegisterFromAlu(this.chip.instructonDecoder.g2);
+                }
 
 
                 else {
@@ -863,6 +882,15 @@
             }
             else
                 return r.getValue();
+        }
+
+        public getRegisterToTempReg(reg8: number) {
+            var val = this.getRegister(reg8);
+            this.tempReg.setValue(val);
+        }
+        public setRegisterFromAlu(reg8: number) {
+            var val = this.alu.result.getValue();
+            this.setRegister(reg8,val);
         }
 
         public getRegisterPairBDHPSW(n: number): number {
