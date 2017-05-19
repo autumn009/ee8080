@@ -707,6 +707,12 @@ var edu8080;
             var hl = h * 256 + l;
             return hl;
         };
+        TimingAndControl.prototype.fetchNextWordAndSetAddressLatch = function () {
+            var l = this.chip.timingAndControl.fetchNextByte();
+            var h = this.chip.timingAndControl.fetchNextByte();
+            this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
+            this.chip.registerSelect16 = RegisterSelect16.latch;
+        };
         TimingAndControl.prototype.instructionFetch = function () {
             this.fetchNextByte();
             var data = this.chip.dataBusBufferLatch.getValue();
@@ -771,10 +777,7 @@ var edu8080;
                     this.chip.memoryWrite();
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.LHLD) {
-                    var l = this.chip.timingAndControl.fetchNextByte();
-                    var h = this.chip.timingAndControl.fetchNextByte();
-                    this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
-                    this.chip.registerSelect16 = RegisterSelect16.latch;
+                    this.fetchNextWordAndSetAddressLatch();
                     this.chip.memoryRead();
                     this.chip.regarray.l.setValue(this.chip.dataBusBufferLatch.getValue());
                     this.chip.regarray.incrementerDecrementerAddressLatch.Increment();
@@ -782,10 +785,7 @@ var edu8080;
                     this.chip.regarray.h.setValue(this.chip.dataBusBufferLatch.getValue());
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.SHLD) {
-                    var l = this.chip.timingAndControl.fetchNextByte();
-                    var h = this.chip.timingAndControl.fetchNextByte();
-                    this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
-                    this.chip.registerSelect16 = RegisterSelect16.latch;
+                    this.fetchNextWordAndSetAddressLatch();
                     this.chip.dataBusBufferLatch.setValue(this.chip.regarray.l.getValue());
                     this.chip.memoryWrite();
                     this.chip.regarray.incrementerDecrementerAddressLatch.Increment();
@@ -793,18 +793,12 @@ var edu8080;
                     this.chip.memoryWrite();
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.LDA) {
-                    var l = this.chip.timingAndControl.fetchNextByte();
-                    var h = this.chip.timingAndControl.fetchNextByte();
-                    this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
-                    this.chip.registerSelect16 = RegisterSelect16.latch;
+                    this.fetchNextWordAndSetAddressLatch();
                     this.chip.memoryRead();
                     this.chip.accumulator.setValue(this.chip.dataBusBufferLatch.getValue());
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.STA) {
-                    var l = this.chip.timingAndControl.fetchNextByte();
-                    var h = this.chip.timingAndControl.fetchNextByte();
-                    this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
-                    this.chip.registerSelect16 = RegisterSelect16.latch;
+                    this.fetchNextWordAndSetAddressLatch();
                     this.chip.dataBusBufferLatch.setValue(this.chip.accumulator.getValue());
                     this.chip.memoryWrite();
                 }

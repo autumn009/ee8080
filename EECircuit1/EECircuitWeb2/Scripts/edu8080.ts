@@ -655,6 +655,12 @@
             var hl = h * 256 + l;
             return hl;
         }
+        private fetchNextWordAndSetAddressLatch() {
+            var l = this.chip.timingAndControl.fetchNextByte();
+            var h = this.chip.timingAndControl.fetchNextByte();
+            this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
+            this.chip.registerSelect16 = RegisterSelect16.latch;
+        }
         private instructionFetch() {
             this.fetchNextByte();
             var data = this.chip.dataBusBufferLatch.getValue();
@@ -718,10 +724,7 @@
                     this.chip.memoryWrite();
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.LHLD) {
-                    var l = this.chip.timingAndControl.fetchNextByte();
-                    var h = this.chip.timingAndControl.fetchNextByte();
-                    this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
-                    this.chip.registerSelect16 = RegisterSelect16.latch;
+                    this.fetchNextWordAndSetAddressLatch();
                     this.chip.memoryRead();
                     this.chip.regarray.l.setValue(this.chip.dataBusBufferLatch.getValue());
                     this.chip.regarray.incrementerDecrementerAddressLatch.Increment();
@@ -729,10 +732,7 @@
                     this.chip.regarray.h.setValue(this.chip.dataBusBufferLatch.getValue());
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.SHLD) {
-                    var l = this.chip.timingAndControl.fetchNextByte();
-                    var h = this.chip.timingAndControl.fetchNextByte();
-                    this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
-                    this.chip.registerSelect16 = RegisterSelect16.latch;
+                    this.fetchNextWordAndSetAddressLatch();
                     this.chip.dataBusBufferLatch.setValue(this.chip.regarray.l.getValue());
                     this.chip.memoryWrite();
                     this.chip.regarray.incrementerDecrementerAddressLatch.Increment();
@@ -740,18 +740,12 @@
                     this.chip.memoryWrite();
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.LDA) {
-                    var l = this.chip.timingAndControl.fetchNextByte();
-                    var h = this.chip.timingAndControl.fetchNextByte();
-                    this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
-                    this.chip.registerSelect16 = RegisterSelect16.latch;
+                    this.fetchNextWordAndSetAddressLatch();
                     this.chip.memoryRead();
                     this.chip.accumulator.setValue(this.chip.dataBusBufferLatch.getValue());
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.STA) {
-                    var l = this.chip.timingAndControl.fetchNextByte();
-                    var h = this.chip.timingAndControl.fetchNextByte();
-                    this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
-                    this.chip.registerSelect16 = RegisterSelect16.latch;
+                    this.fetchNextWordAndSetAddressLatch();
                     this.chip.dataBusBufferLatch.setValue(this.chip.accumulator.getValue());
                     this.chip.memoryWrite();
                 }
@@ -761,6 +755,7 @@
                     // TBW
                 }
             }
+
         }
     }
     export class i8080 implements icpu {
