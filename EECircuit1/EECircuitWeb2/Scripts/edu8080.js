@@ -20,19 +20,23 @@ var edu8080;
         OperationCode[OperationCode["INR"] = 10] = "INR";
         OperationCode[OperationCode["DCR"] = 11] = "DCR";
         OperationCode[OperationCode["MVI"] = 12] = "MVI";
-        OperationCode[OperationCode["ADD"] = 13] = "ADD";
-        OperationCode[OperationCode["SUB"] = 14] = "SUB";
-        OperationCode[OperationCode["CMP"] = 15] = "CMP";
-        OperationCode[OperationCode["AND"] = 16] = "AND";
-        OperationCode[OperationCode["OR"] = 17] = "OR";
-        OperationCode[OperationCode["XOR"] = 18] = "XOR";
-        OperationCode[OperationCode["NOT"] = 19] = "NOT";
-        OperationCode[OperationCode["RLC"] = 20] = "RLC";
-        OperationCode[OperationCode["RRC"] = 21] = "RRC";
-        OperationCode[OperationCode["RAL"] = 22] = "RAL";
-        OperationCode[OperationCode["RAR"] = 23] = "RAR";
-        OperationCode[OperationCode["NOP"] = 24] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 25] = "OTHER";
+        OperationCode[OperationCode["DAA"] = 13] = "DAA";
+        OperationCode[OperationCode["CMA"] = 14] = "CMA";
+        OperationCode[OperationCode["STC"] = 15] = "STC";
+        OperationCode[OperationCode["CMC"] = 16] = "CMC";
+        OperationCode[OperationCode["ADD"] = 17] = "ADD";
+        OperationCode[OperationCode["SUB"] = 18] = "SUB";
+        OperationCode[OperationCode["CMP"] = 19] = "CMP";
+        OperationCode[OperationCode["AND"] = 20] = "AND";
+        OperationCode[OperationCode["OR"] = 21] = "OR";
+        OperationCode[OperationCode["XOR"] = 22] = "XOR";
+        OperationCode[OperationCode["NOT"] = 23] = "NOT";
+        OperationCode[OperationCode["RLC"] = 24] = "RLC";
+        OperationCode[OperationCode["RRC"] = 25] = "RRC";
+        OperationCode[OperationCode["RAL"] = 26] = "RAL";
+        OperationCode[OperationCode["RAR"] = 27] = "RAR";
+        OperationCode[OperationCode["NOP"] = 28] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 29] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -319,6 +323,10 @@ var edu8080;
             this.result.setValue((r & 255) + (this.chip.flags.cy ? 0x80 : 0));
             this.chip.flags.cy = over;
         };
+        ArithmeticLogicUnit.prototype.cma = function () {
+            var r = this.chip.accumulator.getValue();
+            this.result.setValue((~r) & 0xff);
+        };
         return ArithmeticLogicUnit;
     }());
     var FlagFlipFlop = (function () {
@@ -353,8 +361,25 @@ var edu8080;
         return FlagFlipFlop;
     }());
     var DecimalAdjust = (function () {
-        function DecimalAdjust() {
+        function DecimalAdjust(thischip) {
+            this.chip = thischip;
         }
+        DecimalAdjust.prototype.adjust = function () {
+            var a = this.chip.accumulator.getValue();
+            var al4 = a & 15;
+            if (al4 > 9 || this.chip.flags.ac)
+                a += 6;
+            var ah4 = (a >> 4) & 15;
+            if (ah4 > 9 || this.chip.flags.cy)
+                a += 0x60;
+            var r0 = a & 255;
+            this.chip.accumulator.setValue(r0);
+            var rc = (a >> 8) != 0;
+            this.chip.flags.z = (a == 0);
+            this.chip.flags.cy = rc;
+            this.chip.setps(r0);
+            this.chip.flags.ac = false;
+        };
         return DecimalAdjust;
     }());
     var InstructionRegister = (function (_super) {
@@ -438,38 +463,19 @@ var edu8080;
                         this.operationCode = OperationCode.RAL;
                     else if (g2 == 3)
                         this.operationCode = OperationCode.RAR;
-                    else if (g2 == 4) {
-                        var a = this.chip.accumulator.getValue();
-                        var al4 = a & 15;
-                        if (al4 > 9 || this.chip.flags.ac)
-                            a += 6;
-                        var ah4 = (a >> 4) & 15;
-                        if (ah4 > 9 || this.chip.flags.cy)
-                            a += 0x60;
-                        var r0 = a & 255;
-                        this.chip.accumulator.setValue(r0);
-                        var rc = (a >> 8) != 0;
-                        this.chip.flags.z = (a == 0);
-                        this.chip.flags.cy = rc;
-                        this.chip.setps(r0);
-                        this.chip.flags.ac = false;
-                    }
-                    else if (g2 == 5) {
-                        this.chip.accumulator.setValue((~this.chip.accumulator.getValue()) & 255);
-                    }
-                    else if (g2 == 6) {
-                        this.chip.flags.cy = true;
-                    }
-                    else if (g2 == 7) {
-                        this.chip.flags.cy = !this.chip.flags.cy;
-                    }
-                    else {
+                    else if (g2 == 4)
+                        this.operationCode = OperationCode.DAA;
+                    else if (g2 == 5)
+                        this.operationCode = OperationCode.CMA;
+                    else if (g2 == 6)
+                        this.operationCode = OperationCode.STC;
+                    else if (g2 == 7)
+                        this.operationCode = OperationCode.CMC;
+                    else
                         this.chip.notImplemented(machinCode1);
-                    }
                 }
-                else {
+                else
                     this.chip.notImplemented(machinCode1);
-                }
             }
             else if (g1 == 1) {
                 if (g2 == 6 && g3 == 6) {
@@ -777,6 +783,8 @@ var edu8080;
                 case OperationCode.RAR:
                     this.chip.alu.rar();
                     break;
+                case OperationCode.CMA:
+                    this.chip.alu.cma();
                 default:
                     break;
             }
@@ -893,8 +901,18 @@ var edu8080;
                     this.chip.setRegisterFromDataLatch(this.chip.instructonDecoder.g2);
                 }
                 else if (this.chip.instructonDecoder.operationCode >= OperationCode.RLC
-                    && this.chip.instructonDecoder.operationCode <= OperationCode.RAR) {
+                    && this.chip.instructonDecoder.operationCode <= OperationCode.RAR
+                    || this.chip.instructonDecoder.operationCode == OperationCode.CMA) {
                     this.aluWithAcc(this.chip.instructonDecoder.operationCode);
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.DAA) {
+                    this.chip.decimalAdjust.adjust();
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.STC) {
+                    this.chip.flags.cy = true;
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.CMC) {
+                    this.chip.flags.cy = !this.chip.flags.cy;
                 }
                 else {
                 }
@@ -918,6 +936,7 @@ var edu8080;
             this.insutructionRegister = new InstructionRegister();
             this.instructonDecoder = new InstructionDecoderAndMachineCycleEncoding(this);
             this.alu = new ArithmeticLogicUnit(this);
+            this.decimalAdjust = new DecimalAdjust(this);
             this.lastval = 65536;
         }
         i8080.prototype.memoryRead = function () {

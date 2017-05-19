@@ -2,7 +2,7 @@
 {
     enum OperationCode {
         LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
-        INX, DEX, INR, DCR, MVI, 
+        INX, DEX, INR, DCR, MVI, DAA, CMA, STC, CMC,
         ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
@@ -210,6 +210,10 @@
             this.result.setValue((r & 255) + (this.chip.flags.cy ? 0x80 : 0));
             this.chip.flags.cy = over;
         }
+        public cma() {
+            var r = this.chip.accumulator.getValue();
+            this.result.setValue((~r) & 0xff);
+        }
     }
     class FlagFlipFlop {
         public z: boolean = false;
@@ -235,7 +239,25 @@
         }
     }
     class DecimalAdjust {
-
+        private chip: i8080;
+        constructor(thischip: i8080) {
+            this.chip = thischip;
+        }
+        public adjust()
+        {
+            var a = this.chip.accumulator.getValue();
+            var al4 = a & 15;
+            if (al4 > 9 || this.chip.flags.ac) a += 6;
+            var ah4 = (a >> 4) & 15;
+            if (ah4 > 9 || this.chip.flags.cy) a += 0x60;
+            var r0 = a & 255;
+            this.chip.accumulator.setValue(r0);
+            var rc = (a >> 8) != 0;
+            this.chip.flags.z = (a == 0);
+            this.chip.flags.cy = rc;
+            this.chip.setps(r0);
+            this.chip.flags.ac = false;
+        }
     }
     class InstructionRegister extends Register8 { }
     class InstructionDecoderAndMachineCycleEncoding {
@@ -299,40 +321,14 @@
                     else if (g2 == 1) this.operationCode = OperationCode.RRC;
                     else if (g2 == 2) this.operationCode = OperationCode.RAL;
                     else if (g2 == 3) this.operationCode = OperationCode.RAR;
-                    else if (g2 == 4)    // DAA
-                    {
-                        var a = this.chip.accumulator.getValue();
-                        var al4 = a & 15;
-                        if (al4 > 9 || this.chip.flags.ac) a += 6;
-                        var ah4 = (a >> 4) & 15;
-                        if (ah4 > 9 || this.chip.flags.cy) a += 0x60;
-                        var r0 = a & 255;
-                        this.chip.accumulator.setValue(r0);
-                        var rc = (a >> 8) != 0;
-                        this.chip.flags.z = (a == 0);
-                        this.chip.flags.cy = rc;
-                        this.chip.setps(r0);
-                        this.chip.flags.ac = false;
-                    }
-                    else if (g2 == 5)    // CMA
-                    {
-                        this.chip.accumulator.setValue((~this.chip.accumulator.getValue()) & 255);
-                    }
-                    else if (g2 == 6)    // STC
-                    {
-                        this.chip.flags.cy = true;
-                    }
-                    else if (g2 == 7)    // CMC
-                    {
-                        this.chip.flags.cy = !this.chip.flags.cy;
-                    }
-                    else {
-                        this.chip.notImplemented(machinCode1);
-                    }
+                    else if (g2 == 4) this.operationCode = OperationCode.DAA;
+                    else if (g2 == 5) this.operationCode = OperationCode.CMA;
+                    else if (g2 == 6) this.operationCode = OperationCode.STC;
+                    else if (g2 == 7) this.operationCode = OperationCode.CMC;
+                    else this.chip.notImplemented(machinCode1);
                 }
-                else {
-                    this.chip.notImplemented(machinCode1);
-                }
+                else this.chip.notImplemented(machinCode1);
+
             }
             else if (g1 == 1) {
                 if (g2 == 6 && g3 == 6)    // HLT
@@ -684,6 +680,8 @@
                 case OperationCode.RAR:
                     this.chip.alu.rar();
                     break;
+                case OperationCode.CMA:
+                    this.chip.alu.cma();
                 default:
                     break;
             }
@@ -800,8 +798,18 @@
                     this.chip.setRegisterFromDataLatch(this.chip.instructonDecoder.g2);
                 }
                 else if (this.chip.instructonDecoder.operationCode >= OperationCode.RLC
-                    && this.chip.instructonDecoder.operationCode <= OperationCode.RAR) {
+                    && this.chip.instructonDecoder.operationCode <= OperationCode.RAR
+                    || this.chip.instructonDecoder.operationCode == OperationCode.CMA) {
                     this.aluWithAcc(this.chip.instructonDecoder.operationCode);
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.DAA) {
+                    this.chip.decimalAdjust.adjust();
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.STC) {
+                    this.chip.flags.cy = true;
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.CMC) {
+                    this.chip.flags.cy = !this.chip.flags.cy;
                 }
 
 
@@ -829,7 +837,8 @@
         public insutructionRegister = new InstructionRegister();
         public instructonDecoder = new InstructionDecoderAndMachineCycleEncoding(this);
         public alu = new ArithmeticLogicUnit(this);
-        
+        public decimalAdjust = new DecimalAdjust(this);
+
         public memoryRead()
         {
             var addr = this.addressBuffer.getAddress();
