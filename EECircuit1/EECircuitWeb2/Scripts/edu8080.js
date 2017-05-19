@@ -292,6 +292,33 @@ var edu8080;
             this.setlogicFlags(r, false);
             this.result.setValue(r);
         };
+        ArithmeticLogicUnit.prototype.rlc = function () {
+            var r = this.chip.accumulator.getValue();
+            r <<= 1;
+            var over = (r & 0x100) != 0;
+            this.result.setValue((r & 255) + (over ? 1 : 0));
+            this.chip.flags.cy = over;
+        };
+        ArithmeticLogicUnit.prototype.rrc = function () {
+            var r = this.chip.accumulator.getValue();
+            var over = (r & 1) != 0;
+            r >>= 1;
+            this.result.setValue((r & 255) + (over ? 0x80 : 0));
+            this.chip.flags.cy = over;
+        };
+        ArithmeticLogicUnit.prototype.ral = function () {
+            var r = this.chip.accumulator.getValue();
+            r <<= 1;
+            this.result.setValue((r & 255) + (this.chip.flags.cy ? 1 : 0));
+            this.chip.flags.cy = (r & 0x100) != 0;
+        };
+        ArithmeticLogicUnit.prototype.rar = function () {
+            var r = this.chip.accumulator.getValue();
+            var over = (r & 1) != 0;
+            r >>= 1;
+            this.result.setValue((r & 255) + (this.chip.flags.cy ? 0x80 : 0));
+            this.chip.flags.cy = over;
+        };
         return ArithmeticLogicUnit;
     }());
     var FlagFlipFlop = (function () {
@@ -403,33 +430,14 @@ var edu8080;
                 else if (g3 == 6)
                     this.operationCode = OperationCode.MVI;
                 else if (g3 == 7) {
-                    if (g2 == 0) {
-                        var r = this.chip.accumulator.getValue();
-                        r <<= 1;
-                        var over = (r & 0x100) != 0;
-                        this.chip.accumulator.setValue((r & 255) + (over ? 1 : 0));
-                        this.chip.flags.cy = over;
-                    }
-                    else if (g2 == 1) {
-                        var r = this.chip.accumulator.getValue();
-                        var over = (r & 1) != 0;
-                        r >>= 1;
-                        this.chip.accumulator.setValue((r & 255) + (over ? 0x80 : 0));
-                        this.chip.flags.cy = over;
-                    }
-                    else if (g2 == 2) {
-                        var r = this.chip.accumulator.getValue();
-                        r <<= 1;
-                        this.chip.accumulator.setValue((r & 255) + (this.chip.flags.cy ? 1 : 0));
-                        this.chip.flags.cy = (r & 0x100) != 0;
-                    }
-                    else if (g2 == 3) {
-                        var r = this.chip.accumulator.getValue();
-                        var over = (r & 1) != 0;
-                        r >>= 1;
-                        this.chip.accumulator.setValue((r & 255) + (this.chip.flags.cy ? 0x80 : 0));
-                        this.chip.flags.cy = over;
-                    }
+                    if (g2 == 0)
+                        this.operationCode = OperationCode.RLC;
+                    else if (g2 == 1)
+                        this.operationCode = OperationCode.RRC;
+                    else if (g2 == 2)
+                        this.operationCode = OperationCode.RAL;
+                    else if (g2 == 3)
+                        this.operationCode = OperationCode.RAR;
                     else if (g2 == 4) {
                         var a = this.chip.accumulator.getValue();
                         var al4 = a & 15;
@@ -755,6 +763,25 @@ var edu8080;
             var data = this.chip.dataBusBufferLatch.getValue();
             this.chip.insutructionRegister.setValue(data);
         };
+        TimingAndControl.prototype.aluWithAcc = function (operationCode) {
+            switch (operationCode) {
+                case OperationCode.RLC:
+                    this.chip.alu.rlc();
+                    break;
+                case OperationCode.RRC:
+                    this.chip.alu.rrc();
+                    break;
+                case OperationCode.RAL:
+                    this.chip.alu.ral();
+                    break;
+                case OperationCode.RAR:
+                    this.chip.alu.rar();
+                    break;
+                default:
+                    break;
+            }
+            this.chip.accumulator.setValue(this.chip.alu.result.getValue());
+        };
         TimingAndControl.prototype.runMain = function () {
             var _this = this;
             vdt.inputFunc = function (num) {
@@ -864,6 +891,10 @@ var edu8080;
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.MVI) {
                     this.fetchNextByteAndSetDataLatch();
                     this.chip.setRegisterFromDataLatch(this.chip.instructonDecoder.g2);
+                }
+                else if (this.chip.instructonDecoder.operationCode >= OperationCode.RLC
+                    && this.chip.instructonDecoder.operationCode <= OperationCode.RAR) {
+                    this.aluWithAcc(this.chip.instructonDecoder.operationCode);
                 }
                 else {
                 }

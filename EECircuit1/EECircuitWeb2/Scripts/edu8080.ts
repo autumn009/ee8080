@@ -100,7 +100,7 @@
             var b = this.chip.tempReg.getValue();
             this.sub(a, b);
         }
-        private addbase(a:number, b:number, cyUnchange: boolean = false, cyOnlyChange = false, c: boolean = false) {
+        private addbase(a: number, b: number, cyUnchange: boolean = false, cyOnlyChange = false, c: boolean = false) {
             var r = a + b + (c ? 1 : 0);
             var r0 = r & 255;
             var rc = (r >> 8) != 0;
@@ -182,6 +182,33 @@
             var r = a ^ b;
             this.setlogicFlags(r, false);
             this.result.setValue(r);
+        }
+        public rlc() {
+            var r = this.chip.accumulator.getValue();
+            r <<= 1;
+            var over = (r & 0x100) != 0;
+            this.result.setValue((r & 255) + (over ? 1 : 0));
+            this.chip.flags.cy = over;
+        }
+        public rrc() {
+            var r = this.chip.accumulator.getValue();
+            var over = (r & 1) != 0;
+            r >>= 1;
+            this.result.setValue((r & 255) + (over ? 0x80 : 0));
+            this.chip.flags.cy = over;
+        }
+        public ral() {
+            var r = this.chip.accumulator.getValue();
+            r <<= 1;
+            this.result.setValue((r & 255) + (this.chip.flags.cy ? 1 : 0));
+            this.chip.flags.cy = (r & 0x100) != 0;
+        }
+        public rar() {
+            var r = this.chip.accumulator.getValue();
+            var over = (r & 1) != 0;
+            r >>= 1;
+            this.result.setValue((r & 255) + (this.chip.flags.cy ? 0x80 : 0));
+            this.chip.flags.cy = over;
         }
     }
     class FlagFlipFlop {
@@ -268,37 +295,10 @@
                 else if (g3 == 5) this.operationCode = OperationCode.DCR;
                 else if (g3 == 6) this.operationCode = OperationCode.MVI;
                 else if (g3 == 7) {
-                    if (g2 == 0)    // RLC
-                    {
-                        var r = this.chip.accumulator.getValue();
-                        r <<= 1;
-                        var over = (r & 0x100) != 0;
-                        this.chip.accumulator.setValue((r & 255) + (over ? 1 : 0));
-                        this.chip.flags.cy = over;
-                    }
-                    else if (g2 == 1)    // RRC
-                    {
-                        var r = this.chip.accumulator.getValue();
-                        var over = (r & 1) != 0;
-                        r >>= 1;
-                        this.chip.accumulator.setValue((r & 255) + (over ? 0x80 : 0));
-                        this.chip.flags.cy = over;
-                    }
-                    else if (g2 == 2)    // RAL
-                    {
-                        var r = this.chip.accumulator.getValue();
-                        r <<= 1;
-                        this.chip.accumulator.setValue((r & 255) + (this.chip.flags.cy ? 1 : 0));
-                        this.chip.flags.cy = (r & 0x100) != 0;
-                    }
-                    else if (g2 == 3)    // RAR
-                    {
-                        var r = this.chip.accumulator.getValue();
-                        var over = (r & 1) != 0;
-                        r >>= 1;
-                        this.chip.accumulator.setValue((r & 255) + (this.chip.flags.cy ? 0x80 : 0));
-                        this.chip.flags.cy = over;
-                    }
+                    if (g2 == 0) this.operationCode = OperationCode.RLC;
+                    else if (g2 == 1) this.operationCode = OperationCode.RRC;
+                    else if (g2 == 2) this.operationCode = OperationCode.RAL;
+                    else if (g2 == 3) this.operationCode = OperationCode.RAR;
                     else if (g2 == 4)    // DAA
                     {
                         var a = this.chip.accumulator.getValue();
@@ -670,6 +670,26 @@
             var data = this.chip.dataBusBufferLatch.getValue();
             this.chip.insutructionRegister.setValue(data);
         }
+        private aluWithAcc(operationCode: OperationCode) {
+            switch (operationCode) {
+                case OperationCode.RLC:
+                    this.chip.alu.rlc();
+                    break;
+                case OperationCode.RRC:
+                    this.chip.alu.rrc();
+                    break;
+                case OperationCode.RAL:
+                    this.chip.alu.ral();
+                    break;
+                case OperationCode.RAR:
+                    this.chip.alu.rar();
+                    break;
+                default:
+                    break;
+            }
+            this.chip.accumulator.setValue(this.chip.alu.result.getValue());
+        }
+
         public runMain() {
             vdt.inputFunc = (num) => {
                 emu.inputChars += String.fromCharCode(num);
@@ -779,6 +799,13 @@
                     this.fetchNextByteAndSetDataLatch();
                     this.chip.setRegisterFromDataLatch(this.chip.instructonDecoder.g2);
                 }
+                else if (this.chip.instructonDecoder.operationCode >= OperationCode.RLC
+                    && this.chip.instructonDecoder.operationCode <= OperationCode.RAR) {
+                    this.aluWithAcc(this.chip.instructonDecoder.operationCode);
+                }
+
+
+
 
                 else {
                     // TBW
