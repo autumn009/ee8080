@@ -1,7 +1,7 @@
 ﻿namespace edu8080
 {
     enum OperationCode {
-        LXI, DAD, ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, NOP, OTHER
+        LXI, DAD, LDAX, STAX, ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
         b = 0, c, d, e, h, l, m, a
@@ -233,13 +233,17 @@
                 else if (g3 == 2) {
                     if ((g2 & 0x5) == 0x0)  // STAX
                     {
-                        emu.virtualMachine.memory.Bytes.write(this.chip.regarray.getRegisterPairValue(g2 >> 1), this.chip.accumulator.getValue());
+                        this.operationCode = OperationCode.STAX;
+                        this.registerSelect16 = g2 >> 1;
+                        //emu.virtualMachine.memory.Bytes.write(this.chip.regarray.getRegisterPairValue(g2 >> 1), this.chip.accumulator.getValue());
                     }
                     else if ((g2 & 0x5) == 0x1)  // LDAX
                     {
-                        this.chip.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(
-                            this.chip.regarray.getRegisterPairValue(g2 >> 1)
-                        ));
+                        this.operationCode = OperationCode.LDAX;
+                        this.registerSelect16 = g2 >> 1;
+                        //this.chip.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(
+                        //    this.chip.regarray.getRegisterPairValue(g2 >> 1)
+                        //));
                     }
                     else if (g2 == 4)  // SHLD
                     {
@@ -706,6 +710,16 @@
                     var resultH = this.chip.alu.result.getValue();
                     this.chip.regarray.l.setValue(resultL);
                     this.chip.regarray.h.setValue(resultH);
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.LDAX) {
+                    this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
+                    this.chip.memoryRead();
+                    this.chip.accumulator.setValue(this.chip.dataBusBufferLatch.getValue());
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.STAX) {
+                    this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
+                    this.chip.dataBusBufferLatch.setValue(this.chip.accumulator.getValue());
+                    this.chip.memoryWrite();
                 }
                 else {
                     // TBW

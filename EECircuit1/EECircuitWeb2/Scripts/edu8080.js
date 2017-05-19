@@ -9,19 +9,21 @@ var edu8080;
     (function (OperationCode) {
         OperationCode[OperationCode["LXI"] = 0] = "LXI";
         OperationCode[OperationCode["DAD"] = 1] = "DAD";
-        OperationCode[OperationCode["ADD"] = 2] = "ADD";
-        OperationCode[OperationCode["SUB"] = 3] = "SUB";
-        OperationCode[OperationCode["CMP"] = 4] = "CMP";
-        OperationCode[OperationCode["AND"] = 5] = "AND";
-        OperationCode[OperationCode["OR"] = 6] = "OR";
-        OperationCode[OperationCode["XOR"] = 7] = "XOR";
-        OperationCode[OperationCode["NOT"] = 8] = "NOT";
-        OperationCode[OperationCode["RLC"] = 9] = "RLC";
-        OperationCode[OperationCode["RRC"] = 10] = "RRC";
-        OperationCode[OperationCode["RAL"] = 11] = "RAL";
-        OperationCode[OperationCode["RAR"] = 12] = "RAR";
-        OperationCode[OperationCode["NOP"] = 13] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 14] = "OTHER";
+        OperationCode[OperationCode["LDAX"] = 2] = "LDAX";
+        OperationCode[OperationCode["STAX"] = 3] = "STAX";
+        OperationCode[OperationCode["ADD"] = 4] = "ADD";
+        OperationCode[OperationCode["SUB"] = 5] = "SUB";
+        OperationCode[OperationCode["CMP"] = 6] = "CMP";
+        OperationCode[OperationCode["AND"] = 7] = "AND";
+        OperationCode[OperationCode["OR"] = 8] = "OR";
+        OperationCode[OperationCode["XOR"] = 9] = "XOR";
+        OperationCode[OperationCode["NOT"] = 10] = "NOT";
+        OperationCode[OperationCode["RLC"] = 11] = "RLC";
+        OperationCode[OperationCode["RRC"] = 12] = "RRC";
+        OperationCode[OperationCode["RAL"] = 13] = "RAL";
+        OperationCode[OperationCode["RAR"] = 14] = "RAR";
+        OperationCode[OperationCode["NOP"] = 15] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 16] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -337,10 +339,12 @@ var edu8080;
                 }
                 else if (g3 == 2) {
                     if ((g2 & 0x5) == 0x0) {
-                        emu.virtualMachine.memory.Bytes.write(this.chip.regarray.getRegisterPairValue(g2 >> 1), this.chip.accumulator.getValue());
+                        this.operationCode = OperationCode.STAX;
+                        this.registerSelect16 = g2 >> 1;
                     }
                     else if ((g2 & 0x5) == 0x1) {
-                        this.chip.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(this.chip.regarray.getRegisterPairValue(g2 >> 1)));
+                        this.operationCode = OperationCode.LDAX;
+                        this.registerSelect16 = g2 >> 1;
                     }
                     else if (g2 == 4) {
                         var addr = this.chip.timingAndControl.fetchNextWord();
@@ -754,6 +758,16 @@ var edu8080;
                     var resultH = this.chip.alu.result.getValue();
                     this.chip.regarray.l.setValue(resultL);
                     this.chip.regarray.h.setValue(resultH);
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.LDAX) {
+                    this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
+                    this.chip.memoryRead();
+                    this.chip.accumulator.setValue(this.chip.dataBusBufferLatch.getValue());
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.STAX) {
+                    this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
+                    this.chip.dataBusBufferLatch.setValue(this.chip.accumulator.getValue());
+                    this.chip.memoryWrite();
                 }
                 else {
                 }
