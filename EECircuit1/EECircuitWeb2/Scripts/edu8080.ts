@@ -3,7 +3,8 @@
     enum OperationCode {
         LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
         INX, DEX, INR, DCR, MVI, DAA, CMA, STC, CMC, HLT, MOV,
-        ADD,ADC,SUB,SBB,AND,XRA,ORA,CMP,
+        ADD, ADC, SUB, SBB, AND, XRA, ORA, CMP,
+        Rxx,
         RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
@@ -338,22 +339,14 @@
                 this.operationCode = OperationCode.ADD + g2;
             }
             else {
-                if (g3 == 0) {  // Rxx
-                    if (this.chip.condCommon(g2)) {
-                        this.chip.regarray.pc.setValue(this.chip.popCommon());
-                        //tracebox.add("rxx pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                    }
-                }
+                if (g3 == 0) this.operationCode = OperationCode.Rxx;
                 else if (g3 == 1) {
                     if ((g2 & 1) == 0) // POP
                     {
                         this.chip.setRegisterPairBDHPSW(g2 & 6, this.chip.popCommon());
                         //tracebox.add("pop pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                     }
-                    else if (g2 == 1) { // RET
-                        this.chip.regarray.pc.setValue(this.chip.popCommon());
-                        //tracebox.add("ret pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                    }
+                    else if (g2 == 1) this.operationCode = OperationCode.Rxx; // RET
                     else if (g2 == 5) // PCHL
                     {
                         this.chip.regarray.pc.setValue(this.chip.regarray.getRegisterPairValue(2));
@@ -814,6 +807,12 @@
                 else if (this.chip.instructonDecoder.operationCode >= OperationCode.ADD
                     && this.chip.instructonDecoder.operationCode <= OperationCode.CMP) {
                     this.aluWithAccAndTemp(this.chip.instructonDecoder.operationCode, this.chip.instructonDecoder.g3);
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.Rxx) {
+                    if (this.chip.instructonDecoder.g3 == 1 // in case of RET
+                        || this.chip.condCommon(this.chip.instructonDecoder.g2)) {  // in case of Rxx
+                        this.chip.regarray.pc.setValue(this.chip.popCommon());
+                    }
                 }
 
 
