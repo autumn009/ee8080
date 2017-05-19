@@ -655,8 +655,7 @@
             var hl = h * 256 + l;
             return hl;
         }
-        private instructionFetch()
-        {
+        private instructionFetch() {
             this.fetchNextByte();
             var data = this.chip.dataBusBufferLatch.getValue();
             this.chip.insutructionRegister.setValue(data);
@@ -687,24 +686,26 @@
 
                 this.instructionFetch();
                 if (this.chip.instructonDecoder.Decode()) return;
-                if (this.chip.instructonDecoder.operationCode == OperationCode.NOP)
-                {
+                if (this.chip.instructonDecoder.operationCode == OperationCode.NOP) {
                     // do nothing
                 }
-                else if (this.chip.instructonDecoder.operationCode == OperationCode.LXI)
-                {
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.LXI) {
                     var dword = this.chip.timingAndControl.fetchNextWord();
                     this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
                     this.chip.regarray.setSelectedRegisterPairValue(dword);
                 }
-                else if (this.chip.instructonDecoder.operationCode == OperationCode.DAD)
-                {
-                    var t1 = this.chip.regarray.getRegisterPairValue(2);
-                    var t2 = this.chip.regarray.getRegisterPairValue(this.chip.instructonDecoder.registerSelect16);
-                    // NEED TO REWRITE
-                    var s = t1 + t2;
-                    this.chip.flags.cy = (s >= 0x10000) ? true : false;
-                    this.chip.regarray.setRegisterPairValue(2, s & 0xffff);
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.DAD) {
+                    var tgt = this.chip.regarray.getRegisterPairValue(this.chip.instructonDecoder.registerSelect16);
+                    this.chip.accumulatorLatch.setValue(this.chip.regarray.l.getValue());
+                    this.chip.tempReg.setValue(lowByte(tgt));
+                    this.chip.alu.add(false, true);
+                    var resultL = this.chip.alu.result.getValue();
+                    this.chip.accumulatorLatch.setValue(this.chip.regarray.h.getValue());
+                    this.chip.tempReg.setValue(highByte(tgt));
+                    this.chip.alu.adc(false, true);
+                    var resultH = this.chip.alu.result.getValue();
+                    this.chip.regarray.l.setValue(resultL);
+                    this.chip.regarray.h.setValue(resultH);
                 }
                 else {
                     // TBW
