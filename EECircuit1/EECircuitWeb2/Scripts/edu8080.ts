@@ -1,7 +1,7 @@
 ﻿namespace edu8080
 {
     enum OperationCode {
-        LXI, DAD, LDAX, STAX,LHLD, SHLD,
+        LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
         ADD, SUB, CMP, AND, OR, XOR, NOT, RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
@@ -248,25 +248,19 @@
                     else if (g2 == 4)  // SHLD
                     {
                         this.operationCode = OperationCode.SHLD;
-                        //var addr = this.chip.timingAndControl.fetchNextWord();
-                        //emu.virtualMachine.memory.Bytes.write(addr, this.chip.regarray.l.getValue());
-                        //addr = incrementAddress(addr);
-                        //emu.virtualMachine.memory.Bytes.write(addr, this.chip.regarray.h.getValue());
                     }
                     else if (g2 == 5)  // LHLD
                     {
                         this.operationCode = OperationCode.LHLD;
-                        //var addr = this.chip.timingAndControl.fetchNextWord();
-                        //this.chip.regarray.l.setValue(emu.virtualMachine.memory.Bytes.read(addr));
-                        //addr = incrementAddress(addr);
-                        //this.chip.regarray.h.setValue(emu.virtualMachine.memory.Bytes.read(addr));
                     }
                     else if (g2 == 6) // STA
                     {
-                        emu.virtualMachine.memory.Bytes.write(this.chip.timingAndControl.fetchNextWord(), this.chip.accumulator.getValue());
+                        this.operationCode = OperationCode.STA;
+                        //emu.virtualMachine.memory.Bytes.write(this.chip.timingAndControl.fetchNextWord(), this.chip.accumulator.getValue());
                     }
                     else if (g2 == 7) { // LDA
-                        this.chip.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(this.chip.timingAndControl.fetchNextWord()));
+                        this.operationCode = OperationCode.LDA;
+                        //this.chip.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(this.chip.timingAndControl.fetchNextWord()));
                     }
                     else {
                         this.chip.notImplemented(machinCode1);
@@ -745,8 +739,22 @@
                     this.chip.dataBusBufferLatch.setValue(this.chip.regarray.h.getValue());
                     this.chip.memoryWrite();
                 }
-
-
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.LDA) {
+                    var l = this.chip.timingAndControl.fetchNextByte();
+                    var h = this.chip.timingAndControl.fetchNextByte();
+                    this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
+                    this.chip.registerSelect16 = RegisterSelect16.latch;
+                    this.chip.memoryRead();
+                    this.chip.accumulator.setValue(this.chip.dataBusBufferLatch.getValue());
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.STA) {
+                    var l = this.chip.timingAndControl.fetchNextByte();
+                    var h = this.chip.timingAndControl.fetchNextByte();
+                    this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
+                    this.chip.registerSelect16 = RegisterSelect16.latch;
+                    this.chip.dataBusBufferLatch.setValue(this.chip.accumulator.getValue());
+                    this.chip.memoryWrite();
+                }
 
 
                 else {

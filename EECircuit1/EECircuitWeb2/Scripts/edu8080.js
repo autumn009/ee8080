@@ -13,19 +13,21 @@ var edu8080;
         OperationCode[OperationCode["STAX"] = 3] = "STAX";
         OperationCode[OperationCode["LHLD"] = 4] = "LHLD";
         OperationCode[OperationCode["SHLD"] = 5] = "SHLD";
-        OperationCode[OperationCode["ADD"] = 6] = "ADD";
-        OperationCode[OperationCode["SUB"] = 7] = "SUB";
-        OperationCode[OperationCode["CMP"] = 8] = "CMP";
-        OperationCode[OperationCode["AND"] = 9] = "AND";
-        OperationCode[OperationCode["OR"] = 10] = "OR";
-        OperationCode[OperationCode["XOR"] = 11] = "XOR";
-        OperationCode[OperationCode["NOT"] = 12] = "NOT";
-        OperationCode[OperationCode["RLC"] = 13] = "RLC";
-        OperationCode[OperationCode["RRC"] = 14] = "RRC";
-        OperationCode[OperationCode["RAL"] = 15] = "RAL";
-        OperationCode[OperationCode["RAR"] = 16] = "RAR";
-        OperationCode[OperationCode["NOP"] = 17] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 18] = "OTHER";
+        OperationCode[OperationCode["LDA"] = 6] = "LDA";
+        OperationCode[OperationCode["STA"] = 7] = "STA";
+        OperationCode[OperationCode["ADD"] = 8] = "ADD";
+        OperationCode[OperationCode["SUB"] = 9] = "SUB";
+        OperationCode[OperationCode["CMP"] = 10] = "CMP";
+        OperationCode[OperationCode["AND"] = 11] = "AND";
+        OperationCode[OperationCode["OR"] = 12] = "OR";
+        OperationCode[OperationCode["XOR"] = 13] = "XOR";
+        OperationCode[OperationCode["NOT"] = 14] = "NOT";
+        OperationCode[OperationCode["RLC"] = 15] = "RLC";
+        OperationCode[OperationCode["RRC"] = 16] = "RRC";
+        OperationCode[OperationCode["RAL"] = 17] = "RAL";
+        OperationCode[OperationCode["RAR"] = 18] = "RAR";
+        OperationCode[OperationCode["NOP"] = 19] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 20] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -358,10 +360,10 @@ var edu8080;
                         this.operationCode = OperationCode.LHLD;
                     }
                     else if (g2 == 6) {
-                        emu.virtualMachine.memory.Bytes.write(this.chip.timingAndControl.fetchNextWord(), this.chip.accumulator.getValue());
+                        this.operationCode = OperationCode.STA;
                     }
                     else if (g2 == 7) {
-                        this.chip.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(this.chip.timingAndControl.fetchNextWord()));
+                        this.operationCode = OperationCode.LDA;
                     }
                     else {
                         this.chip.notImplemented(machinCode1);
@@ -788,6 +790,22 @@ var edu8080;
                     this.chip.memoryWrite();
                     this.chip.regarray.incrementerDecrementerAddressLatch.Increment();
                     this.chip.dataBusBufferLatch.setValue(this.chip.regarray.h.getValue());
+                    this.chip.memoryWrite();
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.LDA) {
+                    var l = this.chip.timingAndControl.fetchNextByte();
+                    var h = this.chip.timingAndControl.fetchNextByte();
+                    this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
+                    this.chip.registerSelect16 = RegisterSelect16.latch;
+                    this.chip.memoryRead();
+                    this.chip.accumulator.setValue(this.chip.dataBusBufferLatch.getValue());
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.STA) {
+                    var l = this.chip.timingAndControl.fetchNextByte();
+                    var h = this.chip.timingAndControl.fetchNextByte();
+                    this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
+                    this.chip.registerSelect16 = RegisterSelect16.latch;
+                    this.chip.dataBusBufferLatch.setValue(this.chip.accumulator.getValue());
                     this.chip.memoryWrite();
                 }
                 else {
