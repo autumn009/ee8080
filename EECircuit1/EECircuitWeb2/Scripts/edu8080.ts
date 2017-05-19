@@ -215,23 +215,13 @@
             this.operationCode = OperationCode.NOP;
             if (g1 == 0) {
                 if (g3 == 0) {
-                    if (g2 == 0) { // NOP
-                        this.operationCode = OperationCode.NOP;
-                    }
-                    else {
-                        this.chip.notImplemented(machinCode1);
-                    }
+                    if (g2 == 0) this.operationCode = OperationCode.NOP;
+                    else this.chip.notImplemented(machinCode1);
                 }
                 else if (g3 == 1) // LXI or DAD
                 {
-                    if ((g2 & 1) == 0) // LXI
-                    {
-                        this.operationCode = OperationCode.LXI;
-                    }
-                    else // DAD
-                    {
-                        this.operationCode = OperationCode.DAD;
-                    }
+                    if ((g2 & 1) == 0) this.operationCode = OperationCode.LXI;
+                    else this.operationCode = OperationCode.DAD;
                     this.registerSelect16 = g2 >> 1;
                 }
                 else if (g3 == 2) {
@@ -245,26 +235,11 @@
                         this.operationCode = OperationCode.LDAX;
                         this.registerSelect16 = g2 >> 1;
                     }
-                    else if (g2 == 4)  // SHLD
-                    {
-                        this.operationCode = OperationCode.SHLD;
-                    }
-                    else if (g2 == 5)  // LHLD
-                    {
-                        this.operationCode = OperationCode.LHLD;
-                    }
-                    else if (g2 == 6) // STA
-                    {
-                        this.operationCode = OperationCode.STA;
-                        //emu.virtualMachine.memory.Bytes.write(this.chip.timingAndControl.fetchNextWord(), this.chip.accumulator.getValue());
-                    }
-                    else if (g2 == 7) { // LDA
-                        this.operationCode = OperationCode.LDA;
-                        //this.chip.accumulator.setValue(emu.virtualMachine.memory.Bytes.read(this.chip.timingAndControl.fetchNextWord()));
-                    }
-                    else {
-                        this.chip.notImplemented(machinCode1);
-                    }
+                    else if (g2 == 4) this.operationCode = OperationCode.SHLD;
+                    else if (g2 == 5) this.operationCode = OperationCode.LHLD;
+                    else if (g2 == 6) this.operationCode = OperationCode.STA;
+                    else if (g2 == 7) this.operationCode = OperationCode.LDA;
+                    else this.chip.notImplemented(machinCode1);
                 }
                 else if (g3 == 3) {
                     var hl = this.chip.regarray.getRegisterPairValue(g2 >> 1);

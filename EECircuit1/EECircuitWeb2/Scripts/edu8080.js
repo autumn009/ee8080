@@ -328,20 +328,16 @@ var edu8080;
             this.operationCode = OperationCode.NOP;
             if (g1 == 0) {
                 if (g3 == 0) {
-                    if (g2 == 0) {
+                    if (g2 == 0)
                         this.operationCode = OperationCode.NOP;
-                    }
-                    else {
+                    else
                         this.chip.notImplemented(machinCode1);
-                    }
                 }
                 else if (g3 == 1) {
-                    if ((g2 & 1) == 0) {
+                    if ((g2 & 1) == 0)
                         this.operationCode = OperationCode.LXI;
-                    }
-                    else {
+                    else
                         this.operationCode = OperationCode.DAD;
-                    }
                     this.registerSelect16 = g2 >> 1;
                 }
                 else if (g3 == 2) {
@@ -353,21 +349,16 @@ var edu8080;
                         this.operationCode = OperationCode.LDAX;
                         this.registerSelect16 = g2 >> 1;
                     }
-                    else if (g2 == 4) {
+                    else if (g2 == 4)
                         this.operationCode = OperationCode.SHLD;
-                    }
-                    else if (g2 == 5) {
+                    else if (g2 == 5)
                         this.operationCode = OperationCode.LHLD;
-                    }
-                    else if (g2 == 6) {
+                    else if (g2 == 6)
                         this.operationCode = OperationCode.STA;
-                    }
-                    else if (g2 == 7) {
+                    else if (g2 == 7)
                         this.operationCode = OperationCode.LDA;
-                    }
-                    else {
+                    else
                         this.chip.notImplemented(machinCode1);
-                    }
                 }
                 else if (g3 == 3) {
                     var hl = this.chip.regarray.getRegisterPairValue(g2 >> 1);
