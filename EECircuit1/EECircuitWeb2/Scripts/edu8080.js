@@ -59,8 +59,9 @@ var edu8080;
         RegisterSelect16[RegisterSelect16["de"] = 1] = "de";
         RegisterSelect16[RegisterSelect16["hl"] = 2] = "hl";
         RegisterSelect16[RegisterSelect16["sp"] = 3] = "sp";
-        RegisterSelect16[RegisterSelect16["pc"] = 4] = "pc";
-        RegisterSelect16[RegisterSelect16["latch"] = 5] = "latch";
+        RegisterSelect16[RegisterSelect16["wz"] = 4] = "wz";
+        RegisterSelect16[RegisterSelect16["pc"] = 5] = "pc";
+        RegisterSelect16[RegisterSelect16["latch"] = 6] = "latch";
     })(RegisterSelect16 || (RegisterSelect16 = {}));
     var DataBus = (function () {
         function DataBus() {
@@ -88,6 +89,8 @@ var edu8080;
                     return this.chip.regarray.sp.getValue();
                 case RegisterSelect16.pc:
                     return this.chip.regarray.pc.getValue();
+                case RegisterSelect16.wz:
+                    return this.chip.regarray.getRegisterPairValue(4);
                 default:
                     return this.chip.regarray.incrementerDecrementerAddressLatch.getValue();
             }
@@ -626,7 +629,7 @@ var edu8080;
             this.incrementerDecrementerAddressLatch = new Register16();
             this.chip = thischip;
         }
-        // n: 0=BC, 1=DE, 2=HL, 3=SP
+        // n: 0=BC, 1=DE, 2=HL, 3=SP, 4=WZ
         RegisterArray.prototype.getRegisterPairValue = function (n) {
             switch (n) {
                 case 0:
@@ -637,6 +640,8 @@ var edu8080;
                     return this.h.getValue() * 256 + this.l.getValue();
                 case 3:
                     return this.sp.getValue();
+                case 4:
+                    return this.w.getValue() * 256 + this.z.getValue();
                 default:
                     alert(n + " is not a register pair number in setRegisterPairValue.");
             }
@@ -660,6 +665,10 @@ var edu8080;
                 case 3:
                     this.sp.setValue(v);
                     break;
+                case 4:
+                    this.w.setValue(h);
+                    this.z.setValue(l);
+                    break;
                 default:
                     alert(n + " is not a register pair number in setRegisterPairValue.");
                     break;
@@ -671,6 +680,7 @@ var edu8080;
                 case RegisterSelect16.de:
                 case RegisterSelect16.hl:
                 case RegisterSelect16.sp:
+                case RegisterSelect16.wz:
                     return this.getRegisterPairValue(this.chip.registerSelect16);
                 case RegisterSelect16.pc:
                     return this.pc.getValue();

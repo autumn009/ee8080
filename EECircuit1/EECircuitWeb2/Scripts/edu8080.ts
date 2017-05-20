@@ -11,7 +11,7 @@
         b = 0, c, d, e, h, l, m, a
     }
     enum RegisterSelect16 {
-        bc = 0, de = 1, hl = 2, sp = 3, pc, latch
+        bc = 0, de = 1, hl = 2, sp = 3, wz = 4, pc, latch,
     }
     class DataBus {
 
@@ -36,6 +36,8 @@
                     return this.chip.regarray.sp.getValue();
                 case RegisterSelect16.pc:
                     return this.chip.regarray.pc.getValue();
+                case RegisterSelect16.wz:
+                    return this.chip.regarray.getRegisterPairValue(4);
                 default:
                     return this.chip.regarray.incrementerDecrementerAddressLatch.getValue();
             }
@@ -503,7 +505,7 @@
         public sp = new Register16();
         public pc = new Register16();
         public incrementerDecrementerAddressLatch = new Register16();
-        // n: 0=BC, 1=DE, 2=HL, 3=SP
+        // n: 0=BC, 1=DE, 2=HL, 3=SP, 4=WZ
         public getRegisterPairValue(n: number) {
             switch (n) {
                 case 0:
@@ -514,6 +516,8 @@
                     return this.h.getValue() * 256 + this.l.getValue();
                 case 3:
                     return this.sp.getValue();
+                case 4:
+                    return this.w.getValue() * 256 + this.z.getValue();
                 default:
                     alert(n + " is not a register pair number in setRegisterPairValue.");
             }
@@ -537,6 +541,10 @@
                 case 3:
                     this.sp.setValue(v);
                     break;
+                case 4:
+                    this.w.setValue(h);
+                    this.z.setValue(l);
+                    break;
                 default:
                     alert(n + " is not a register pair number in setRegisterPairValue.");
                     break;
@@ -548,6 +556,7 @@
                 case RegisterSelect16.de:
                 case RegisterSelect16.hl:
                 case RegisterSelect16.sp:
+                case RegisterSelect16.wz:
                     return this.getRegisterPairValue(this.chip.registerSelect16);
                 case RegisterSelect16.pc:
                     return this.pc.getValue();
