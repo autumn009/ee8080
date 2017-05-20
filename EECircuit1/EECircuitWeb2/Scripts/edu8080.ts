@@ -415,7 +415,7 @@
                 else if (g3 == 4)   // Cxx
                 {
                     var oldpc = this.chip.condJump(this.chip.condCommon(g2));
-                    if (oldpc != null) this.chip.pushCommon(oldpc);
+                    if (oldpc != null) this.chip.pushCommon(oldpc - 1);
                 }
                 else if (g3 == 5) {
                     if ((g2 & 1) == 0) // PUSH
@@ -427,7 +427,7 @@
                     else if (g2 == 1)   // CALL
                     {
                         var oldpc = this.chip.condJump(true);
-                        this.chip.pushCommon(oldpc);
+                        this.chip.pushCommon(oldpc-1);
                         //tracebox.add("call pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                     }
                     else {
@@ -480,7 +480,7 @@
                         return true;
                     }
                     this.chip.regarray.pc.setValue(g2 << 3);
-                    this.chip.pushCommon(oldpc);
+                    this.chip.pushCommon(oldpc-1);
                 }
                 else {
                     this.chip.notImplemented(machinCode1);
@@ -590,8 +590,6 @@
             var hl = this.incrementerDecrementerAddressLatch.getValue();
             this.setSelectedRegisterPairValue(hl);
         }
-
-
     }
     class TimingAndControl {
         private chip: i8080;
@@ -820,7 +818,11 @@
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.Rxx) {
                     if (this.chip.instructonDecoder.g3 == 1 // in case of RET
                         || this.chip.condCommon(this.chip.instructonDecoder.g2)) {  // in case of Rxx
-                        this.chip.regarray.pc.setValue(this.chip.popCommon());
+                        this.chip.popToWZ();
+                        this.chip.registerSelect16 = RegisterSelect16.wz;
+                        var hl = this.chip.regarray.getSelectedRegisterPairValue();
+                        this.chip.registerSelect16 = RegisterSelect16.pc;
+                        this.chip.regarray.setSelectedRegisterPairValue(hl + 1);
                     }
                 }
 
@@ -1112,6 +1114,17 @@
             }
         }
 
+        public popToWZ() {
+            this.registerSelect16 = RegisterSelect16.sp;
+            this.memoryRead();
+            this.regarray.z.setValue(this.dataBusBufferLatch.getValue());
+            this.regarray.sp.Increment();
+            this.memoryRead();
+            this.regarray.w.setValue(this.dataBusBufferLatch.getValue());
+            this.regarray.sp.Increment();
+        }
+
+        // wish to remove
         public popCommon(): number {
             var l = emu.virtualMachine.memory.Bytes.read(this.regarray.sp.getValue());
             this.regarray.sp.Increment();
@@ -1120,6 +1133,7 @@
             return h * 256 + l;
         }
 
+        // wish to remove
         public pushCommon(val: number) {
             this.regarray.sp.Decrement();
             emu.virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val >> 8);

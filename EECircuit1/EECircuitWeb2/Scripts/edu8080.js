@@ -552,7 +552,7 @@ var edu8080;
                 else if (g3 == 4) {
                     var oldpc = this.chip.condJump(this.chip.condCommon(g2));
                     if (oldpc != null)
-                        this.chip.pushCommon(oldpc);
+                        this.chip.pushCommon(oldpc - 1);
                 }
                 else if (g3 == 5) {
                     if ((g2 & 1) == 0) {
@@ -561,7 +561,7 @@ var edu8080;
                     }
                     else if (g2 == 1) {
                         var oldpc = this.chip.condJump(true);
-                        this.chip.pushCommon(oldpc);
+                        this.chip.pushCommon(oldpc - 1);
                     }
                     else {
                         this.chip.notImplemented(machinCode1);
@@ -604,7 +604,7 @@ var edu8080;
                         return true;
                     }
                     this.chip.regarray.pc.setValue(g2 << 3);
-                    this.chip.pushCommon(oldpc);
+                    this.chip.pushCommon(oldpc - 1);
                 }
                 else {
                     this.chip.notImplemented(machinCode1);
@@ -939,7 +939,11 @@ var edu8080;
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.Rxx) {
                     if (this.chip.instructonDecoder.g3 == 1 // in case of RET
                         || this.chip.condCommon(this.chip.instructonDecoder.g2)) {
-                        this.chip.regarray.pc.setValue(this.chip.popCommon());
+                        this.chip.popToWZ();
+                        this.chip.registerSelect16 = RegisterSelect16.wz;
+                        var hl = this.chip.regarray.getSelectedRegisterPairValue();
+                        this.chip.registerSelect16 = RegisterSelect16.pc;
+                        this.chip.regarray.setSelectedRegisterPairValue(hl + 1);
                     }
                 }
                 else {
@@ -1215,6 +1219,16 @@ var edu8080;
                     return this.flags.s;
             }
         };
+        i8080.prototype.popToWZ = function () {
+            this.registerSelect16 = RegisterSelect16.sp;
+            this.memoryRead();
+            this.regarray.z.setValue(this.dataBusBufferLatch.getValue());
+            this.regarray.sp.Increment();
+            this.memoryRead();
+            this.regarray.w.setValue(this.dataBusBufferLatch.getValue());
+            this.regarray.sp.Increment();
+        };
+        // wish to remove
         i8080.prototype.popCommon = function () {
             var l = emu.virtualMachine.memory.Bytes.read(this.regarray.sp.getValue());
             this.regarray.sp.Increment();
@@ -1222,6 +1236,7 @@ var edu8080;
             this.regarray.sp.Increment();
             return h * 256 + l;
         };
+        // wish to remove
         i8080.prototype.pushCommon = function (val) {
             this.regarray.sp.Decrement();
             emu.virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val >> 8);
