@@ -345,8 +345,42 @@
                 else if (g3 == 1) {
                     if ((g2 & 1) == 0) // POP
                     {
-                        this.chip.setRegisterPairBDHPSW(g2 & 6, this.chip.popCommon());
-                        //tracebox.add("pop pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                        this.chip.regarray.sp.Increment();
+                        this.chip.registerSelect16 = RegisterSelect16.sp;
+                        this.chip.memoryRead();
+                        var data = this.chip.dataBusBufferLatch.getValue();
+                        switch (g2 & 6) {
+                            case 0:
+                                this.chip.regarray.c.setValue(data);
+                                break;
+                            case 2:
+                                this.chip.regarray.e.setValue(data);
+                                break;
+                            case 4:
+                                this.chip.regarray.l.setValue(data);
+                                break;
+                            case 6:
+                                this.chip.flags.setPacked(data);
+                                break;
+                        }
+                        this.chip.regarray.sp.Increment();
+                        this.chip.registerSelect16 = RegisterSelect16.sp;
+                        this.chip.memoryRead();
+                        data = this.chip.dataBusBufferLatch.getValue();
+                        switch (g2 & 6) {
+                            case 0:
+                                this.chip.regarray.b.setValue(data);
+                                break;
+                            case 2:
+                                this.chip.regarray.d.setValue(data);
+                                break;
+                            case 4:
+                                this.chip.regarray.h.setValue(data);
+                                break;
+                            case 6:
+                                this.chip.accumulator.setValue(data);
+                                break;
+                        }
                     }
                     else if (g2 == 1) this.operationCode = OperationCode.Rxx; // RET
                     else if (g2 == 5) // PCHL
@@ -967,29 +1001,6 @@
             }
         }
 
-        public setRegisterPairBDHPSW(n: number, v: number) {
-            var l = v & 255;
-            var h = v >> 8;
-            switch (n) {
-                case 0:
-                    this.regarray.b.setValue(h);
-                    this.regarray.c.setValue(l);
-                    break;
-                case 2:
-                    this.regarray.d.setValue(h);
-                    this.regarray.e.setValue(l);
-                    break;
-                case 4:
-                    this.regarray.h.setValue(h);
-                    this.regarray.l.setValue(l);
-                    break;
-                case 6:
-                    this.accumulator.setValue(h);
-                    this.flags.setPacked(l);
-                    break;
-            }
-        }
-
         public setRuning() {
             $("#runStopStatus").removeClass("stop");
             $("#runStopStatus").removeClass("run");
@@ -1116,29 +1127,29 @@
 
         public popToWZ() {
             this.registerSelect16 = RegisterSelect16.sp;
+            this.regarray.sp.Increment();
             this.memoryRead();
             this.regarray.z.setValue(this.dataBusBufferLatch.getValue());
             this.regarray.sp.Increment();
             this.memoryRead();
             this.regarray.w.setValue(this.dataBusBufferLatch.getValue());
-            this.regarray.sp.Increment();
         }
 
         // wish to remove
         public popCommon(): number {
+            this.regarray.sp.Increment();
             var l = emu.virtualMachine.memory.Bytes.read(this.regarray.sp.getValue());
             this.regarray.sp.Increment();
             var h = emu.virtualMachine.memory.Bytes.read(this.regarray.sp.getValue());
-            this.regarray.sp.Increment();
             return h * 256 + l;
         }
 
         // wish to remove
         public pushCommon(val: number) {
-            this.regarray.sp.Decrement();
             emu.virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val >> 8);
             this.regarray.sp.Decrement();
             emu.virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val & 255);
+            this.regarray.sp.Decrement();
         }
 
         public hlt() {

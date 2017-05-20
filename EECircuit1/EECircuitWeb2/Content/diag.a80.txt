@@ -228,7 +228,6 @@ skipjp1:
 	lxi	b,1234h
 	push	b
 	lxi	h,stack2
-	dcx	h
 	mov	a,m
 	cpi	12h
 	jnz	fail
