@@ -947,9 +947,9 @@ var edu8080;
                     }
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.POP) {
-                    this.chip.regarray.sp.Increment();
                     this.chip.registerSelect16 = RegisterSelect16.sp;
                     this.chip.memoryRead();
+                    this.chip.regarray.sp.Increment();
                     var data = this.chip.dataBusBufferLatch.getValue();
                     switch (this.chip.instructonDecoder.g2 & 6) {
                         case 0:
@@ -965,9 +965,9 @@ var edu8080;
                             this.chip.flags.setPacked(data);
                             break;
                     }
-                    this.chip.regarray.sp.Increment();
                     this.chip.registerSelect16 = RegisterSelect16.sp;
                     this.chip.memoryRead();
+                    this.chip.regarray.sp.Increment();
                     data = this.chip.dataBusBufferLatch.getValue();
                     switch (this.chip.instructonDecoder.g2 & 6) {
                         case 0:
@@ -1237,27 +1237,27 @@ var edu8080;
         };
         i8080.prototype.popToWZ = function () {
             this.registerSelect16 = RegisterSelect16.sp;
-            this.regarray.sp.Increment();
             this.memoryRead();
+            this.regarray.sp.Increment();
             this.regarray.z.setValue(this.dataBusBufferLatch.getValue());
-            this.regarray.sp.Increment();
             this.memoryRead();
+            this.regarray.sp.Increment();
             this.regarray.w.setValue(this.dataBusBufferLatch.getValue());
         };
         // wish to remove
         i8080.prototype.popCommon = function () {
-            this.regarray.sp.Increment();
             var l = emu.virtualMachine.memory.Bytes.read(this.regarray.sp.getValue());
             this.regarray.sp.Increment();
             var h = emu.virtualMachine.memory.Bytes.read(this.regarray.sp.getValue());
+            this.regarray.sp.Increment();
             return h * 256 + l;
         };
         // wish to remove
         i8080.prototype.pushCommon = function (val) {
+            this.regarray.sp.Decrement();
             emu.virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val >> 8);
             this.regarray.sp.Decrement();
             emu.virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val & 255);
-            this.regarray.sp.Decrement();
         };
         i8080.prototype.hlt = function () {
             this.halt = true;
