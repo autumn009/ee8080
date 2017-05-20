@@ -4,7 +4,7 @@
         LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
         INX, DEX, INR, DCR, MVI, DAA, CMA, STC, CMC, HLT, MOV,
         ADD, ADC, SUB, SBB, AND, XRA, ORA, CMP,
-        Rxx,
+        Rxx,POP,
         RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
@@ -343,45 +343,7 @@
             else {
                 if (g3 == 0) this.operationCode = OperationCode.Rxx;
                 else if (g3 == 1) {
-                    if ((g2 & 1) == 0) // POP
-                    {
-                        this.chip.regarray.sp.Increment();
-                        this.chip.registerSelect16 = RegisterSelect16.sp;
-                        this.chip.memoryRead();
-                        var data = this.chip.dataBusBufferLatch.getValue();
-                        switch (g2 & 6) {
-                            case 0:
-                                this.chip.regarray.c.setValue(data);
-                                break;
-                            case 2:
-                                this.chip.regarray.e.setValue(data);
-                                break;
-                            case 4:
-                                this.chip.regarray.l.setValue(data);
-                                break;
-                            case 6:
-                                this.chip.flags.setPacked(data);
-                                break;
-                        }
-                        this.chip.regarray.sp.Increment();
-                        this.chip.registerSelect16 = RegisterSelect16.sp;
-                        this.chip.memoryRead();
-                        data = this.chip.dataBusBufferLatch.getValue();
-                        switch (g2 & 6) {
-                            case 0:
-                                this.chip.regarray.b.setValue(data);
-                                break;
-                            case 2:
-                                this.chip.regarray.d.setValue(data);
-                                break;
-                            case 4:
-                                this.chip.regarray.h.setValue(data);
-                                break;
-                            case 6:
-                                this.chip.accumulator.setValue(data);
-                                break;
-                        }
-                    }
+                    if ((g2 & 1) == 0) this.operationCode = OperationCode.POP;
                     else if (g2 == 1) this.operationCode = OperationCode.Rxx; // RET
                     else if (g2 == 5) // PCHL
                     {
@@ -859,7 +821,44 @@
                         this.chip.regarray.setSelectedRegisterPairValue(hl + 1);
                     }
                 }
-
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.POP) {
+                    this.chip.regarray.sp.Increment();
+                    this.chip.registerSelect16 = RegisterSelect16.sp;
+                    this.chip.memoryRead();
+                    var data = this.chip.dataBusBufferLatch.getValue();
+                    switch (this.chip.instructonDecoder.g2 & 6) {
+                        case 0:
+                            this.chip.regarray.c.setValue(data);
+                            break;
+                        case 2:
+                            this.chip.regarray.e.setValue(data);
+                            break;
+                        case 4:
+                            this.chip.regarray.l.setValue(data);
+                            break;
+                        case 6:
+                            this.chip.flags.setPacked(data);
+                            break;
+                    }
+                    this.chip.regarray.sp.Increment();
+                    this.chip.registerSelect16 = RegisterSelect16.sp;
+                    this.chip.memoryRead();
+                    data = this.chip.dataBusBufferLatch.getValue();
+                    switch (this.chip.instructonDecoder.g2 & 6) {
+                        case 0:
+                            this.chip.regarray.b.setValue(data);
+                            break;
+                        case 2:
+                            this.chip.regarray.d.setValue(data);
+                            break;
+                        case 4:
+                            this.chip.regarray.h.setValue(data);
+                            break;
+                        case 6:
+                            this.chip.accumulator.setValue(data);
+                            break;
+                    }
+                }
 
 
 

@@ -35,12 +35,13 @@ var edu8080;
         OperationCode[OperationCode["ORA"] = 25] = "ORA";
         OperationCode[OperationCode["CMP"] = 26] = "CMP";
         OperationCode[OperationCode["Rxx"] = 27] = "Rxx";
-        OperationCode[OperationCode["RLC"] = 28] = "RLC";
-        OperationCode[OperationCode["RRC"] = 29] = "RRC";
-        OperationCode[OperationCode["RAL"] = 30] = "RAL";
-        OperationCode[OperationCode["RAR"] = 31] = "RAR";
-        OperationCode[OperationCode["NOP"] = 32] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 33] = "OTHER";
+        OperationCode[OperationCode["POP"] = 28] = "POP";
+        OperationCode[OperationCode["RLC"] = 29] = "RLC";
+        OperationCode[OperationCode["RRC"] = 30] = "RRC";
+        OperationCode[OperationCode["RAL"] = 31] = "RAL";
+        OperationCode[OperationCode["RAR"] = 32] = "RAR";
+        OperationCode[OperationCode["NOP"] = 33] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 34] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -495,44 +496,8 @@ var edu8080;
                 if (g3 == 0)
                     this.operationCode = OperationCode.Rxx;
                 else if (g3 == 1) {
-                    if ((g2 & 1) == 0) {
-                        this.chip.regarray.sp.Increment();
-                        this.chip.registerSelect16 = RegisterSelect16.sp;
-                        this.chip.memoryRead();
-                        var data = this.chip.dataBusBufferLatch.getValue();
-                        switch (g2 & 6) {
-                            case 0:
-                                this.chip.regarray.c.setValue(data);
-                                break;
-                            case 2:
-                                this.chip.regarray.e.setValue(data);
-                                break;
-                            case 4:
-                                this.chip.regarray.l.setValue(data);
-                                break;
-                            case 6:
-                                this.chip.flags.setPacked(data);
-                                break;
-                        }
-                        this.chip.regarray.sp.Increment();
-                        this.chip.registerSelect16 = RegisterSelect16.sp;
-                        this.chip.memoryRead();
-                        data = this.chip.dataBusBufferLatch.getValue();
-                        switch (g2 & 6) {
-                            case 0:
-                                this.chip.regarray.b.setValue(data);
-                                break;
-                            case 2:
-                                this.chip.regarray.d.setValue(data);
-                                break;
-                            case 4:
-                                this.chip.regarray.h.setValue(data);
-                                break;
-                            case 6:
-                                this.chip.accumulator.setValue(data);
-                                break;
-                        }
-                    }
+                    if ((g2 & 1) == 0)
+                        this.operationCode = OperationCode.POP;
                     else if (g2 == 1)
                         this.operationCode = OperationCode.Rxx; // RET
                     else if (g2 == 5) {
@@ -979,6 +944,44 @@ var edu8080;
                         var hl = this.chip.regarray.getSelectedRegisterPairValue();
                         this.chip.registerSelect16 = RegisterSelect16.pc;
                         this.chip.regarray.setSelectedRegisterPairValue(hl + 1);
+                    }
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.POP) {
+                    this.chip.regarray.sp.Increment();
+                    this.chip.registerSelect16 = RegisterSelect16.sp;
+                    this.chip.memoryRead();
+                    var data = this.chip.dataBusBufferLatch.getValue();
+                    switch (this.chip.instructonDecoder.g2 & 6) {
+                        case 0:
+                            this.chip.regarray.c.setValue(data);
+                            break;
+                        case 2:
+                            this.chip.regarray.e.setValue(data);
+                            break;
+                        case 4:
+                            this.chip.regarray.l.setValue(data);
+                            break;
+                        case 6:
+                            this.chip.flags.setPacked(data);
+                            break;
+                    }
+                    this.chip.regarray.sp.Increment();
+                    this.chip.registerSelect16 = RegisterSelect16.sp;
+                    this.chip.memoryRead();
+                    data = this.chip.dataBusBufferLatch.getValue();
+                    switch (this.chip.instructonDecoder.g2 & 6) {
+                        case 0:
+                            this.chip.regarray.b.setValue(data);
+                            break;
+                        case 2:
+                            this.chip.regarray.d.setValue(data);
+                            break;
+                        case 4:
+                            this.chip.regarray.h.setValue(data);
+                            break;
+                        case 6:
+                            this.chip.accumulator.setValue(data);
+                            break;
                     }
                 }
                 else {
