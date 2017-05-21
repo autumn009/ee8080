@@ -538,13 +538,12 @@ var edu8080;
                         this.chip.regarray.e.setValue(t1);
                         this.chip.regarray.d.setValue(t2);
                     }
-                    else if (g2 == 6) {
-                    }
-                    else if (g2 == 7) {
-                    }
-                    else {
+                    else if (g2 == 6)
+                        this.operationCode = OperationCode.NOP; // ASSUMED AS NOP
+                    else if (g2 == 7)
+                        this.operationCode = OperationCode.NOP; // ASSUMED AS NOP
+                    else
                         this.chip.notImplemented(machinCode1);
-                    }
                 }
                 else if (g3 == 4) {
                     var oldpc = this.chip.condJump(this.chip.condCommon(g2));
