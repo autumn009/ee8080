@@ -4,7 +4,7 @@
         LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
         INX, DEX, INR, DCR, MVI, DAA, CMA, STC, CMC, HLT, MOV,
         ADD, ADC, SUB, SBB, AND, XRA, ORA, CMP,
-        Rxx, POP, PCHL, SPHL,
+        Rxx, POP, PCHL, SPHL, Jxx,
         RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
@@ -349,16 +349,9 @@
                     else if (g2 == 7) this.operationCode = OperationCode.SPHL;
                     else this.chip.notImplemented(machinCode1);
                 }
-                else if (g3 == 2)   // Jxx
-                {
-                    this.chip.condJump(this.chip.condCommon(g2));
-                }
+                else if (g3 == 2) this.operationCode = OperationCode.Jxx;
                 else if (g3 == 3) {
-                    if (g2 == 0) // JMP
-                    {
-                        var n = this.chip.timingAndControl.fetchNextWord();
-                        this.chip.regarray.pc.setValue(n);
-                    }
+                    if (g2 == 0) this.operationCode = OperationCode.Jxx;    // JMP
                     else if (g2 == 3) // IN
                     {
                         var port = this.chip.timingAndControl.fetchNextByte();
@@ -577,6 +570,12 @@
             var hl = this.incrementerDecrementerAddressLatch.getValue();
             this.setSelectedRegisterPairValue(hl);
         }
+        public transferSelectedRefgister16toPC() {
+            var val = this.getSelectedRegisterPairValue();
+            this.pc.setValue(val);
+        }
+        
+
     }
     class TimingAndControl {
         private chip: i8080;
@@ -597,6 +596,12 @@
             var h = this.chip.dataBusBufferLatch.getValue();
             var hl = h * 256 + l;
             return hl;
+        }
+        public fetchNextWordToWZ() {
+            this.fetchNextByte();
+            this.chip.regarray.z.setValue(this.chip.dataBusBufferLatch.getValue());
+            this.fetchNextByte();
+            this.chip.regarray.w.setValue(this.chip.dataBusBufferLatch.getValue());
         }
         private fetchNextByteAndSetDataLatch() {
             var d = this.chip.timingAndControl.fetchNextByte();
@@ -858,6 +863,17 @@
                     var v = this.chip.regarray.getRegisterPairValue(2); // HL
                     this.chip.regarray.sp.setValue(v);
                 }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.Jxx) {
+                    this.chip.timingAndControl.fetchNextWordToWZ();
+                    if (this.chip.instructonDecoder.g3 == 3 // in case of JMP
+                        || this.chip.condCommon(this.chip.instructonDecoder.g2)) {  // in case of Jxx
+                        this.chip.registerSelect16 = RegisterSelect16.wz;
+                        this.chip.regarray.transferSelectedRefgister16toPC();
+                    }
+                }
+
+
+
 
 
                 else {

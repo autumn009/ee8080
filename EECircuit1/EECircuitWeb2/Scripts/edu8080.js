@@ -38,12 +38,13 @@ var edu8080;
         OperationCode[OperationCode["POP"] = 28] = "POP";
         OperationCode[OperationCode["PCHL"] = 29] = "PCHL";
         OperationCode[OperationCode["SPHL"] = 30] = "SPHL";
-        OperationCode[OperationCode["RLC"] = 31] = "RLC";
-        OperationCode[OperationCode["RRC"] = 32] = "RRC";
-        OperationCode[OperationCode["RAL"] = 33] = "RAL";
-        OperationCode[OperationCode["RAR"] = 34] = "RAR";
-        OperationCode[OperationCode["NOP"] = 35] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 36] = "OTHER";
+        OperationCode[OperationCode["Jxx"] = 31] = "Jxx";
+        OperationCode[OperationCode["RLC"] = 32] = "RLC";
+        OperationCode[OperationCode["RRC"] = 33] = "RRC";
+        OperationCode[OperationCode["RAL"] = 34] = "RAL";
+        OperationCode[OperationCode["RAR"] = 35] = "RAR";
+        OperationCode[OperationCode["NOP"] = 36] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 37] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -509,14 +510,11 @@ var edu8080;
                     else
                         this.chip.notImplemented(machinCode1);
                 }
-                else if (g3 == 2) {
-                    this.chip.condJump(this.chip.condCommon(g2));
-                }
+                else if (g3 == 2)
+                    this.operationCode = OperationCode.Jxx;
                 else if (g3 == 3) {
-                    if (g2 == 0) {
-                        var n = this.chip.timingAndControl.fetchNextWord();
-                        this.chip.regarray.pc.setValue(n);
-                    }
+                    if (g2 == 0)
+                        this.operationCode = OperationCode.Jxx; // JMP
                     else if (g2 == 3) {
                         var port = this.chip.timingAndControl.fetchNextByte();
                         var r = emu.virtualMachine.io.in(port);
@@ -711,6 +709,10 @@ var edu8080;
             var hl = this.incrementerDecrementerAddressLatch.getValue();
             this.setSelectedRegisterPairValue(hl);
         };
+        RegisterArray.prototype.transferSelectedRefgister16toPC = function () {
+            var val = this.getSelectedRegisterPairValue();
+            this.pc.setValue(val);
+        };
         return RegisterArray;
     }());
     var TimingAndControl = (function () {
@@ -731,6 +733,12 @@ var edu8080;
             var h = this.chip.dataBusBufferLatch.getValue();
             var hl = h * 256 + l;
             return hl;
+        };
+        TimingAndControl.prototype.fetchNextWordToWZ = function () {
+            this.fetchNextByte();
+            this.chip.regarray.z.setValue(this.chip.dataBusBufferLatch.getValue());
+            this.fetchNextByte();
+            this.chip.regarray.w.setValue(this.chip.dataBusBufferLatch.getValue());
         };
         TimingAndControl.prototype.fetchNextByteAndSetDataLatch = function () {
             var d = this.chip.timingAndControl.fetchNextByte();
@@ -990,6 +998,14 @@ var edu8080;
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.SPHL) {
                     var v = this.chip.regarray.getRegisterPairValue(2); // HL
                     this.chip.regarray.sp.setValue(v);
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.Jxx) {
+                    this.chip.timingAndControl.fetchNextWordToWZ();
+                    if (this.chip.instructonDecoder.g3 == 3 // in case of JMP
+                        || this.chip.condCommon(this.chip.instructonDecoder.g2)) {
+                        this.chip.registerSelect16 = RegisterSelect16.wz;
+                        this.chip.regarray.transferSelectedRefgister16toPC();
+                    }
                 }
                 else {
                 }
