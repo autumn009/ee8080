@@ -653,7 +653,7 @@ var fast8080;
                 else {
                     if (g3 == 0) {
                         if (this.condCommon(g2)) {
-                            this.regarray.pc.setValue(this.popCommon());
+                            this.regarray.pc.setValue(this.popCommon() + 1);
                         }
                     }
                     else if (g3 == 1) {
@@ -661,7 +661,7 @@ var fast8080;
                             this.setRegisterPairBDHPSW(g2 & 6, this.popCommon());
                         }
                         else if (g2 == 1) {
-                            this.regarray.pc.setValue(this.popCommon());
+                            this.regarray.pc.setValue(this.popCommon() + 1);
                         }
                         else if (g2 == 5) {
                             this.regarray.pc.setValue(this.regarray.getRegisterPairValue(2));
@@ -715,7 +715,7 @@ var fast8080;
                     else if (g3 == 4) {
                         var oldpc = this.condJump(this.condCommon(g2));
                         if (oldpc != null)
-                            this.pushCommon(oldpc);
+                            this.pushCommon(oldpc - 1);
                     }
                     else if (g3 == 5) {
                         if ((g2 & 1) == 0) {
@@ -724,7 +724,7 @@ var fast8080;
                         }
                         else if (g2 == 1) {
                             var oldpc = this.condJump(true);
-                            this.pushCommon(oldpc);
+                            this.pushCommon(oldpc - 1);
                         }
                         else {
                             this.notImplemented(machinCode1);
@@ -767,7 +767,7 @@ var fast8080;
                             return;
                         }
                         this.regarray.pc.setValue(g2 << 3);
-                        this.pushCommon(oldpc);
+                        this.pushCommon(oldpc - 1);
                     }
                     else {
                         this.notImplemented(machinCode1);
