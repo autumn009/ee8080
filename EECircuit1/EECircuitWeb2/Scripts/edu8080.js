@@ -36,12 +36,14 @@ var edu8080;
         OperationCode[OperationCode["CMP"] = 26] = "CMP";
         OperationCode[OperationCode["Rxx"] = 27] = "Rxx";
         OperationCode[OperationCode["POP"] = 28] = "POP";
-        OperationCode[OperationCode["RLC"] = 29] = "RLC";
-        OperationCode[OperationCode["RRC"] = 30] = "RRC";
-        OperationCode[OperationCode["RAL"] = 31] = "RAL";
-        OperationCode[OperationCode["RAR"] = 32] = "RAR";
-        OperationCode[OperationCode["NOP"] = 33] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 34] = "OTHER";
+        OperationCode[OperationCode["PCHL"] = 29] = "PCHL";
+        OperationCode[OperationCode["SPHL"] = 30] = "SPHL";
+        OperationCode[OperationCode["RLC"] = 31] = "RLC";
+        OperationCode[OperationCode["RRC"] = 32] = "RRC";
+        OperationCode[OperationCode["RAL"] = 33] = "RAL";
+        OperationCode[OperationCode["RAR"] = 34] = "RAR";
+        OperationCode[OperationCode["NOP"] = 35] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 36] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -500,15 +502,12 @@ var edu8080;
                         this.operationCode = OperationCode.POP;
                     else if (g2 == 1)
                         this.operationCode = OperationCode.Rxx; // RET
-                    else if (g2 == 5) {
-                        this.chip.regarray.pc.setValue(this.chip.regarray.getRegisterPairValue(2));
-                    }
-                    else if (g2 == 7) {
-                        this.chip.regarray.sp.setValue(this.chip.regarray.getRegisterPairValue(2));
-                    }
-                    else {
+                    else if (g2 == 5)
+                        this.operationCode = OperationCode.PCHL;
+                    else if (g2 == 7)
+                        this.operationCode = OperationCode.SPHL;
+                    else
                         this.chip.notImplemented(machinCode1);
-                    }
                 }
                 else if (g3 == 2) {
                     this.chip.condJump(this.chip.condCommon(g2));
@@ -983,6 +982,14 @@ var edu8080;
                             this.chip.accumulator.setValue(data);
                             break;
                     }
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.PCHL) {
+                    var v = this.chip.regarray.getRegisterPairValue(2); // HL
+                    this.chip.regarray.pc.setValue(v);
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.SPHL) {
+                    var v = this.chip.regarray.getRegisterPairValue(2); // HL
+                    this.chip.regarray.sp.setValue(v);
                 }
                 else {
                 }

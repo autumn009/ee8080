@@ -4,7 +4,7 @@
         LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
         INX, DEX, INR, DCR, MVI, DAA, CMA, STC, CMC, HLT, MOV,
         ADD, ADC, SUB, SBB, AND, XRA, ORA, CMP,
-        Rxx,POP,
+        Rxx, POP, PCHL, SPHL,
         RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
@@ -345,18 +345,9 @@
                 else if (g3 == 1) {
                     if ((g2 & 1) == 0) this.operationCode = OperationCode.POP;
                     else if (g2 == 1) this.operationCode = OperationCode.Rxx; // RET
-                    else if (g2 == 5) // PCHL
-                    {
-                        this.chip.regarray.pc.setValue(this.chip.regarray.getRegisterPairValue(2));
-                    }
-                    else if (g2 == 7) // SPHL
-                    {
-                        this.chip.regarray.sp.setValue(this.chip.regarray.getRegisterPairValue(2));
-                        //tracebox.add("sphl pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                    }
-                    else {
-                        this.chip.notImplemented(machinCode1);
-                    }
+                    else if (g2 == 5) this.operationCode = OperationCode.PCHL;
+                    else if (g2 == 7) this.operationCode = OperationCode.SPHL;
+                    else this.chip.notImplemented(machinCode1);
                 }
                 else if (g3 == 2)   // Jxx
                 {
@@ -859,7 +850,14 @@
                             break;
                     }
                 }
-
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.PCHL) {
+                    var v = this.chip.regarray.getRegisterPairValue(2); // HL
+                    this.chip.regarray.pc.setValue(v);
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.SPHL) {
+                    var v = this.chip.regarray.getRegisterPairValue(2); // HL
+                    this.chip.regarray.sp.setValue(v);
+                }
 
 
                 else {
