@@ -1024,9 +1024,13 @@ var edu8080;
                     this.chip.setRegister(7, this.chip.dataBusBufferLatch.getValue());
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.OUT) {
-                    var port = this.chip.timingAndControl.fetchNextByte();
-                    var v = this.chip.getRegister(7);
-                    emu.virtualMachine.io.out(port, v);
+                    var d = this.chip.timingAndControl.fetchNextByte();
+                    this.chip.regarray.w.setValue(d);
+                    this.chip.regarray.z.setValue(d);
+                    this.chip.registerSelect16 = RegisterSelect16.wz;
+                    this.chip.regarray.transferSelectedRefgister16toAddressLatch();
+                    this.chip.dataBusBufferLatch.setValue(this.chip.getRegister(7));
+                    this.chip.ioWrite();
                 }
                 else {
                 }
