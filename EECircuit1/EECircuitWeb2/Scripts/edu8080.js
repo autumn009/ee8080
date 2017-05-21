@@ -39,14 +39,16 @@ var edu8080;
         OperationCode[OperationCode["PCHL"] = 29] = "PCHL";
         OperationCode[OperationCode["SPHL"] = 30] = "SPHL";
         OperationCode[OperationCode["Jxx"] = 31] = "Jxx";
-        OperationCode[OperationCode["XTHL"] = 32] = "XTHL";
-        OperationCode[OperationCode["XCHG"] = 33] = "XCHG";
-        OperationCode[OperationCode["RLC"] = 34] = "RLC";
-        OperationCode[OperationCode["RRC"] = 35] = "RRC";
-        OperationCode[OperationCode["RAL"] = 36] = "RAL";
-        OperationCode[OperationCode["RAR"] = 37] = "RAR";
-        OperationCode[OperationCode["NOP"] = 38] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 39] = "OTHER";
+        OperationCode[OperationCode["IN"] = 32] = "IN";
+        OperationCode[OperationCode["OUT"] = 33] = "OUT";
+        OperationCode[OperationCode["XTHL"] = 34] = "XTHL";
+        OperationCode[OperationCode["XCHG"] = 35] = "XCHG";
+        OperationCode[OperationCode["RLC"] = 36] = "RLC";
+        OperationCode[OperationCode["RRC"] = 37] = "RRC";
+        OperationCode[OperationCode["RAL"] = 38] = "RAL";
+        OperationCode[OperationCode["RAR"] = 39] = "RAR";
+        OperationCode[OperationCode["NOP"] = 40] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 41] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -517,16 +519,10 @@ var edu8080;
                 else if (g3 == 3) {
                     if (g2 == 0)
                         this.operationCode = OperationCode.Jxx; // JMP
-                    else if (g2 == 3) {
-                        var port = this.chip.timingAndControl.fetchNextByte();
-                        var r = emu.virtualMachine.io.in(port);
-                        this.chip.setRegister(7, r);
-                    }
-                    else if (g2 == 2) {
-                        var port = this.chip.timingAndControl.fetchNextByte();
-                        var v = this.chip.getRegister(7);
-                        emu.virtualMachine.io.out(port, v);
-                    }
+                    else if (g2 == 3)
+                        this.operationCode = OperationCode.IN;
+                    else if (g2 == 2)
+                        this.operationCode = OperationCode.OUT;
                     else if (g2 == 4)
                         this.operationCode = OperationCode.XTHL;
                     else if (g2 == 5)
@@ -1017,6 +1013,16 @@ var edu8080;
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.XCHG) {
                     this.chip.regarray.swapHLandDE();
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.IN) {
+                    var port = this.chip.timingAndControl.fetchNextByte();
+                    var r = emu.virtualMachine.io.in(port);
+                    this.chip.setRegister(7, r);
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.OUT) {
+                    var port = this.chip.timingAndControl.fetchNextByte();
+                    var v = this.chip.getRegister(7);
+                    emu.virtualMachine.io.out(port, v);
                 }
                 else {
                 }

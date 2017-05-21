@@ -4,7 +4,7 @@
         LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
         INX, DEX, INR, DCR, MVI, DAA, CMA, STC, CMC, HLT, MOV,
         ADD, ADC, SUB, SBB, AND, XRA, ORA, CMP,
-        Rxx, POP, PCHL, SPHL, Jxx, XTHL, XCHG,
+        Rxx, POP, PCHL, SPHL, Jxx, IN, OUT, XTHL, XCHG,
         RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
@@ -352,18 +352,8 @@
                 else if (g3 == 2) this.operationCode = OperationCode.Jxx;
                 else if (g3 == 3) {
                     if (g2 == 0) this.operationCode = OperationCode.Jxx;    // JMP
-                    else if (g2 == 3) // IN
-                    {
-                        var port = this.chip.timingAndControl.fetchNextByte();
-                        var r = emu.virtualMachine.io.in(port);
-                        this.chip.setRegister(7, r);
-                    }
-                    else if (g2 == 2) // OUT
-                    {
-                        var port = this.chip.timingAndControl.fetchNextByte();
-                        var v = this.chip.getRegister(7);
-                        emu.virtualMachine.io.out(port, v);
-                    }
+                    else if (g2 == 3) this.operationCode = OperationCode.IN;
+                    else if (g2 == 2) this.operationCode = OperationCode.OUT;
                     else if (g2 == 4) this.operationCode = OperationCode.XTHL;
                     else if (g2 == 5) this.operationCode = OperationCode.XCHG;
                     else if (g2 == 6) this.operationCode = OperationCode.NOP; // ASSUMED AS NOP
@@ -865,6 +855,16 @@
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.XCHG) {
                     this.chip.regarray.swapHLandDE();
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.IN) {
+                    var port = this.chip.timingAndControl.fetchNextByte();
+                    var r = emu.virtualMachine.io.in(port);
+                    this.chip.setRegister(7, r);
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.OUT) {
+                    var port = this.chip.timingAndControl.fetchNextByte();
+                    var v = this.chip.getRegister(7);
+                    emu.virtualMachine.io.out(port, v);
                 }
 
 
