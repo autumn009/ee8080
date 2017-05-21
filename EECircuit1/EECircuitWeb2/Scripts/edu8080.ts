@@ -857,9 +857,13 @@
                     this.chip.regarray.swapHLandDE();
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.IN) {
-                    var port = this.chip.timingAndControl.fetchNextByte();
-                    var r = emu.virtualMachine.io.in(port);
-                    this.chip.setRegister(7, r);
+                    var d = this.chip.timingAndControl.fetchNextByte();
+                    this.chip.regarray.w.setValue(d);
+                    this.chip.regarray.z.setValue(d);
+                    this.chip.registerSelect16 = RegisterSelect16.wz;
+                    this.chip.regarray.transferSelectedRefgister16toAddressLatch();
+                    this.chip.ioRead();
+                    this.chip.setRegister(7, this.chip.dataBusBufferLatch.getValue());
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.OUT) {
                     var port = this.chip.timingAndControl.fetchNextByte();
@@ -910,14 +914,14 @@
 
         public ioRead() {
             var addr = this.addressBuffer.getAddress();
-            var data = emu.virtualMachine.io.in(addr);
+            var data = emu.virtualMachine.io.in(addr & 255);
             this.dataBusBufferLatch.setValue(data);
         }
 
         public ioWrite() {
             var addr = this.addressBuffer.getAddress();
             var data = this.dataBusBufferLatch.getValue();
-            emu.virtualMachine.io.out(addr, data);
+            emu.virtualMachine.io.out(addr & 255, data);
         }
 
         public update() {
