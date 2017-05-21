@@ -4,7 +4,7 @@
         LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
         INX, DEX, INR, DCR, MVI, DAA, CMA, STC, CMC, HLT, MOV,
         ADD, ADC, SUB, SBB, AND, XRA, ORA, CMP,
-        Rxx, POP, PCHL, SPHL, Jxx,
+        Rxx, POP, PCHL, SPHL, Jxx, XTHL, XCHG,
         RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
@@ -364,22 +364,8 @@
                         var v = this.chip.getRegister(7);
                         emu.virtualMachine.io.out(port, v);
                     }
-                    else if (g2 == 4)   // XTHL
-                    {
-                        var t = this.chip.popCommon();
-                        this.chip.pushCommon(this.chip.regarray.getRegisterPairValue(2));
-                        this.chip.regarray.setRegisterPairValue(2, t);
-                        //tracebox.add("xthl pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                    }
-                    else if (g2 == 5) // XCHG
-                    {
-                        var t1 = this.chip.regarray.l.getValue();
-                        var t2 = this.chip.regarray.h.getValue();
-                        this.chip.regarray.l.setValue(this.chip.regarray.e.getValue());
-                        this.chip.regarray.h.setValue(this.chip.regarray.d.getValue());
-                        this.chip.regarray.e.setValue(t1);
-                        this.chip.regarray.d.setValue(t2);
-                    }
+                    else if (g2 == 4) this.operationCode = OperationCode.XTHL;
+                    else if (g2 == 5) this.operationCode = OperationCode.XCHG;
                     else if (g2 == 6) this.operationCode = OperationCode.NOP; // ASSUMED AS NOP
                     else if (g2 == 7) this.operationCode = OperationCode.NOP; // ASSUMED AS NOP
                     else this.chip.notImplemented(machinCode1);
@@ -566,8 +552,14 @@
             var val = this.getSelectedRegisterPairValue();
             this.pc.setValue(val);
         }
-        
-
+        public swapHLandDE() {
+            var t = this.chip.regarray.l.getValue();
+            this.chip.regarray.l.setValue(this.chip.regarray.e.getValue());
+            this.chip.regarray.e.setValue(t);
+            var t = this.chip.regarray.h.getValue();
+            this.chip.regarray.h.setValue(this.chip.regarray.d.getValue());
+            this.chip.regarray.d.setValue(t);
+        }
     }
     class TimingAndControl {
         private chip: i8080;
@@ -862,6 +854,17 @@
                         this.chip.registerSelect16 = RegisterSelect16.wz;
                         this.chip.regarray.transferSelectedRefgister16toPC();
                     }
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.XTHL) {
+                    this.chip.popToWZ();
+                    this.chip.registerSelect16 = RegisterSelect16.hl;
+                    var hl = this.chip.regarray.getSelectedRegisterPairValue();
+                    this.chip.pushCommon(hl);
+                    this.chip.regarray.l.setValue(this.chip.regarray.z.getValue());
+                    this.chip.regarray.h.setValue(this.chip.regarray.w.getValue());
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.XCHG) {
+                    this.chip.regarray.swapHLandDE();
                 }
 
 

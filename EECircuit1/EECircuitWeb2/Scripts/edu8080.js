@@ -39,12 +39,14 @@ var edu8080;
         OperationCode[OperationCode["PCHL"] = 29] = "PCHL";
         OperationCode[OperationCode["SPHL"] = 30] = "SPHL";
         OperationCode[OperationCode["Jxx"] = 31] = "Jxx";
-        OperationCode[OperationCode["RLC"] = 32] = "RLC";
-        OperationCode[OperationCode["RRC"] = 33] = "RRC";
-        OperationCode[OperationCode["RAL"] = 34] = "RAL";
-        OperationCode[OperationCode["RAR"] = 35] = "RAR";
-        OperationCode[OperationCode["NOP"] = 36] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 37] = "OTHER";
+        OperationCode[OperationCode["XTHL"] = 32] = "XTHL";
+        OperationCode[OperationCode["XCHG"] = 33] = "XCHG";
+        OperationCode[OperationCode["RLC"] = 34] = "RLC";
+        OperationCode[OperationCode["RRC"] = 35] = "RRC";
+        OperationCode[OperationCode["RAL"] = 36] = "RAL";
+        OperationCode[OperationCode["RAR"] = 37] = "RAR";
+        OperationCode[OperationCode["NOP"] = 38] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 39] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -525,19 +527,10 @@ var edu8080;
                         var v = this.chip.getRegister(7);
                         emu.virtualMachine.io.out(port, v);
                     }
-                    else if (g2 == 4) {
-                        var t = this.chip.popCommon();
-                        this.chip.pushCommon(this.chip.regarray.getRegisterPairValue(2));
-                        this.chip.regarray.setRegisterPairValue(2, t);
-                    }
-                    else if (g2 == 5) {
-                        var t1 = this.chip.regarray.l.getValue();
-                        var t2 = this.chip.regarray.h.getValue();
-                        this.chip.regarray.l.setValue(this.chip.regarray.e.getValue());
-                        this.chip.regarray.h.setValue(this.chip.regarray.d.getValue());
-                        this.chip.regarray.e.setValue(t1);
-                        this.chip.regarray.d.setValue(t2);
-                    }
+                    else if (g2 == 4)
+                        this.operationCode = OperationCode.XTHL;
+                    else if (g2 == 5)
+                        this.operationCode = OperationCode.XCHG;
                     else if (g2 == 6)
                         this.operationCode = OperationCode.NOP; // ASSUMED AS NOP
                     else if (g2 == 7)
@@ -711,6 +704,14 @@ var edu8080;
         RegisterArray.prototype.transferSelectedRefgister16toPC = function () {
             var val = this.getSelectedRegisterPairValue();
             this.pc.setValue(val);
+        };
+        RegisterArray.prototype.swapHLandDE = function () {
+            var t = this.chip.regarray.l.getValue();
+            this.chip.regarray.l.setValue(this.chip.regarray.e.getValue());
+            this.chip.regarray.e.setValue(t);
+            var t = this.chip.regarray.h.getValue();
+            this.chip.regarray.h.setValue(this.chip.regarray.d.getValue());
+            this.chip.regarray.d.setValue(t);
         };
         return RegisterArray;
     }());
@@ -1005,6 +1006,17 @@ var edu8080;
                         this.chip.registerSelect16 = RegisterSelect16.wz;
                         this.chip.regarray.transferSelectedRefgister16toPC();
                     }
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.XTHL) {
+                    this.chip.popToWZ();
+                    this.chip.registerSelect16 = RegisterSelect16.hl;
+                    var hl = this.chip.regarray.getSelectedRegisterPairValue();
+                    this.chip.pushCommon(hl);
+                    this.chip.regarray.l.setValue(this.chip.regarray.z.getValue());
+                    this.chip.regarray.h.setValue(this.chip.regarray.w.getValue());
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.XCHG) {
+                    this.chip.regarray.swapHLandDE();
                 }
                 else {
                 }
