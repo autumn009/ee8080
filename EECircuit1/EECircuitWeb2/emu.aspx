@@ -300,7 +300,6 @@
 
     <script src="/Scripts/vdt.js"></script>
     <script src="/Scripts/disk.js"></script>
-    <script src="/Scripts/org8080.js"></script>
     <script src="/Scripts/fast8080.js"></script>
     <script src="/Scripts/edu8080.js"></script>
     <script src="/Scripts/emu.js"></script>

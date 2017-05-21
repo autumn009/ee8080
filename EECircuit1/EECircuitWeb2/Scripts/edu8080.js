@@ -127,8 +127,8 @@ var edu8080;
         };
         Register.prototype.Decrement = function () {
             this.value--;
-            if (this.value > this.upperLimit)
-                this.value = 0;
+            if (this.value < 0)
+                this.value = this.upperLimit;
         };
         Register.prototype.randomInitialize = function () {
             this.value = Math.floor(Math.random() * this.upperLimit);
@@ -552,7 +552,7 @@ var edu8080;
                 else if (g3 == 4) {
                     var oldpc = this.chip.condJump(this.chip.condCommon(g2));
                     if (oldpc != null)
-                        this.chip.pushCommon(oldpc - 1);
+                        this.chip.pushCommon(oldpc);
                 }
                 else if (g3 == 5) {
                     if ((g2 & 1) == 0) {
@@ -561,7 +561,7 @@ var edu8080;
                     }
                     else if (g2 == 1) {
                         var oldpc = this.chip.condJump(true);
-                        this.chip.pushCommon(oldpc - 1);
+                        this.chip.pushCommon(oldpc);
                     }
                     else {
                         this.chip.notImplemented(machinCode1);
@@ -604,7 +604,7 @@ var edu8080;
                         return true;
                     }
                     this.chip.regarray.pc.setValue(g2 << 3);
-                    this.chip.pushCommon(oldpc - 1);
+                    this.chip.pushCommon(oldpc);
                 }
                 else {
                     this.chip.notImplemented(machinCode1);
@@ -943,7 +943,7 @@ var edu8080;
                         this.chip.registerSelect16 = RegisterSelect16.wz;
                         var hl = this.chip.regarray.getSelectedRegisterPairValue();
                         this.chip.registerSelect16 = RegisterSelect16.pc;
-                        this.chip.regarray.setSelectedRegisterPairValue(hl + 1);
+                        this.chip.regarray.setSelectedRegisterPairValue(hl);
                     }
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.POP) {

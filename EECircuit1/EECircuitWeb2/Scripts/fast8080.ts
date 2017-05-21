@@ -18,7 +18,7 @@
         }
         public Decrement() {
             this.value--;
-            if (this.value > this.upperLimit) this.value = 0;
+            if (this.value < 0) this.value = this.upperLimit;
         }
         public randomInitialize() {
             this.value = Math.floor(Math.random() * this.upperLimit);
@@ -645,7 +645,7 @@
                 else {
                     if (g3 == 0) {  // Rxx
                         if (this.condCommon(g2)) {
-                            this.regarray.pc.setValue(this.popCommon()+1);
+                            this.regarray.pc.setValue(this.popCommon());
                             //tracebox.add("rxx pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                     }
@@ -656,7 +656,7 @@
                             //tracebox.add("pop pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 1) { // RET
-                            this.regarray.pc.setValue(this.popCommon()+1);
+                            this.regarray.pc.setValue(this.popCommon());
                             //tracebox.add("ret pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 5) // PCHL
@@ -725,7 +725,7 @@
                     else if (g3 == 4)   // Cxx
                     {
                         var oldpc = this.condJump(this.condCommon(g2));
-                        if (oldpc != null) this.pushCommon(oldpc-1);
+                        if (oldpc != null) this.pushCommon(oldpc);
                     }
                     else if (g3 == 5) {
                         if ((g2 & 1) == 0) // PUSH
@@ -737,7 +737,7 @@
                         else if (g2 == 1)   // CALL
                         {
                             var oldpc = this.condJump(true);
-                            this.pushCommon(oldpc-1);
+                            this.pushCommon(oldpc);
                             //tracebox.add("call pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else {
@@ -790,7 +790,7 @@
                             return;
                         }
                         this.regarray.pc.setValue(g2 << 3);
-                        this.pushCommon(oldpc-1);
+                        this.pushCommon(oldpc);
                     }
                     else {
                         this.notImplemented(machinCode1);

@@ -1,8 +1,7 @@
 ﻿function run(uri: string)
 {
     var cpu = "";
-    if ($("#selectOrg8080").prop("checked")) cpu = "Org8080";
-    else if ($("#selectFast8080").prop("checked")) cpu = "Fast8080";
+    if ($("#selectFast8080").prop("checked")) cpu = "Fast8080";
     else if ($("#selectEdu8080").prop("checked")) cpu = "Edu8080";
     if (uri.indexOf("?")>=0)
         location.href = uri + "&cpu=" + cpu;
@@ -14,7 +13,7 @@
 $(document).on("pagecreate", function () {
     $("#warnbutton").click(() => {
         if (window.confirm('This will erase all files in your all disks(A,B,C,D). Are you sure?')) {
-            location.href = "/emu.aspx?cpm=&initdisk=";
+            run("/emu.aspx?cpm=&initdisk=");
         }
     });
     $("#cpm").click(() => {

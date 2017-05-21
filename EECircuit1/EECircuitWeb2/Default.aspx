@@ -20,8 +20,6 @@
                 <label for="selectFast8080">i8080(fast)</label>
                 <input id="selectEdu8080" name="selectCPU" type="radio" value="Edu8080" />
                 <label for="selectEdu8080">i8080(educational)</label>
-                <input id="selectOrg8080" name="selectCPU" type="radio" value="Org8080" />
-                <label for="selectOrg8080">i8080(original)</label>
             </fieldset>
         </li>
         <li data-role="collapsible" data-inset="false" data-iconpos="right">
