@@ -1106,8 +1106,10 @@ var edu8080;
         i8080.prototype.setRegister = function (n, v) {
             var r = this.selectRegister(n);
             if (r == null) {
-                var hl = this.regarray.h.getValue() * 256 + this.regarray.l.getValue();
-                emu.virtualMachine.memory.Bytes.write(Math.floor(hl), v);
+                this.registerSelect16 = RegisterSelect16.hl;
+                this.regarray.transferSelectedRefgister16toAddressLatch();
+                this.dataBusBufferLatch.setValue(v);
+                this.memoryWrite();
             }
             else
                 r.setValue(v);
