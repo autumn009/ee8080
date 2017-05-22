@@ -198,13 +198,7 @@
                 <ul data-role="listview">
                     <li><a href="#" class="ideCommands" id="ideCompile">Compile</a></li>
                     <li><a href="#" class="ideCommands" id="ideCompileAndRun">Compile and Run</a></li>
-                    <li><a href="#" class="ideCommands">New File</a></li>
-                    <li><a href="#" class="ideCommands">Load File</a></li>
-                    <li><a href="#" class="ideCommands">Save File</a></li>
-                    <li><a href="#" class="ideCommands">Save As File</a></li>
-                    <li><a href="#" class="ideCommands">Cut</a></li>
-                    <li><a href="#" class="ideCommands">Copy</a></li>
-                    <li><a href="#" class="ideCommands">Paste</a></li>
+                    <li><a href="#souceCodes" class="ideCommands" id="ideLoad" data-rel="popup" data-transition="pop">Load Source Codes</a></li>
                 </ul>
             </div>
             <label for="result">Compiler Results:</label>
@@ -296,6 +290,14 @@
 
     <div id="popupUpCompleted" data-role="popup" data-theme="b">
         <p style="color:lightskyblue;font-size:larger;">Completed.</p>
+    </div>
+
+    <div id="souceCodes" data-role="popup" data-theme="a">
+        <a class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" href="#" data-rel="back">Close</a>
+        <ul data-role="listview">
+            <li><a data-rel="back" class="anchor" href="#" id="loadSoureceBios">CP/M 2.2 EE8080 BIOS</a></li>
+            <li><a data-rel="back" class="anchor" href="#" id="loadSoureceDiag">i8080 Self Tester</a></li>
+        </ul>
     </div>
 
     <script src="/Scripts/vdt.js"></script>

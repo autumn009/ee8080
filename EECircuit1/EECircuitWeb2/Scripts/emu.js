@@ -244,6 +244,8 @@ var emu;
                 this.cpu = new fast8080.i8080();
             else if (arg["cpu"] == "Edu8080")
                 this.cpu = new edu8080.i8080();
+            else
+                this.cpu = new fast8080.i8080();
         }
         vm.prototype.update = function () {
             updateMonitorMemoryView();
