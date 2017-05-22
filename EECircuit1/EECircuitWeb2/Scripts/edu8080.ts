@@ -271,8 +271,6 @@
         public g2 = 0;
         public g3 = 0;
         public operationCode: OperationCode;
-        public registerSelect16 = 0;
-        public registerSelect8 = 0;
         public Decode() {
             var machinCode1 = this.chip.insutructionRegister.getValue();
             var g1 = machinCode1 >> 6;
@@ -291,18 +289,15 @@
                 {
                     if ((g2 & 1) == 0) this.operationCode = OperationCode.LXI;
                     else this.operationCode = OperationCode.DAD;
-                    this.registerSelect16 = g2 >> 1;
                 }
                 else if (g3 == 2) {
                     if ((g2 & 0x5) == 0x0)  // STAX
                     {
                         this.operationCode = OperationCode.STAX;
-                        this.registerSelect16 = g2 >> 1;
                     }
                     else if ((g2 & 0x5) == 0x1)  // LDAX
                     {
                         this.operationCode = OperationCode.LDAX;
-                        this.registerSelect16 = g2 >> 1;
                     }
                     else if (g2 == 4) this.operationCode = OperationCode.SHLD;
                     else if (g2 == 5) this.operationCode = OperationCode.LHLD;
@@ -311,7 +306,6 @@
                     else this.chip.notImplemented(machinCode1);
                 }
                 else if (g3 == 3) {
-                    this.registerSelect16 = g2 >> 1;
                     if ((g2 & 1) == 0) this.operationCode = OperationCode.INX;
                     else this.operationCode = OperationCode.DEX;
                 }
@@ -626,11 +620,11 @@
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.LXI) {
                     var dword = this.chip.timingAndControl.fetchNextWord();
-                    this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
+                    this.chip.registerSelect16 = this.chip.instructonDecoder.g2 >> 1;
                     this.chip.regarray.setSelectedRegisterPairValue(dword);
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.DAD) {
-                    var tgt = this.chip.regarray.getRegisterPairValue(this.chip.instructonDecoder.registerSelect16);
+                    var tgt = this.chip.regarray.getRegisterPairValue(this.chip.instructonDecoder.g2 >> 1);
                     this.chip.accumulatorLatch.setValue(this.chip.regarray.l.getValue());
                     this.chip.tempReg.setValue(lowByte(tgt));
                     this.chip.alu.add(false, true);
@@ -643,12 +637,12 @@
                     this.chip.regarray.h.setValue(resultH);
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.LDAX) {
-                    this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
+                    this.chip.registerSelect16 = this.chip.instructonDecoder.g2 >> 1;
                     this.chip.memoryRead();
                     this.chip.accumulator.setValue(this.chip.dataBusBufferLatch.getValue());
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.STAX) {
-                    this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
+                    this.chip.registerSelect16 = this.chip.instructonDecoder.g2 >> 1;
                     this.chip.dataBusBufferLatch.setValue(this.chip.accumulator.getValue());
                     this.chip.memoryWrite();
                 }
@@ -679,13 +673,13 @@
                     this.chip.memoryWrite();
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.INX) {
-                    this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
+                    this.chip.registerSelect16 = this.chip.instructonDecoder.g2 >> 1;
                     this.chip.regarray.transferSelectedRefgister16toAddressLatch();
                     this.chip.regarray.incrementerDecrementerAddressLatch.Increment();
                     this.chip.regarray.transferSelectedRefgister16fromAddressLatch();
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.DEX) {
-                    this.chip.registerSelect16 = this.chip.instructonDecoder.registerSelect16;
+                    this.chip.registerSelect16 = this.chip.instructonDecoder.g2 >> 1;
                     this.chip.regarray.transferSelectedRefgister16toAddressLatch();
                     this.chip.regarray.incrementerDecrementerAddressLatch.Decrement();
                     this.chip.regarray.transferSelectedRefgister16fromAddressLatch();
