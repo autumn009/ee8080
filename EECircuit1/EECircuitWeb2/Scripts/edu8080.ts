@@ -349,20 +349,8 @@
                     else this.chip.notImplemented(machinCode1);
                 }
                 else if (g3 == 6) this.operationCode = OperationCode.ALU; // this is a trick of ADI,ACI,SUI,SBI,ANI,XRI,ORI,CPI
-                else if (g3 == 7)   // RST
-                {
-                    var oldpc = this.chip.regarray.pc.getValue();
-                    if (emu.superTrap && g2 == 7) {
-                        this.chip.hlt();
-                        emu.setMonitor();
-                        return true;
-                    }
-                    this.chip.regarray.pc.setValue(g2 << 3);
-                    this.chip.pushCommon(oldpc);
-                }
-                else {
-                    this.chip.notImplemented(machinCode1);
-                }
+                else if (g3 == 7) this.operationCode = OperationCode.RST;
+                else this.chip.notImplemented(machinCode1);
             }
             return false;
         }
@@ -858,8 +846,18 @@
                             this.chip.regarray.transferSelectedRefgister16toPC();
                         }
                         break;
+                    case OperationCode.RST:
+                        var oldpc = this.chip.regarray.pc.getValue();
+                        if (emu.superTrap && this.chip.instructonDecoder.g2 == 7) {
+                            this.chip.hlt();
+                            emu.setMonitor();
+                            return true;
+                        }
+                        this.chip.regarray.pc.setValue(this.chip.instructonDecoder.g2 << 3);
+                        this.chip.pushCommon(oldpc);
+                        break;
                     default:
-                    // TBW
+                        console.log("Unknown OperationCode:" + this.chip.instructonDecoder.operationCode);
                 }
             }
         }
