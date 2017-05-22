@@ -1044,9 +1044,6 @@
         }
 
         public reset() {
-            // TBW
-            //this.regarray.b.setValue(255);  // DEBUG
-
             this.randomInitialize();
             this.regarray.pc.setValue(0);
             this.halt = false;
@@ -1062,7 +1059,6 @@
                 this.regarray.c.getValue(),
                 this.regarray.e.getValue(),
                 hl);
-            //alert(virtualMachine.memory.Bytes.read(hl));
             return r;
         }
         public diskwrite() {

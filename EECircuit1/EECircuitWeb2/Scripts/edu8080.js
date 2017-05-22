@@ -1227,8 +1227,6 @@ var edu8080;
             this.timingAndControl.runMain();
         };
         i8080.prototype.reset = function () {
-            // TBW
-            //this.regarray.b.setValue(255);  // DEBUG
             var _this = this;
             this.randomInitialize();
             this.regarray.pc.setValue(0);
@@ -1241,7 +1239,6 @@ var edu8080;
         i8080.prototype.diskread = function () {
             var hl = this.regarray.getRegisterPairValue(2);
             var r = disk.read(this.regarray.b.getValue(), this.regarray.c.getValue(), this.regarray.e.getValue(), hl);
-            //alert(virtualMachine.memory.Bytes.read(hl));
             return r;
         };
         i8080.prototype.diskwrite = function () {
