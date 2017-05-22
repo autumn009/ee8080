@@ -1207,16 +1207,6 @@ var edu8080;
             this.regarray.sp.Increment();
             this.regarray.w.setValue(this.dataBusBufferLatch.getValue());
         };
-        i8080.prototype.popCommon = function () {
-            this.registerSelect16 = RegisterSelect16.sp;
-            this.memoryRead();
-            this.regarray.sp.Increment();
-            var l = this.dataBusBufferLatch.getValue();
-            this.memoryRead();
-            this.regarray.sp.Increment();
-            var h = this.dataBusBufferLatch.getValue();
-            return h * 256 + l;
-        };
         i8080.prototype.pushCommon = function (val) {
             this.registerSelect16 = RegisterSelect16.sp;
             this.regarray.sp.Decrement();

@@ -1020,17 +1020,6 @@
             this.regarray.w.setValue(this.dataBusBufferLatch.getValue());
         }
 
-        public popCommon(): number {
-            this.registerSelect16 = RegisterSelect16.sp;
-            this.memoryRead();
-            this.regarray.sp.Increment();
-            var l = this.dataBusBufferLatch.getValue();
-            this.memoryRead();
-            this.regarray.sp.Increment();
-            var h = this.dataBusBufferLatch.getValue();
-            return h * 256 + l;
-        }
-
         public pushCommon(val: number) {
             this.registerSelect16 = RegisterSelect16.sp;
             this.regarray.sp.Decrement();
