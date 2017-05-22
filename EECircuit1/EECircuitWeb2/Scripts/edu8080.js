@@ -1207,12 +1207,14 @@ var edu8080;
             this.regarray.sp.Increment();
             this.regarray.w.setValue(this.dataBusBufferLatch.getValue());
         };
-        // wish to remove
         i8080.prototype.popCommon = function () {
-            var l = emu.virtualMachine.memory.Bytes.read(this.regarray.sp.getValue());
+            this.registerSelect16 = RegisterSelect16.sp;
+            this.memoryRead();
             this.regarray.sp.Increment();
-            var h = emu.virtualMachine.memory.Bytes.read(this.regarray.sp.getValue());
+            var l = this.dataBusBufferLatch.getValue();
+            this.memoryRead();
             this.regarray.sp.Increment();
+            var h = this.dataBusBufferLatch.getValue();
             return h * 256 + l;
         };
         // wish to remove
