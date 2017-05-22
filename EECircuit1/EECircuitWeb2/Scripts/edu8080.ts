@@ -3,7 +3,7 @@
     enum OperationCode {
         LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
         INX, DEX, INR, DCR, MVI, DAA, CMA, STC, CMC, HLT, MOV,
-        ADD, ADC, SUB, SBB, AND, XRA, ORA, CMP,
+        ALU,
         Rxx, POP, PCHL, SPHL, Jxx, IN, OUT, XTHL, XCHG, Cxx, 
         RLC, RRC, RAL, RAR, NOP, OTHER
     }
@@ -336,10 +336,7 @@
                 if (g2 == 6 && g3 == 6) this.operationCode = OperationCode.HLT;
                 else this.operationCode = OperationCode.MOV;
             }
-            else if (g1 == 2) {
-                // this is a trick of ADD,ADC,SUB,SBB,AND,XRA,ORA,CMP
-                this.operationCode = OperationCode.ADD + g2;
-            }
+            else if (g1 == 2) this.operationCode = OperationCode.ALU;// this is a trick of ADD,ADC,SUB,SBB,AND,XRA,ORA,CMP
             else {
                 if (g3 == 0) this.operationCode = OperationCode.Rxx;
                 else if (g3 == 1) {
@@ -371,10 +368,7 @@
                     else if (g2 == 1) this.operationCode = OperationCode.Cxx;
                     else this.chip.notImplemented(machinCode1);
                 }
-                else if (g3 == 6) {
-                    // this is a trick of ADI,ACI,SUI,SBI,ANI,XRI,ORI,CPI
-                    this.operationCode = OperationCode.ADD + g2;
-                }
+                else if (g3 == 6) this.operationCode = OperationCode.ALU; // this is a trick of ADI,ACI,SUI,SBI,ANI,XRI,ORI,CPI
                 else if (g3 == 7)   // RST
                 {
                     var oldpc = this.chip.regarray.pc.getValue();
@@ -570,31 +564,31 @@
             this.chip.accumulator.setValue(this.chip.alu.result.getValue());
         }
 
-        private aluWithAccAndTemp(operationCode: OperationCode) {
+        private aluWithAccAndTemp(operationCode: number) {
             this.chip.accumulatorLatch.setValue(this.chip.accumulator.getValue());
             switch (operationCode) {
-                case OperationCode.ADD:
+                case 0:
                     this.chip.alu.add();
                     break;
-                case OperationCode.ADC:
+                case 1:
                     this.chip.alu.adc();
                     break;
-                case OperationCode.SUB:
+                case 2:
                     this.chip.alu.sub();
                     break;
-                case OperationCode.SBB:
+                case 3:
                     this.chip.alu.sbb();
                     break;
-                case OperationCode.AND:
+                case 4:
                     this.chip.alu.and();
                     break;
-                case OperationCode.XRA:
+                case 5:
                     this.chip.alu.xor();
                     break;
-                case OperationCode.ORA:
+                case 6:
                     this.chip.alu.or();
                     break;
-                case OperationCode.CMP:
+                case 7:
                     this.chip.alu.cmp();
                     return;
             }
@@ -732,15 +726,14 @@
                     this.chip.getRegisterToTempReg(this.chip.instructonDecoder.g3);
                     this.chip.setRegisterFromTempReg(this.chip.instructonDecoder.g2);
                 }
-                else if (this.chip.instructonDecoder.operationCode >= OperationCode.ADD
-                    && this.chip.instructonDecoder.operationCode <= OperationCode.CMP) {
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.ALU) {
                     if (this.chip.instructonDecoder.g1 == 2)
                         // with register
                         this.chip.getRegisterToTempReg(this.chip.instructonDecoder.g3);
                     else
                         // with immediate value
                         this.chip.tempReg.setValue(this.chip.timingAndControl.fetchNextByte());
-                    this.aluWithAccAndTemp(this.chip.instructonDecoder.operationCode);
+                    this.aluWithAccAndTemp(this.chip.instructonDecoder.g2);
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.Rxx) {
                     if (this.chip.instructonDecoder.g3 == 1 // in case of RET
