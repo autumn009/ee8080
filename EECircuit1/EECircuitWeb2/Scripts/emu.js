@@ -5,6 +5,7 @@ var emu;
     emu.waitingInput = false;
     emu.inputChars = "";
     emu.screenRefreshRequest = false;
+    emu.stepMode = false;
     //var debugCounter = 0;
     //var rightCount = 0;
     var DelayedTraceBox = (function () {
@@ -267,7 +268,9 @@ var emu;
     $("#memoryAddress").keyup(function () {
         updateMonitorMemoryView();
     });
-    function restart() {
+    function restart(myStepMode) {
+        if (myStepMode === void 0) { myStepMode = false; }
+        emu.stepMode = myStepMode;
         emu.virtualMachine.cpu.reset();
         emu.virtualMachine.cpu.update();
     }
@@ -275,8 +278,17 @@ var emu;
     $("#restart").click(function () {
         restart();
     });
-    $("#stopcont").click(function () {
-        // TBW
+    $("#restartbreak").click(function () {
+        restart(true);
+    });
+    $("#step").click(function () {
+        emu.virtualMachine.cpu.runMain();
+        emu.virtualMachine.cpu.update();
+    });
+    $("#continue").click(function () {
+        emu.stepMode = false;
+        emu.virtualMachine.cpu.runMain();
+        emu.virtualMachine.cpu.update();
     });
     function loadSource(uri, afterproc) {
         var jqxhr = $.get(uri)

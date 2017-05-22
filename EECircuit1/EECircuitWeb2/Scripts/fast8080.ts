@@ -359,6 +359,12 @@
             emu.setMonitor();
             emu.tracebox.dump();
         }
+        private break() {
+            emu.virtualMachine.update();
+            this.setStopped();
+            emu.setMonitor();
+            emu.tracebox.dump();
+        }
         private lastval = 65536;
 
         public runMain() {
@@ -795,6 +801,10 @@
                     else {
                         this.notImplemented(machinCode1);
                     }
+                }
+                if (emu.stepMode) {
+                    this.break();
+                    return;
                 }
             }
         }

@@ -1022,6 +1022,10 @@ var edu8080;
                     default:
                         console.log("Unknown OperationCode:" + this.chip.instructonDecoder.operationCode);
                 }
+                if (emu.stepMode) {
+                    this.chip.break();
+                    return true;
+                }
             }
         };
         return TimingAndControl;
@@ -1199,6 +1203,12 @@ var edu8080;
         };
         i8080.prototype.hlt = function () {
             this.halt = true;
+            emu.virtualMachine.update();
+            this.setStopped();
+            emu.setMonitor();
+            emu.tracebox.dump();
+        };
+        i8080.prototype.break = function () {
             emu.virtualMachine.update();
             this.setStopped();
             emu.setMonitor();

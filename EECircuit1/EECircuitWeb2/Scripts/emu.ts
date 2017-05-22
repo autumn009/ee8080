@@ -4,6 +4,7 @@
     export var waitingInput = false;
     export var inputChars = "";
     export var screenRefreshRequest = false;
+    export var stepMode = false;
     //var debugCounter = 0;
     //var rightCount = 0;
 
@@ -258,7 +259,8 @@
         updateMonitorMemoryView();
     });
 
-    export function restart() {
+    export function restart(myStepMode: boolean = false) {
+        stepMode = myStepMode;
         virtualMachine.cpu.reset();
         virtualMachine.cpu.update();
     }
@@ -267,8 +269,19 @@
         restart();
     });
 
-    $("#stopcont").click(() => {
-        // TBW
+    $("#restartbreak").click(() => {
+        restart(true);
+    });
+
+    $("#step").click(() => {
+        virtualMachine.cpu.runMain();
+        virtualMachine.cpu.update();
+    });
+
+    $("#continue").click(() => {
+        stepMode = false;
+        virtualMachine.cpu.runMain();
+        virtualMachine.cpu.update();
     });
 
     function loadSource(uri: string, afterproc: () => void) {

@@ -825,8 +825,12 @@
                     default:
                         console.log("Unknown OperationCode:" + this.chip.instructonDecoder.operationCode);
                 }
+                if (emu.stepMode) {
+                    this.chip.break();
+                    return true;
+                }
             }
-        }
+       }
     }
     export class i8080 implements icpu {
         public halt = true;
@@ -1014,6 +1018,13 @@
 
         public hlt() {
             this.halt = true;
+            emu.virtualMachine.update();
+            this.setStopped();
+            emu.setMonitor();
+            emu.tracebox.dump();
+        }
+
+        public break() {
             emu.virtualMachine.update();
             this.setStopped();
             emu.setMonitor();

@@ -403,6 +403,12 @@ var fast8080;
             emu.setMonitor();
             emu.tracebox.dump();
         };
+        i8080.prototype.break = function () {
+            emu.virtualMachine.update();
+            this.setStopped();
+            emu.setMonitor();
+            emu.tracebox.dump();
+        };
         i8080.prototype.runMain = function () {
             var _this = this;
             vdt.inputFunc = function (num) {
@@ -772,6 +778,10 @@ var fast8080;
                     else {
                         this.notImplemented(machinCode1);
                     }
+                }
+                if (emu.stepMode) {
+                    this.break();
+                    return;
                 }
             }
         };
