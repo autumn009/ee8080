@@ -291,14 +291,8 @@
                     else this.operationCode = OperationCode.DAD;
                 }
                 else if (g3 == 2) {
-                    if ((g2 & 0x5) == 0x0)  // STAX
-                    {
-                        this.operationCode = OperationCode.STAX;
-                    }
-                    else if ((g2 & 0x5) == 0x1)  // LDAX
-                    {
-                        this.operationCode = OperationCode.LDAX;
-                    }
+                    if ((g2 & 0x5) == 0x0) this.operationCode = OperationCode.STAX;
+                    else if ((g2 & 0x5) == 0x1) this.operationCode = OperationCode.LDAX;
                     else if (g2 == 4) this.operationCode = OperationCode.SHLD;
                     else if (g2 == 5) this.operationCode = OperationCode.LHLD;
                     else if (g2 == 6) this.operationCode = OperationCode.STA;
