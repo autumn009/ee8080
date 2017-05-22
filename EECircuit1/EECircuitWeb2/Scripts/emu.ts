@@ -585,7 +585,10 @@
     //$("#loadtpas30").click((evt) => { loadDiskWithComplete("tpas30.bin.exe"); });
     $("#loadcc1").click((evt) => { loadDiskWithComplete("ccdisk1.bin.exe"); });
     $("#loadcc2").click((evt) => { loadDiskWithComplete("ccdisk2.bin.exe"); });
-    
+
+    $("#loadSoureceBios").click((evt) => { loadBiosSource(null); });
+    $("#loadSoureceDiag").click((evt) => { loadTest1(null); });
+
     $("#fileUpDrive").change((evt) => {
         $("#popupUpDrive").popup("close");
         var x: any = $("#menu-left");
