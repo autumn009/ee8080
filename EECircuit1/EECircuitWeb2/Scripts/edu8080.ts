@@ -911,7 +911,7 @@
 
         public setRegister(n: number, v: number) {
             var r = this.selectRegister(n);
-            if (r == null) {
+            if (r == null) {                // it's M register
                 this.registerSelect16 = RegisterSelect16.hl;
                 this.regarray.transferSelectedRefgister16toAddressLatch();
                 this.dataBusBufferLatch.setValue(v);
@@ -922,9 +922,11 @@
         }
         public getRegister(n: number) {
             var r = this.selectRegister(n);
-            if (r == null) {
-                var hl = this.regarray.h.getValue() * 256 + this.regarray.l.getValue();
-                return emu.virtualMachine.memory.Bytes.read(Math.floor(hl));
+            if (r == null) {                // it's M register
+                this.registerSelect16 = RegisterSelect16.hl;
+                this.regarray.transferSelectedRefgister16toAddressLatch();
+                this.memoryRead();
+                return this.dataBusBufferLatch.getValue();
             }
             else
                 return r.getValue();
