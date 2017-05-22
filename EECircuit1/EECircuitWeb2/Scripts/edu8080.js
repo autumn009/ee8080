@@ -92,9 +92,6 @@ var edu8080;
             this.upperLimit = 65535;
             this.value = 0;
         }
-        Register.prototype.setValueHL = function (l, h) {
-            this.setValue(h * 256 + l);
-        };
         Register.prototype.setValue = function (n) {
             if (n < 0 || n > this.upperLimit) {
                 throw Error("value is out of range n=" + n);
@@ -140,6 +137,9 @@ var edu8080;
         function Register16() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
+        Register16.prototype.setValueHL = function (l, h) {
+            this.setValue(h * 256 + l);
+        };
         return Register16;
     }(Register));
     var Accumulator = (function (_super) {

@@ -39,9 +39,6 @@
     class Register {
         protected upperLimit = 65535;
         private value = 0;
-        public setValueHL(l: number, h: number) {
-            this.setValue(h * 256 + l);
-        }
         public setValue(n: number) {
             if (n < 0 || n > this.upperLimit) {
                 throw Error("value is out of range n=" + n);
@@ -68,7 +65,11 @@
     }
     class DataBusBufferLatch extends Register8 {
     }
-    class Register16 extends Register { }
+    class Register16 extends Register {
+        public setValueHL(l: number, h: number) {
+            this.setValue(h * 256 + l);
+        }
+    }
     class Accumulator extends Register8 { }
     class AccumulatorLatch extends Register8 { }
     class TempReg extends Register8 { }
