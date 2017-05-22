@@ -3,7 +3,7 @@
         LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
         INX, DEX, INR, DCR, MVI, DAA, CMA, STC, CMC, HLT, MOV,
         ALU,
-        Rxx, POP, PCHL, SPHL, Jxx, IN, OUT, XTHL, XCHG, Cxx,
+        Rxx, POP, PCHL, SPHL, Jxx, IN, OUT, XTHL, XCHG, Cxx, PUSH, RST,
         RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
@@ -344,12 +344,7 @@
                 }
                 else if (g3 == 4) this.operationCode = OperationCode.Cxx;
                 else if (g3 == 5) {
-                    if ((g2 & 1) == 0) // PUSH
-                    {
-                        var val = this.chip.getRegisterPairBDHPSW(g2 & 6);
-                        this.chip.pushCommon(val);
-                        //tracebox.add("push pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                    }
+                    if ((g2 & 1) == 0) this.operationCode = OperationCode.PUSH;
                     else if (g2 == 1) this.operationCode = OperationCode.Cxx;
                     else this.chip.notImplemented(machinCode1);
                 }
@@ -731,6 +726,11 @@
                             this.chip.registerSelect16 = RegisterSelect16.pc;
                             this.chip.regarray.setSelectedRegisterPairValue(hl);
                         }
+                        break;
+                    case OperationCode.PUSH:
+                        var val = this.chip.getRegisterPairBDHPSW(this.chip.instructonDecoder.g2 & 6);
+                        this.chip.pushCommon(val);
+
                         break;
                     case OperationCode.POP:
                         this.chip.registerSelect16 = RegisterSelect16.sp;

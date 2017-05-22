@@ -37,12 +37,14 @@ var edu8080;
         OperationCode[OperationCode["XTHL"] = 27] = "XTHL";
         OperationCode[OperationCode["XCHG"] = 28] = "XCHG";
         OperationCode[OperationCode["Cxx"] = 29] = "Cxx";
-        OperationCode[OperationCode["RLC"] = 30] = "RLC";
-        OperationCode[OperationCode["RRC"] = 31] = "RRC";
-        OperationCode[OperationCode["RAL"] = 32] = "RAL";
-        OperationCode[OperationCode["RAR"] = 33] = "RAR";
-        OperationCode[OperationCode["NOP"] = 34] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 35] = "OTHER";
+        OperationCode[OperationCode["PUSH"] = 30] = "PUSH";
+        OperationCode[OperationCode["RST"] = 31] = "RST";
+        OperationCode[OperationCode["RLC"] = 32] = "RLC";
+        OperationCode[OperationCode["RRC"] = 33] = "RRC";
+        OperationCode[OperationCode["RAL"] = 34] = "RAL";
+        OperationCode[OperationCode["RAR"] = 35] = "RAR";
+        OperationCode[OperationCode["NOP"] = 36] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 37] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -521,10 +523,8 @@ var edu8080;
                 else if (g3 == 4)
                     this.operationCode = OperationCode.Cxx;
                 else if (g3 == 5) {
-                    if ((g2 & 1) == 0) {
-                        var val = this.chip.getRegisterPairBDHPSW(g2 & 6);
-                        this.chip.pushCommon(val);
-                    }
+                    if ((g2 & 1) == 0)
+                        this.operationCode = OperationCode.PUSH;
                     else if (g2 == 1)
                         this.operationCode = OperationCode.Cxx;
                     else
@@ -906,6 +906,10 @@ var edu8080;
                             this.chip.registerSelect16 = RegisterSelect16.pc;
                             this.chip.regarray.setSelectedRegisterPairValue(hl);
                         }
+                        break;
+                    case OperationCode.PUSH:
+                        var val = this.chip.getRegisterPairBDHPSW(this.chip.instructonDecoder.g2 & 6);
+                        this.chip.pushCommon(val);
                         break;
                     case OperationCode.POP:
                         this.chip.registerSelect16 = RegisterSelect16.sp;
