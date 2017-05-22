@@ -383,41 +383,8 @@
                     }
                 }
                 else if (g3 == 6) {
-                    if (g2 == 0) // ADI
-                    {
-                        this.chip.accumulator.setValue(this.chip.add(this.chip.accumulator.getValue(), this.chip.timingAndControl.fetchNextByte()));
-                    }
-                    else if (g2 == 1) // ACI
-                    {
-                        this.chip.accumulator.setValue(this.chip.add(this.chip.accumulator.getValue(), this.chip.timingAndControl.fetchNextByte(), false, this.chip.flags.cy));
-                    }
-                    else if (g2 == 2) // SUI
-                    {
-                        this.chip.accumulator.setValue(this.chip.sub(this.chip.accumulator.getValue(), this.chip.timingAndControl.fetchNextByte()));
-                    }
-                    else if (g2 == 3) // SBI
-                    {
-                        this.chip.accumulator.setValue(this.chip.sub(this.chip.accumulator.getValue(), this.chip.timingAndControl.fetchNextByte(), false, this.chip.flags.cy));
-                    }
-                    else if (g2 == 4) // ANI
-                    {
-                        this.chip.accumulator.setValue(this.chip.and(this.chip.accumulator.getValue(), this.chip.timingAndControl.fetchNextByte()));
-                    }
-                    else if (g2 == 5) // XRI
-                    {
-                        this.chip.accumulator.setValue(this.chip.xor(this.chip.accumulator.getValue(), this.chip.timingAndControl.fetchNextByte()));
-                    }
-                    else if (g2 == 6) // ORI
-                    {
-                        this.chip.accumulator.setValue(this.chip.or(this.chip.accumulator.getValue(), this.chip.timingAndControl.fetchNextByte()));
-                    }
-                    else if (g2 == 7) // CPI
-                    {
-                        this.chip.cmp(this.chip.accumulator.getValue(), this.chip.timingAndControl.fetchNextByte());
-                    }
-                    else {
-                        this.chip.notImplemented(machinCode1);
-                    }
+                    // this is a trick of ADI,ACI,SUI,SBI,ANI,XRI,ORI,CPI
+                    this.operationCode = OperationCode.ADD + g2;
                 }
                 else if (g3 == 7)   // RST
                 {
@@ -614,9 +581,8 @@
             this.chip.accumulator.setValue(this.chip.alu.result.getValue());
         }
 
-        private aluWithAccAndTemp(operationCode: OperationCode, reg8: number) {
+        private aluWithAccAndTemp(operationCode: OperationCode) {
             this.chip.accumulatorLatch.setValue(this.chip.accumulator.getValue());
-            this.chip.getRegisterToTempReg(reg8);
             switch (operationCode) {
                 case OperationCode.ADD:
                     this.chip.alu.add();
@@ -779,7 +745,13 @@
                 }
                 else if (this.chip.instructonDecoder.operationCode >= OperationCode.ADD
                     && this.chip.instructonDecoder.operationCode <= OperationCode.CMP) {
-                    this.aluWithAccAndTemp(this.chip.instructonDecoder.operationCode, this.chip.instructonDecoder.g3);
+                    if (this.chip.instructonDecoder.g1 == 2)
+                        // with register
+                        this.chip.getRegisterToTempReg(this.chip.instructonDecoder.g3);
+                    else
+                        // with immediate value
+                        this.chip.tempReg.setValue(this.chip.timingAndControl.fetchNextByte());
+                    this.aluWithAccAndTemp(this.chip.instructonDecoder.operationCode);
                 }
                 else if (this.chip.instructonDecoder.operationCode == OperationCode.Rxx) {
                     if (this.chip.instructonDecoder.g3 == 1 // in case of RET
