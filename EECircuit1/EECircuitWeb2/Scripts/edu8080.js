@@ -1043,7 +1043,6 @@ var edu8080;
             this.instructonDecoder = new InstructionDecoderAndMachineCycleEncoding(this);
             this.alu = new ArithmeticLogicUnit(this);
             this.decimalAdjust = new DecimalAdjust(this);
-            this.lastval = 65536;
         }
         i8080.prototype.memoryRead = function () {
             var addr = this.addressBuffer.getAddress();
@@ -1155,16 +1154,6 @@ var edu8080;
         };
         i8080.prototype.notImplemented = function (n) {
             alert(n.toString(16) + " is not implemented");
-        };
-        i8080.prototype.condJump = function (cond) {
-            var tgt = this.timingAndControl.fetchNextWord();
-            if (cond) {
-                var oldpc = this.regarray.pc.getValue();
-                this.regarray.pc.setValue(tgt);
-                return oldpc;
-            }
-            else
-                return null;
         };
         i8080.prototype.condCommon = function (g2) {
             switch (g2) {

@@ -966,17 +966,6 @@
             alert(n.toString(16) + " is not implemented");
         }
 
-        public condJump(cond: boolean): number {
-            var tgt = this.timingAndControl.fetchNextWord();
-            if (cond) {
-                var oldpc = this.regarray.pc.getValue();
-                this.regarray.pc.setValue(tgt);
-                return oldpc;
-            }
-            else
-                return null;
-        }
-
         public condCommon(g2: number): boolean {
             switch (g2) {
                 case 0: // NZ
@@ -1025,7 +1014,6 @@
             emu.setMonitor();
             emu.tracebox.dump();
         }
-        private lastval = 65536;
 
         public runMain() {
             this.timingAndControl.runMain();
