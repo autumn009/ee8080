@@ -219,6 +219,7 @@ var vdt;
         }
         else if (evt.keyCode == 8) {
             commonInputRowCode(8);
+            //commonInputRowCode(0x7f);   // BS as RUB
             return false;
         }
         else if (evt.keyCode == 9) {
@@ -254,7 +255,8 @@ var vdt;
             return false;
         }
         else if (evt.keyCode == 46) {
-            commonInputRowCode(0x7f);
+            //commonInputRowCode(0x7f);
+            commonInputRowCode("G".charCodeAt(0) - 0x40); // Delete as Ctrl-G
             return false;
         }
         else if (evt.keyCode == 36 && evt.ctrlKey) {
