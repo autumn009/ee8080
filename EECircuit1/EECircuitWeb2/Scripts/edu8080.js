@@ -1217,12 +1217,14 @@ var edu8080;
             var h = this.dataBusBufferLatch.getValue();
             return h * 256 + l;
         };
-        // wish to remove
         i8080.prototype.pushCommon = function (val) {
+            this.registerSelect16 = RegisterSelect16.sp;
             this.regarray.sp.Decrement();
-            emu.virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val >> 8);
+            this.dataBusBufferLatch.setValue(val >> 8);
+            this.memoryWrite();
             this.regarray.sp.Decrement();
-            emu.virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val & 255);
+            var h = this.dataBusBufferLatch.setValue(val & 255);
+            this.memoryWrite();
         };
         i8080.prototype.hlt = function () {
             this.halt = true;

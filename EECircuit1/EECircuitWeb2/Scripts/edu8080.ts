@@ -1031,12 +1031,14 @@
             return h * 256 + l;
         }
 
-        // wish to remove
         public pushCommon(val: number) {
+            this.registerSelect16 = RegisterSelect16.sp;
             this.regarray.sp.Decrement();
-            emu.virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val >> 8);
+            this.dataBusBufferLatch.setValue(val >> 8);
+            this.memoryWrite();
             this.regarray.sp.Decrement();
-            emu.virtualMachine.memory.Bytes.write(this.regarray.sp.getValue(), val & 255);
+            var h = this.dataBusBufferLatch.setValue(val & 255);
+            this.memoryWrite();
         }
 
         public hlt() {
