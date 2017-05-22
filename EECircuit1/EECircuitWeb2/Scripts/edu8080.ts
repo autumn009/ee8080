@@ -1,10 +1,10 @@
 ﻿namespace edu8080 {
     enum OperationCode {
         LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
-        INX, DEX, INR, DCR, MVI, DAA, CMA, STC, CMC, HLT, MOV,
-        ALU,
+        INX, DEX, INR, DCR, MVI, DAA, STC, CMC, HLT, MOV,
+        ALU1, ALU2,
         Rxx, POP, PCHL, SPHL, Jxx, IN, OUT, XTHL, XCHG, Cxx, PUSH, RST,
-        RLC, RRC, RAL, RAR, NOP, OTHER
+        NOP, OTHER
     }
     enum RegisterSelect8 {
         b = 0, c, d, e, h, l, m, a
@@ -304,12 +304,12 @@
                 else if (g3 == 5) this.operationCode = OperationCode.DCR;
                 else if (g3 == 6) this.operationCode = OperationCode.MVI;
                 else if (g3 == 7) {
-                    if (g2 == 0) this.operationCode = OperationCode.RLC;
-                    else if (g2 == 1) this.operationCode = OperationCode.RRC;
-                    else if (g2 == 2) this.operationCode = OperationCode.RAL;
-                    else if (g2 == 3) this.operationCode = OperationCode.RAR;
+                    if (g2 == 0) this.operationCode = OperationCode.ALU1;   // RLC
+                    else if (g2 == 1) this.operationCode = OperationCode.ALU1;  //RRC
+                    else if (g2 == 2) this.operationCode = OperationCode.ALU1;  //RAL
+                    else if (g2 == 3) this.operationCode = OperationCode.ALU1;  //RAR
                     else if (g2 == 4) this.operationCode = OperationCode.DAA;
-                    else if (g2 == 5) this.operationCode = OperationCode.CMA;
+                    else if (g2 == 5) this.operationCode = OperationCode.ALU1;  //CMA
                     else if (g2 == 6) this.operationCode = OperationCode.STC;
                     else if (g2 == 7) this.operationCode = OperationCode.CMC;
                     else this.chip.notImplemented(machinCode1);
@@ -321,7 +321,7 @@
                 if (g2 == 6 && g3 == 6) this.operationCode = OperationCode.HLT;
                 else this.operationCode = OperationCode.MOV;
             }
-            else if (g1 == 2) this.operationCode = OperationCode.ALU;// this is a trick of ADD,ADC,SUB,SBB,AND,XRA,ORA,CMP
+            else if (g1 == 2) this.operationCode = OperationCode.ALU2;// this is a trick of ADD,ADC,SUB,SBB,AND,XRA,ORA,CMP
             else {
                 if (g3 == 0) this.operationCode = OperationCode.Rxx;
                 else if (g3 == 1) {
@@ -348,7 +348,7 @@
                     else if (g2 == 1) this.operationCode = OperationCode.Cxx;
                     else this.chip.notImplemented(machinCode1);
                 }
-                else if (g3 == 6) this.operationCode = OperationCode.ALU; // this is a trick of ADI,ACI,SUI,SBI,ANI,XRI,ORI,CPI
+                else if (g3 == 6) this.operationCode = OperationCode.ALU2; // this is a trick of ADI,ACI,SUI,SBI,ANI,XRI,ORI,CPI
                 else if (g3 == 7) this.operationCode = OperationCode.RST;
                 else this.chip.notImplemented(machinCode1);
             }
@@ -510,55 +510,28 @@
             var data = this.chip.dataBusBufferLatch.getValue();
             this.chip.insutructionRegister.setValue(data);
         }
-        private aluWithAcc(operationCode: OperationCode) {
-            switch (operationCode) {
-                case OperationCode.RLC:
-                    this.chip.alu.rlc();
-                    break;
-                case OperationCode.RRC:
-                    this.chip.alu.rrc();
-                    break;
-                case OperationCode.RAL:
-                    this.chip.alu.ral();
-                    break;
-                case OperationCode.RAR:
-                    this.chip.alu.rar();
-                    break;
-                case OperationCode.CMA:
-                    this.chip.alu.cma();
-                default:
-                    break;
+        private aluWithAcc() {
+            switch (this.chip.instructonDecoder.g2) {
+                case 0: this.chip.alu.rlc(); break;
+                case 1: this.chip.alu.rrc(); break;
+                case 2: this.chip.alu.ral(); break;
+                case 3: this.chip.alu.rar(); break;
+                case 5: this.chip.alu.cma(); break;
             }
             this.chip.accumulator.setValue(this.chip.alu.result.getValue());
         }
 
-        private aluWithAccAndTemp(operationCode: number) {
+        private aluWithAccAndTemp() {
             this.chip.accumulatorLatch.setValue(this.chip.accumulator.getValue());
-            switch (operationCode) {
-                case 0:
-                    this.chip.alu.add();
-                    break;
-                case 1:
-                    this.chip.alu.adc();
-                    break;
-                case 2:
-                    this.chip.alu.sub();
-                    break;
-                case 3:
-                    this.chip.alu.sbb();
-                    break;
-                case 4:
-                    this.chip.alu.and();
-                    break;
-                case 5:
-                    this.chip.alu.xor();
-                    break;
-                case 6:
-                    this.chip.alu.or();
-                    break;
-                case 7:
-                    this.chip.alu.cmp();
-                    return;
+            switch (this.chip.instructonDecoder.g2) {
+                case 0: this.chip.alu.add(); break;
+                case 1: this.chip.alu.adc(); break;
+                case 2: this.chip.alu.sub(); break;
+                case 3: this.chip.alu.sbb(); break;
+                case 4: this.chip.alu.and(); break;
+                case 5: this.chip.alu.xor(); break;
+                case 6: this.chip.alu.or(); break;
+                case 7: this.chip.alu.cmp(); return;
             }
             this.chip.setRegisterFromAlu(7);    //save acc if not CMP
         }
@@ -673,13 +646,6 @@
                         this.fetchNextByteAndSetDataLatch();
                         this.chip.setRegisterFromDataLatch(this.chip.instructonDecoder.g2);
                         break;
-                    case OperationCode.RLC:
-                    case OperationCode.RRC:
-                    case OperationCode.RAL:
-                    case OperationCode.RAR:
-                    case OperationCode.CMA:
-                        this.aluWithAcc(this.chip.instructonDecoder.operationCode);
-                        break;
                     case OperationCode.DAA:
                         this.chip.decimalAdjust.adjust();
                         break;
@@ -696,14 +662,17 @@
                         this.chip.getRegisterToTempReg(this.chip.instructonDecoder.g3);
                         this.chip.setRegisterFromTempReg(this.chip.instructonDecoder.g2);
                         break;
-                    case OperationCode.ALU:
+                    case OperationCode.ALU1:
+                        this.aluWithAcc();
+                        break;
+                    case OperationCode.ALU2:
                         if (this.chip.instructonDecoder.g1 == 2)
                             // with register
                             this.chip.getRegisterToTempReg(this.chip.instructonDecoder.g3);
                         else
                             // with immediate value
                             this.chip.tempReg.setValue(this.chip.timingAndControl.fetchNextByte());
-                        this.aluWithAccAndTemp(this.chip.instructonDecoder.g2);
+                        this.aluWithAccAndTemp();
                         break;
                     case OperationCode.Rxx:
                         if (this.chip.instructonDecoder.g3 == 1 // in case of RET

@@ -21,12 +21,12 @@ var edu8080;
         OperationCode[OperationCode["DCR"] = 11] = "DCR";
         OperationCode[OperationCode["MVI"] = 12] = "MVI";
         OperationCode[OperationCode["DAA"] = 13] = "DAA";
-        OperationCode[OperationCode["CMA"] = 14] = "CMA";
-        OperationCode[OperationCode["STC"] = 15] = "STC";
-        OperationCode[OperationCode["CMC"] = 16] = "CMC";
-        OperationCode[OperationCode["HLT"] = 17] = "HLT";
-        OperationCode[OperationCode["MOV"] = 18] = "MOV";
-        OperationCode[OperationCode["ALU"] = 19] = "ALU";
+        OperationCode[OperationCode["STC"] = 14] = "STC";
+        OperationCode[OperationCode["CMC"] = 15] = "CMC";
+        OperationCode[OperationCode["HLT"] = 16] = "HLT";
+        OperationCode[OperationCode["MOV"] = 17] = "MOV";
+        OperationCode[OperationCode["ALU1"] = 18] = "ALU1";
+        OperationCode[OperationCode["ALU2"] = 19] = "ALU2";
         OperationCode[OperationCode["Rxx"] = 20] = "Rxx";
         OperationCode[OperationCode["POP"] = 21] = "POP";
         OperationCode[OperationCode["PCHL"] = 22] = "PCHL";
@@ -39,12 +39,8 @@ var edu8080;
         OperationCode[OperationCode["Cxx"] = 29] = "Cxx";
         OperationCode[OperationCode["PUSH"] = 30] = "PUSH";
         OperationCode[OperationCode["RST"] = 31] = "RST";
-        OperationCode[OperationCode["RLC"] = 32] = "RLC";
-        OperationCode[OperationCode["RRC"] = 33] = "RRC";
-        OperationCode[OperationCode["RAL"] = 34] = "RAL";
-        OperationCode[OperationCode["RAR"] = 35] = "RAR";
-        OperationCode[OperationCode["NOP"] = 36] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 37] = "OTHER";
+        OperationCode[OperationCode["NOP"] = 32] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 33] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -456,17 +452,17 @@ var edu8080;
                     this.operationCode = OperationCode.MVI;
                 else if (g3 == 7) {
                     if (g2 == 0)
-                        this.operationCode = OperationCode.RLC;
+                        this.operationCode = OperationCode.ALU1; // RLC
                     else if (g2 == 1)
-                        this.operationCode = OperationCode.RRC;
+                        this.operationCode = OperationCode.ALU1; //RRC
                     else if (g2 == 2)
-                        this.operationCode = OperationCode.RAL;
+                        this.operationCode = OperationCode.ALU1; //RAL
                     else if (g2 == 3)
-                        this.operationCode = OperationCode.RAR;
+                        this.operationCode = OperationCode.ALU1; //RAR
                     else if (g2 == 4)
                         this.operationCode = OperationCode.DAA;
                     else if (g2 == 5)
-                        this.operationCode = OperationCode.CMA;
+                        this.operationCode = OperationCode.ALU1; //CMA
                     else if (g2 == 6)
                         this.operationCode = OperationCode.STC;
                     else if (g2 == 7)
@@ -484,7 +480,7 @@ var edu8080;
                     this.operationCode = OperationCode.MOV;
             }
             else if (g1 == 2)
-                this.operationCode = OperationCode.ALU; // this is a trick of ADD,ADC,SUB,SBB,AND,XRA,ORA,CMP
+                this.operationCode = OperationCode.ALU2; // this is a trick of ADD,ADC,SUB,SBB,AND,XRA,ORA,CMP
             else {
                 if (g3 == 0)
                     this.operationCode = OperationCode.Rxx;
@@ -531,7 +527,7 @@ var edu8080;
                         this.chip.notImplemented(machinCode1);
                 }
                 else if (g3 == 6)
-                    this.operationCode = OperationCode.ALU; // this is a trick of ADI,ACI,SUI,SBI,ANI,XRI,ORI,CPI
+                    this.operationCode = OperationCode.ALU2; // this is a trick of ADI,ACI,SUI,SBI,ANI,XRI,ORI,CPI
                 else if (g3 == 7)
                     this.operationCode = OperationCode.RST;
                 else
@@ -693,30 +689,29 @@ var edu8080;
             var data = this.chip.dataBusBufferLatch.getValue();
             this.chip.insutructionRegister.setValue(data);
         };
-        TimingAndControl.prototype.aluWithAcc = function (operationCode) {
-            switch (operationCode) {
-                case OperationCode.RLC:
+        TimingAndControl.prototype.aluWithAcc = function () {
+            switch (this.chip.instructonDecoder.g2) {
+                case 0:
                     this.chip.alu.rlc();
                     break;
-                case OperationCode.RRC:
+                case 1:
                     this.chip.alu.rrc();
                     break;
-                case OperationCode.RAL:
+                case 2:
                     this.chip.alu.ral();
                     break;
-                case OperationCode.RAR:
+                case 3:
                     this.chip.alu.rar();
                     break;
-                case OperationCode.CMA:
+                case 5:
                     this.chip.alu.cma();
-                default:
                     break;
             }
             this.chip.accumulator.setValue(this.chip.alu.result.getValue());
         };
-        TimingAndControl.prototype.aluWithAccAndTemp = function (operationCode) {
+        TimingAndControl.prototype.aluWithAccAndTemp = function () {
             this.chip.accumulatorLatch.setValue(this.chip.accumulator.getValue());
-            switch (operationCode) {
+            switch (this.chip.instructonDecoder.g2) {
                 case 0:
                     this.chip.alu.add();
                     break;
@@ -856,13 +851,6 @@ var edu8080;
                         this.fetchNextByteAndSetDataLatch();
                         this.chip.setRegisterFromDataLatch(this.chip.instructonDecoder.g2);
                         break;
-                    case OperationCode.RLC:
-                    case OperationCode.RRC:
-                    case OperationCode.RAL:
-                    case OperationCode.RAR:
-                    case OperationCode.CMA:
-                        this.aluWithAcc(this.chip.instructonDecoder.operationCode);
-                        break;
                     case OperationCode.DAA:
                         this.chip.decimalAdjust.adjust();
                         break;
@@ -879,14 +867,17 @@ var edu8080;
                         this.chip.getRegisterToTempReg(this.chip.instructonDecoder.g3);
                         this.chip.setRegisterFromTempReg(this.chip.instructonDecoder.g2);
                         break;
-                    case OperationCode.ALU:
+                    case OperationCode.ALU1:
+                        this.aluWithAcc();
+                        break;
+                    case OperationCode.ALU2:
                         if (this.chip.instructonDecoder.g1 == 2)
                             // with register
                             this.chip.getRegisterToTempReg(this.chip.instructonDecoder.g3);
                         else
                             // with immediate value
                             this.chip.tempReg.setValue(this.chip.timingAndControl.fetchNextByte());
-                        this.aluWithAccAndTemp(this.chip.instructonDecoder.g2);
+                        this.aluWithAccAndTemp();
                         break;
                     case OperationCode.Rxx:
                         if (this.chip.instructonDecoder.g3 == 1 // in case of RET
