@@ -290,18 +290,11 @@ var emu;
             alert("load error");
         });
     }
-    function loadTest1(afterproc) {
+    function loadDiagSource(afterproc) {
         loadSource("/Content/diag.a80.txt", afterproc);
     }
     function loadBiosSource(afterproc) {
         loadSource("/Content/bios.a80.txt", afterproc);
-    }
-    function loadTest2() {
-        var s = "";
-        s += " in 0ffh\r\n";
-        s += " out 0ffh\r\n";
-        s += " hlt\r\n";
-        $("#sourceCode").val(s);
     }
     var cpmArray;
     function reloadCpm(limit) {
@@ -370,12 +363,6 @@ var emu;
     }
     $("#rdrReset").click(function () {
         $("#rdrPointer").text("1");
-    });
-    $("#navtest2").click(function () {
-        loadTest2();
-    });
-    $("#navtest1").click(function () {
-        loadTest1(null);
     });
     $("#navcpm").click(function () {
         setupCpm(null);
@@ -567,7 +554,7 @@ var emu;
     $("#loadcc1").click(function (evt) { loadDiskWithComplete("ccdisk1.bin.exe"); });
     $("#loadcc2").click(function (evt) { loadDiskWithComplete("ccdisk2.bin.exe"); });
     $("#loadSoureceBios").click(function (evt) { loadBiosSource(null); });
-    $("#loadSoureceDiag").click(function (evt) { loadTest1(null); });
+    $("#loadSoureceDiag").click(function (evt) { loadDiagSource(null); });
     $("#fileUpDrive").change(function (evt) {
         $("#popupUpDrive").popup("close");
         var x = $("#menu-left");
@@ -636,7 +623,7 @@ var emu;
         }
         else {
             setIde();
-            loadTest1(null);
+            loadDiagSource(null);
         }
     });
 })(emu || (emu = {}));

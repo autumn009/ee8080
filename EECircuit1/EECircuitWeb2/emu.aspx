@@ -252,8 +252,6 @@
             <div data-role="collapsible" data-inset="false">
                 <h2>Test/Dev</h2>
                 <ul data-role="listview">
-                    <li><a data-rel="close" class="anchor" href="#" id="navtest1">Load Test-1</a></li>
-                    <li><a data-rel="close" class="anchor" href="#" id="navtest2">Load Test-2</a></li>
                     <li><a data-rel="close" class="anchor" href="#" id="navcpm">Load CPM to mem</a></li>
                     <li><a data-rel="close" class="anchor" href="#" id="naventrap">Enable Trap</a></li>
                     <li><a data-rel="close" class="anchor" href="#" id="navdistrap">Disable Trap</a></li>
