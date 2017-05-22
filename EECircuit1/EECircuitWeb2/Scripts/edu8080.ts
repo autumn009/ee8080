@@ -78,7 +78,7 @@
             this.chip = thischip;
         }
         public result: Register8 = new Register8();
-        private setps(a: number) {
+        public setps(a: number) {
             this.chip.flags.s = ((a & 0x80) != 0);
             var p = 0;
             var x = a;
@@ -246,7 +246,7 @@
             var rc = (a >> 8) != 0;
             this.chip.flags.z = (a == 0);
             this.chip.flags.cy = rc;
-            this.chip.setps(r0);
+            this.chip.alu.setps(r0);
             this.chip.flags.ac = false;
         }
     }
@@ -976,77 +976,6 @@
 
         public notImplemented(n: number) {
             alert(n.toString(16) + " is not implemented");
-        }
-
-        // will remove
-        public setps(a: number) {
-            this.flags.s = ((a & 0x80) != 0);
-            var p = 0;
-            var x = a;
-            for (var i = 0; i < 8; i++) {
-                if (x & 1) p++;
-                x >>= 1;
-            }
-            this.flags.p = ((p & 1) == 0);
-        }
-
-        // will remove
-        public cmp(a: number, b: number) {
-            //this.flags.z = (a == b);
-            //this.flags.cy = (a < b);
-            //this.setps(this.accumulator.getValue());
-            //this.flags.ac = false;
-            this.sub(a, b);
-        }
-
-        // will remove
-        public add(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
-            var r = a + b + (c ? 1 : 0);
-            var r0 = r & 255;
-            var rc = (r >> 8) != 0;
-            this.flags.z = (r0 == 0);
-            if (!cyUnchange) this.flags.cy = rc;
-            this.setps(r0);
-            this.flags.ac = ((a & 0x8) & (b & 0x8)) != 0;
-            return r0;
-        }
-        // will remove
-        public sub(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
-            var r = a - b - (c ? 1 : 0);
-            var r0 = r & 255;
-            var rc = (r >> 8) != 0;
-            this.flags.z = (r0 == 0);
-            if (!cyUnchange) this.flags.cy = rc;
-            this.setps(r0);
-            this.flags.ac = false;
-            return r0;
-        }
-
-        // will remove
-        public setlogicFlags(v: number, ac: boolean) {
-            this.flags.z = (v == 0);
-            this.flags.cy = false;
-            this.setps(v);
-            this.flags.ac = ac;
-        }
-
-        // will remove
-        public and(a: number, b: number): number {
-            var r = a & b;
-            this.setlogicFlags(r, true);
-            return r;
-        }
-        // will remove
-        public or(a: number, b: number): number {
-            var r = a | b;
-            this.setlogicFlags(r, false);
-            return r;
-        }
-        // will remove
-        public xor(a: number, b: number): number {
-            var r = a ^ b;
-            this.setlogicFlags(r, false);
-            return r;
         }
 
         public condJump(cond: boolean): number {

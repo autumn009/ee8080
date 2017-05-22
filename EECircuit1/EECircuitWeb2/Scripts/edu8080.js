@@ -366,7 +366,7 @@ var edu8080;
             var rc = (a >> 8) != 0;
             this.chip.flags.z = (a == 0);
             this.chip.flags.cy = rc;
-            this.chip.setps(r0);
+            this.chip.alu.setps(r0);
             this.chip.flags.ac = false;
         };
         return DecimalAdjust;
@@ -1167,79 +1167,6 @@ var edu8080;
         };
         i8080.prototype.notImplemented = function (n) {
             alert(n.toString(16) + " is not implemented");
-        };
-        // will remove
-        i8080.prototype.setps = function (a) {
-            this.flags.s = ((a & 0x80) != 0);
-            var p = 0;
-            var x = a;
-            for (var i = 0; i < 8; i++) {
-                if (x & 1)
-                    p++;
-                x >>= 1;
-            }
-            this.flags.p = ((p & 1) == 0);
-        };
-        // will remove
-        i8080.prototype.cmp = function (a, b) {
-            //this.flags.z = (a == b);
-            //this.flags.cy = (a < b);
-            //this.setps(this.accumulator.getValue());
-            //this.flags.ac = false;
-            this.sub(a, b);
-        };
-        // will remove
-        i8080.prototype.add = function (a, b, cyUnchange, c) {
-            if (cyUnchange === void 0) { cyUnchange = false; }
-            if (c === void 0) { c = false; }
-            var r = a + b + (c ? 1 : 0);
-            var r0 = r & 255;
-            var rc = (r >> 8) != 0;
-            this.flags.z = (r0 == 0);
-            if (!cyUnchange)
-                this.flags.cy = rc;
-            this.setps(r0);
-            this.flags.ac = ((a & 0x8) & (b & 0x8)) != 0;
-            return r0;
-        };
-        // will remove
-        i8080.prototype.sub = function (a, b, cyUnchange, c) {
-            if (cyUnchange === void 0) { cyUnchange = false; }
-            if (c === void 0) { c = false; }
-            var r = a - b - (c ? 1 : 0);
-            var r0 = r & 255;
-            var rc = (r >> 8) != 0;
-            this.flags.z = (r0 == 0);
-            if (!cyUnchange)
-                this.flags.cy = rc;
-            this.setps(r0);
-            this.flags.ac = false;
-            return r0;
-        };
-        // will remove
-        i8080.prototype.setlogicFlags = function (v, ac) {
-            this.flags.z = (v == 0);
-            this.flags.cy = false;
-            this.setps(v);
-            this.flags.ac = ac;
-        };
-        // will remove
-        i8080.prototype.and = function (a, b) {
-            var r = a & b;
-            this.setlogicFlags(r, true);
-            return r;
-        };
-        // will remove
-        i8080.prototype.or = function (a, b) {
-            var r = a | b;
-            this.setlogicFlags(r, false);
-            return r;
-        };
-        // will remove
-        i8080.prototype.xor = function (a, b) {
-            var r = a ^ b;
-            this.setlogicFlags(r, false);
-            return r;
         };
         i8080.prototype.condJump = function (cond) {
             var tgt = this.timingAndControl.fetchNextWord();
