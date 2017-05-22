@@ -12,11 +12,6 @@
     enum RegisterSelect16 {
         bc = 0, de = 1, hl = 2, sp = 3, wz = 4, pc, latch,
     }
-    class DataBus {
-
-    }
-    class AddressBus {
-    }
     class AddressBuffer {
         private chip: i8080;
         constructor(thischip: i8080) {
@@ -40,9 +35,6 @@
                     return this.chip.regarray.incrementerDecrementerAddressLatch.getValue();
             }
         }
-    }
-    class InternalDataBus {
-
     }
     class Register {
         protected upperLimit = 65535;
@@ -474,12 +466,10 @@
         constructor(thischip: i8080) {
             this.chip = thischip;
         }
-        public fetchNextByte() {
+        public fetchNextByte():void {
             this.chip.registerSelect16 = RegisterSelect16.pc;
             this.chip.memoryRead();
             this.chip.regarray.pc.Increment();
-            // TBW with to remove
-            return this.chip.dataBusBufferLatch.getValue();
         }
         public fetchNextWord() {
             this.fetchNextByte();
@@ -496,12 +486,14 @@
             this.chip.regarray.w.setValue(this.chip.dataBusBufferLatch.getValue());
         }
         private fetchNextByteAndSetDataLatch() {
-            var d = this.chip.timingAndControl.fetchNextByte();
-            this.chip.dataBusBufferLatch.setValue(d);
+            this.chip.timingAndControl.fetchNextByte();
+            this.chip.dataBusBufferLatch.setValue(this.chip.dataBusBufferLatch.getValue());
         }
         private fetchNextWordAndSetAddressLatch() {
-            var l = this.chip.timingAndControl.fetchNextByte();
-            var h = this.chip.timingAndControl.fetchNextByte();
+            this.chip.timingAndControl.fetchNextByte();
+            var l = this.chip.dataBusBufferLatch.getValue();
+            this.chip.timingAndControl.fetchNextByte();
+            var h = this.chip.dataBusBufferLatch.getValue();
             this.chip.regarray.incrementerDecrementerAddressLatch.setValueHL(l, h);
             this.chip.registerSelect16 = RegisterSelect16.latch;
         }
@@ -669,9 +661,11 @@
                         if (this.chip.instructonDecoder.g1 == 2)
                             // with register
                             this.chip.getRegisterToTempReg(this.chip.instructonDecoder.g3);
-                        else
+                        else {
                             // with immediate value
-                            this.chip.tempReg.setValue(this.chip.timingAndControl.fetchNextByte());
+                            this.chip.timingAndControl.fetchNextByte();
+                            this.chip.tempReg.setValue(this.chip.dataBusBufferLatch.getValue());
+                        }
                         this.aluWithAccAndTemp();
                         break;
                     case OperationCode.Rxx:
@@ -789,7 +783,8 @@
                         this.chip.regarray.swapHLandDE();
                         break;
                     case OperationCode.IN:
-                        var d = this.chip.timingAndControl.fetchNextByte();
+                        this.chip.timingAndControl.fetchNextByte();
+                        var d = this.chip.dataBusBufferLatch.getValue();
                         this.chip.regarray.w.setValue(d);
                         this.chip.regarray.z.setValue(d);
                         this.chip.registerSelect16 = RegisterSelect16.wz;
@@ -798,7 +793,8 @@
                         this.chip.setRegister(7, this.chip.dataBusBufferLatch.getValue());
                         break;
                     case OperationCode.OUT:
-                        var d = this.chip.timingAndControl.fetchNextByte();
+                        this.chip.timingAndControl.fetchNextByte();
+                        var d = this.chip.dataBusBufferLatch.getValue();
                         this.chip.regarray.w.setValue(d);
                         this.chip.regarray.z.setValue(d);
                         this.chip.registerSelect16 = RegisterSelect16.wz;
