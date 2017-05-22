@@ -4,7 +4,7 @@
         LXI, DAD, LDAX, STAX, LHLD, SHLD, LDA, STA,
         INX, DEX, INR, DCR, MVI, DAA, CMA, STC, CMC, HLT, MOV,
         ADD, ADC, SUB, SBB, AND, XRA, ORA, CMP,
-        Rxx, POP, PCHL, SPHL, Jxx, IN, OUT, XTHL, XCHG,
+        Rxx, POP, PCHL, SPHL, Jxx, IN, OUT, XTHL, XCHG, Cxx, 
         RLC, RRC, RAL, RAR, NOP, OTHER
     }
     enum RegisterSelect8 {
@@ -360,11 +360,7 @@
                     else if (g2 == 7) this.operationCode = OperationCode.NOP; // ASSUMED AS NOP
                     else this.chip.notImplemented(machinCode1);
                 }
-                else if (g3 == 4)   // Cxx
-                {
-                    var oldpc = this.chip.condJump(this.chip.condCommon(g2));
-                    if (oldpc != null) this.chip.pushCommon(oldpc);
-                }
+                else if (g3 == 4) this.operationCode = OperationCode.Cxx;
                 else if (g3 == 5) {
                     if ((g2 & 1) == 0) // PUSH
                     {
@@ -372,15 +368,8 @@
                         this.chip.pushCommon(val);
                         //tracebox.add("push pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                     }
-                    else if (g2 == 1)   // CALL
-                    {
-                        var oldpc = this.chip.condJump(true);
-                        this.chip.pushCommon(oldpc);
-                        //tracebox.add("call pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
-                    }
-                    else {
-                        this.chip.notImplemented(machinCode1);
-                    }
+                    else if (g2 == 1) this.operationCode = OperationCode.Cxx;
+                    else this.chip.notImplemented(machinCode1);
                 }
                 else if (g3 == 6) {
                     // this is a trick of ADI,ACI,SUI,SBI,ANI,XRI,ORI,CPI
@@ -846,7 +835,15 @@
                     this.chip.dataBusBufferLatch.setValue(this.chip.getRegister(7));
                     this.chip.ioWrite();
                 }
-
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.Cxx) {
+                    this.chip.timingAndControl.fetchNextWordToWZ();
+                    if (this.chip.instructonDecoder.g3 != 4 // in case of CALL
+                        || this.chip.condCommon(this.chip.instructonDecoder.g2)) {  // in case of Cxx
+                        this.chip.pushCommon(this.chip.regarray.pc.getValue());
+                        this.chip.registerSelect16 = RegisterSelect16.wz;
+                        this.chip.regarray.transferSelectedRefgister16toPC();
+                    }
+                }
 
 
 

@@ -43,12 +43,13 @@ var edu8080;
         OperationCode[OperationCode["OUT"] = 33] = "OUT";
         OperationCode[OperationCode["XTHL"] = 34] = "XTHL";
         OperationCode[OperationCode["XCHG"] = 35] = "XCHG";
-        OperationCode[OperationCode["RLC"] = 36] = "RLC";
-        OperationCode[OperationCode["RRC"] = 37] = "RRC";
-        OperationCode[OperationCode["RAL"] = 38] = "RAL";
-        OperationCode[OperationCode["RAR"] = 39] = "RAR";
-        OperationCode[OperationCode["NOP"] = 40] = "NOP";
-        OperationCode[OperationCode["OTHER"] = 41] = "OTHER";
+        OperationCode[OperationCode["Cxx"] = 36] = "Cxx";
+        OperationCode[OperationCode["RLC"] = 37] = "RLC";
+        OperationCode[OperationCode["RRC"] = 38] = "RRC";
+        OperationCode[OperationCode["RAL"] = 39] = "RAL";
+        OperationCode[OperationCode["RAR"] = 40] = "RAR";
+        OperationCode[OperationCode["NOP"] = 41] = "NOP";
+        OperationCode[OperationCode["OTHER"] = 42] = "OTHER";
     })(OperationCode || (OperationCode = {}));
     var RegisterSelect8;
     (function (RegisterSelect8) {
@@ -534,23 +535,17 @@ var edu8080;
                     else
                         this.chip.notImplemented(machinCode1);
                 }
-                else if (g3 == 4) {
-                    var oldpc = this.chip.condJump(this.chip.condCommon(g2));
-                    if (oldpc != null)
-                        this.chip.pushCommon(oldpc);
-                }
+                else if (g3 == 4)
+                    this.operationCode = OperationCode.Cxx;
                 else if (g3 == 5) {
                     if ((g2 & 1) == 0) {
                         var val = this.chip.getRegisterPairBDHPSW(g2 & 6);
                         this.chip.pushCommon(val);
                     }
-                    else if (g2 == 1) {
-                        var oldpc = this.chip.condJump(true);
-                        this.chip.pushCommon(oldpc);
-                    }
-                    else {
+                    else if (g2 == 1)
+                        this.operationCode = OperationCode.Cxx;
+                    else
                         this.chip.notImplemented(machinCode1);
-                    }
                 }
                 else if (g3 == 6) {
                     // this is a trick of ADI,ACI,SUI,SBI,ANI,XRI,ORI,CPI
@@ -1011,6 +1006,15 @@ var edu8080;
                     this.chip.regarray.transferSelectedRefgister16toAddressLatch();
                     this.chip.dataBusBufferLatch.setValue(this.chip.getRegister(7));
                     this.chip.ioWrite();
+                }
+                else if (this.chip.instructonDecoder.operationCode == OperationCode.Cxx) {
+                    this.chip.timingAndControl.fetchNextWordToWZ();
+                    if (this.chip.instructonDecoder.g3 != 4 // in case of CALL
+                        || this.chip.condCommon(this.chip.instructonDecoder.g2)) {
+                        this.chip.pushCommon(this.chip.regarray.pc.getValue());
+                        this.chip.registerSelect16 = RegisterSelect16.wz;
+                        this.chip.regarray.transferSelectedRefgister16toPC();
+                    }
                 }
                 else {
                 }
