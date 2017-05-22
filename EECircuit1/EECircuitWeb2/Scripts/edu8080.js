@@ -1138,18 +1138,6 @@ var edu8080;
             var val = this.dataBusBufferLatch.getValue();
             this.setRegister(reg8, val);
         };
-        i8080.prototype.getRegisterPairBDHPSW = function (n) {
-            switch (n) {
-                case 0:
-                    return this.regarray.b.getValue() * 256 + this.regarray.c.getValue();
-                case 2:
-                    return this.regarray.d.getValue() * 256 + this.regarray.e.getValue();
-                case 4:
-                    return this.regarray.h.getValue() * 256 + this.regarray.l.getValue();
-                case 6:
-                    return this.accumulator.getValue() * 256 + this.flags.getPacked();
-            }
-        };
         i8080.prototype.setRuning = function () {
             $("#runStopStatus").removeClass("stop");
             $("#runStopStatus").removeClass("run");

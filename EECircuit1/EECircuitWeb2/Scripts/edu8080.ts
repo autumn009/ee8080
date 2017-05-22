@@ -944,18 +944,6 @@
             var val = this.dataBusBufferLatch.getValue();
             this.setRegister(reg8, val);
         }
-        public getRegisterPairBDHPSW(n: number): number {
-            switch (n) {
-                case 0:
-                    return this.regarray.b.getValue() * 256 + this.regarray.c.getValue();
-                case 2:
-                    return this.regarray.d.getValue() * 256 + this.regarray.e.getValue();
-                case 4:
-                    return this.regarray.h.getValue() * 256 + this.regarray.l.getValue();
-                case 6:
-                    return this.accumulator.getValue() * 256 + this.flags.getPacked();
-            }
-        }
 
         public setRuning() {
             $("#runStopStatus").removeClass("stop");
