@@ -728,9 +728,43 @@
                         }
                         break;
                     case OperationCode.PUSH:
-                        var val = this.chip.getRegisterPairBDHPSW(this.chip.instructonDecoder.g2 & 6);
-                        this.chip.pushCommon(val);
-
+                        this.chip.registerSelect16 = RegisterSelect16.sp;
+                        var data: number;
+                        switch (this.chip.instructonDecoder.g2 & 6) {
+                            case 0:
+                                data = this.chip.regarray.b.getValue();
+                                break;
+                            case 2:
+                                data = this.chip.regarray.d.getValue();
+                                break;
+                            case 4:
+                                data = this.chip.regarray.h.getValue();
+                                break;
+                            case 6:
+                                data = this.chip.accumulator.getValue();
+                                break;
+                        }
+                        this.chip.dataBusBufferLatch.setValue(data);
+                        this.chip.regarray.sp.Decrement();
+                        this.chip.memoryWrite();
+                        switch (this.chip.instructonDecoder.g2 & 6) {
+                            case 0:
+                                data = this.chip.regarray.c.getValue();
+                                break;
+                            case 2:
+                                data = this.chip.regarray.e.getValue();
+                                break;
+                            case 4:
+                                data = this.chip.regarray.l.getValue();
+                                break;
+                            case 6:
+                                data = this.chip.flags.getPacked();
+                                break;
+                        }
+                        this.chip.registerSelect16 = RegisterSelect16.sp;
+                        this.chip.dataBusBufferLatch.setValue(data);
+                        this.chip.regarray.sp.Decrement();
+                        this.chip.memoryWrite();
                         break;
                     case OperationCode.POP:
                         this.chip.registerSelect16 = RegisterSelect16.sp;
