@@ -357,7 +357,7 @@ var vdt;
                 }
                 commonInputRowCode(code);
             }
-            else if ($(button).attr("id") == "vkspace")
+            else if (keytop == "SPACE")
                 commonInputRowCode(0x20);
             else if (keytop == "BS")
                 commonInputRowCode(0x08);

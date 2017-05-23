@@ -184,7 +184,7 @@
                     <button id="vkrshift" type="button" class="vkey vkshifts" data-normal="Shift"><span class="blabel">X</span></button>
                 </fieldset>
                 <fieldset id="kbd5" class="kbdl" data-role="controlgroup" data-type="horizontal" data-mini="true">
-                    <button id="vkspace" type="button" class="vkey" data-normal="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"><span class="blabel">X</span></button>
+                    <button id="vkspace" type="button" class="vkey" data-normal="SPACE"><span class="blabel">X</span></button>
                 </fieldset>
             </div>
 
