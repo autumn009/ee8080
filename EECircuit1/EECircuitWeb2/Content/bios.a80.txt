@@ -1,14 +1,12 @@
 ﻿	org	0f200h
 
-offset	equ	2	;number of disk tracks used by cp/m
-iobyte	equ	0003h	;address of iobyte
 cdisk	equ	0004h	;address of last logged disk on warm start
 buff	equ	0080h	;default buffer address
 buff80h	equ	0100h
+iobyte	equ	0003h	;address of iobyte
 cpmb	equ	0dc00h	;base of cpm console processor
 bdos	equ	0e406h	;806h+cpmb basic dos (resident portion)
 ndisks	equ	4		;number of disks
-retry	equ	10	;max retries on disk i/o before error
 
 	jmp	boot
 wboote:	jmp	wboot
@@ -276,14 +274,6 @@ conout:	;console outout c
 	ret
 
 ;	data areas (must be in ram)
-; dbank:	db	0	;disk bank 00 if drive 0,1
-			;	   10 if drive 2,3
-; iopb:	;io parameter block
-	db	80h	;normal i/o operation
-; iof:	db	readf	;io function, initial read
-; ion:	db	1	;number of sectors to read
-; iot:	db	offset	;track number
-; ios:	db	1	;sector number
 iod:	dw	buff	;io address
 
 

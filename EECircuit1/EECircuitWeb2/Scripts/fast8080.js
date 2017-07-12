@@ -1,8 +1,13 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var fast8080;
 (function (fast8080) {
     var Register = (function () {
@@ -477,11 +482,13 @@ var fast8080;
                 if (g1 == 0) {
                     if (g3 == 0) {
                         if (g2 == 0) {
+                            // NO OPETATION
                         }
                         else {
                             // NO OPETATION
                             this.hlt();
                             return;
+                            //this.notImplemented(machinCode1);
                         }
                     }
                     else if (g3 == 1) {
@@ -493,6 +500,7 @@ var fast8080;
                                 //    return;
                                 //}
                                 this.regarray.sp.setValue(sp);
+                                //tracebox.add("lxi pc="+virtualMachine.cpu.regarray.pc.getValue().toString(16)+" sp=" +virtualMachine.cpu.regarray.sp.getValue().toString(16));
                             }
                             else {
                                 this.setRegister(g2 + 1, this.fetchNextByte());
@@ -543,6 +551,10 @@ var fast8080;
                         else
                             hl--;
                         this.regarray.setRegisterPairValue(g2 >> 1, hl & 0xffff);
+                        //if ((g2 >> 1) == 3)
+                        //{
+                        //tracebox.add("inx/dex pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
+                        //}
                     }
                     else if (g3 == 4) {
                         var val = this.getRegister(g2);
@@ -660,20 +672,24 @@ var fast8080;
                     if (g3 == 0) {
                         if (this.condCommon(g2)) {
                             this.regarray.pc.setValue(this.popCommon());
+                            //tracebox.add("rxx pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                     }
                     else if (g3 == 1) {
                         if ((g2 & 1) == 0) {
                             this.setRegisterPairBDHPSW(g2 & 6, this.popCommon());
+                            //tracebox.add("pop pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 1) {
                             this.regarray.pc.setValue(this.popCommon());
+                            //tracebox.add("ret pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 5) {
                             this.regarray.pc.setValue(this.regarray.getRegisterPairValue(2));
                         }
                         else if (g2 == 7) {
                             this.regarray.sp.setValue(this.regarray.getRegisterPairValue(2));
+                            //tracebox.add("sphl pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else {
                             this.notImplemented(machinCode1);
@@ -701,6 +717,7 @@ var fast8080;
                             var t = this.popCommon();
                             this.pushCommon(this.regarray.getRegisterPairValue(2));
                             this.regarray.setRegisterPairValue(2, t);
+                            //tracebox.add("xthl pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 5) {
                             var t1 = this.regarray.l.getValue();
@@ -711,8 +728,10 @@ var fast8080;
                             this.regarray.d.setValue(t2);
                         }
                         else if (g2 == 6) {
+                            // ASSUMED AS NOP
                         }
                         else if (g2 == 7) {
+                            // ASSUMED AS NOP
                         }
                         else {
                             this.notImplemented(machinCode1);
@@ -727,10 +746,12 @@ var fast8080;
                         if ((g2 & 1) == 0) {
                             var val = this.getRegisterPairBDHPSW(g2 & 6);
                             this.pushCommon(val);
+                            //tracebox.add("push pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else if (g2 == 1) {
                             var oldpc = this.condJump(true);
                             this.pushCommon(oldpc);
+                            //tracebox.add("call pc=" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + " sp=" + virtualMachine.cpu.regarray.sp.getValue().toString(16));
                         }
                         else {
                             this.notImplemented(machinCode1);

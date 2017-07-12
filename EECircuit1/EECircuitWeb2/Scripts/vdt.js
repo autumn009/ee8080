@@ -125,6 +125,7 @@ var vdt;
         cursorY--;
         if (cursorY < 0) {
             cursorY = 0;
+            //scrollDown();
         }
         setCursorClass();
     }
