@@ -1,0 +1,125 @@
+﻿	org	100h
+
+	; set up memory allocation
+	lxi	h,last
+	mov	a,h
+	; after last (DATA AREA)
+	inr	a
+	sta	data
+	; more after last (SP)
+	inr	a
+	mov	h,a
+	mvi	l,0
+	sphl
+
+	; setup execution pointer
+	lxi	h,src
+	shld	execptr
+
+	; interpreter main
+main:
+	call	getnext
+	ora	a
+	jz	0
+	cpi	'>'
+	jz	incptr
+	cpi	'<'
+	jz	decptr
+	cpi	'+'
+	jz	incval
+	cpi	'-'
+	jz	decval
+	cpi	'.'
+	jz	outchar
+	cpi	'['
+	jz	beginloop
+	cpi	']'
+	jz	endloop
+	jmp	main
+
+incptr:
+	lxi	h,ptr
+	inr	m
+	jmp	main
+decptr:
+	lxi	h,ptr
+	dcr	m
+	jmp	main
+incval:
+	call	setupval
+	inr m
+	jmp	main
+decval:
+	call	setupval
+	dcr m
+	jmp	main
+outchar:
+	call	setupval
+	mov	e,m
+	mvi	c,2
+	call	5	; BDOS CALL TO OUTPUT CONSOLE
+	jmp	main
+beginloop:
+	call	setupval
+	mov	a,m
+	ora	a
+	jnz	main
+loop1:
+	call	getnext
+	ora	a
+	jmp	0
+	cpi	']'
+	jnz	loop1
+	jmp	main
+endloop:
+	call	setupval
+	mov	a,m
+	ora	a
+	jz	main
+
+loop2:
+	call	getprev
+	ora	a
+	jmp	0
+	cpi	'['
+	jnz	loop2
+	inx	h
+	jmp	main
+
+getnext:
+	lhld	execptr
+	mov	a,m
+	inx	h
+	shld	execptr
+	ret
+
+getprev:
+	lhld	execptr
+	dcx	h
+	mov	a,m
+	shld	execptr
+	ret
+
+setupval:
+	lda	ptr
+	mov	h,a
+	mvi	l,0
+	ret
+
+; excecution pointer
+execptr:	dw	0
+
+; the BrainF*ck pointer
+ptr:	db	0
+; high byte of BrainF*ck memory
+data:	db	0
+
+; sample hello world
+beforesrc:	db	0
+src:	db	"+++++++++[>++++++++>+++++++++++>+++++<<<-]>.>++.+++++++..+++.>-.------------.<++++++++.--------.+++.------.--------.>+.",0
+
+
+last:
+	end
+
+
