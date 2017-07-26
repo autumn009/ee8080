@@ -27,6 +27,11 @@ iloop:
 
 	; interpreter main
 main:
+; DEBUG START
+;	mvi	e,21H
+;	mvi	c,2
+;	call	5	; BDOS CALL TO OUTPUT CONSOLE
+; DEBUG END
 	call	getnext
 	ora	a
 	jz	0
@@ -76,7 +81,7 @@ beginloop:
 loop1:
 	call	getnext
 	ora	a
-	jmp	0
+	jz	0
 	cpi	5DH	;']'
 	jnz	loop1
 	jmp	main
@@ -89,7 +94,7 @@ endloop:
 loop2:
 	call	getprev
 	ora	a
-	jmp	0
+	jz	0
 	cpi	5BH	;'['
 	jnz	loop2
 	inx	h
