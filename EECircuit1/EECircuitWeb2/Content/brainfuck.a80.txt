@@ -12,6 +12,15 @@
 	mvi	l,0
 	sphl
 
+	; clear memory
+	call	setupval
+	mvi	b,0
+iloop:
+	mvi	m,0
+	dcr	b
+	inx	h
+	jnz	iloop
+
 	; setup execution pointer
 	lxi	h,src
 	shld	execptr
@@ -101,9 +110,10 @@ getprev:
 	ret
 
 setupval:
-	lda	ptr
+	lda	data
 	mov	h,a
-	mvi	l,0
+	lda	ptr
+	mov	l,a
 	ret
 
 ; excecution pointer
@@ -117,7 +127,7 @@ data:	db	0
 ; sample hello world
 beforesrc:	db	0
 src:	db	"+++++++++[>++++++++>+++++++++++>+++++<<<-]>.>++.+++++++..+++.>-.------------.<++++++++.--------.+++.------.--------.>+.",0
-
+//src:	db	"+++++++++++++++++++++++++++++++++.",0	; will output "!"
 
 last:
 	end
