@@ -21,19 +21,19 @@ main:
 	call	getnext
 	ora	a
 	jz	0
-	cpi	'>'
+	cpi	3EH	;'>'
 	jz	incptr
-	cpi	'<'
+	cpi	3Ch	;'<'
 	jz	decptr
-	cpi	'+'
+	cpi	2BH	;'+'
 	jz	incval
-	cpi	'-'
+	cpi	2DH	;'-'
 	jz	decval
-	cpi	'.'
+	cpi	2EH	;'.'
 	jz	outchar
-	cpi	'['
+	cpi	5BH	;'['
 	jz	beginloop
-	cpi	']'
+	cpi	5DH	;']'
 	jz	endloop
 	jmp	main
 
@@ -68,7 +68,7 @@ loop1:
 	call	getnext
 	ora	a
 	jmp	0
-	cpi	']'
+	cpi	5DH	;']'
 	jnz	loop1
 	jmp	main
 endloop:
@@ -81,7 +81,7 @@ loop2:
 	call	getprev
 	ora	a
 	jmp	0
-	cpi	'['
+	cpi	5BH	;'['
 	jnz	loop2
 	inx	h
 	jmp	main
