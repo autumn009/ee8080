@@ -400,7 +400,7 @@
                         tokens.push(s);
                         return tokens;
                     }
-                    if (ch == "\t" || ch == " " || ch == ",") {
+                    if (ch == "\t" || ch == " " || ch == "," || ch == "\xa0") {
                         tokens.push(s);
                         break;
                     }
@@ -412,7 +412,7 @@
             for (; ;) {
                 if (p >= line.length) return tokens;
                 var ch = line[p];
-                if (ch != "\t" && ch != " " && ch != ",") break;
+                if (ch != "\t" && ch != " " && ch != "," && ch != "\xa0") break;
                 p++;
             }
         }

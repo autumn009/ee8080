@@ -159,6 +159,7 @@
     <Content Include="Content\images\gate\SELECTOR.png" />
     <Content Include="Content\images\gate\TWOCOMP.png" />
     <Content Include="Content\images\gate\XOR.png" />
+    <Content Include="Content\selfcopy1.a80.txt" />
     <Content Include="Content\JRTPascal4.bin.exe" />
     <Content Include="Content\mbasic.bin.exe" />
     <Content Include="Content\Site.css" />

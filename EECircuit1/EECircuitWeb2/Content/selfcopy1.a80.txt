@@ -1,0 +1,38 @@
+﻿        org     100h
+
+; if flag is on, quit
+		lda	flag
+		ora	a
+		jnz	term
+
+; Hello World
+        lxi     d,msg
+        mvi     c,9
+        call    5
+
+; set flag
+		mvi	a,1
+		sta	 flag
+
+; copy 100h to 200h 256 byte
+		lxi	d,100h
+		lxi	h,200h
+		mvi	b,0
+loop:
+		ldax	d
+		mov	m,a
+		dcr	b
+		jnz	loop
+
+; execute copy code
+        jmp     200h
+
+; terminate
+term:
+; stop for DDT
+		rst	7
+; stop for CP/M
+		jmp	0
+msg:    db      "Hello World$"
+flag:	db	0
+        end
