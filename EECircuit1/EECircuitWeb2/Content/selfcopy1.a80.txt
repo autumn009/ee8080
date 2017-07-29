@@ -1,10 +1,10 @@
-﻿        org     100h
+﻿        org     100h
 
 ; Hello World
-		db	11h	;lxi d
+		db	11h	;lxi d
 loc1:	dw	msg
-        mvi     c,9
-        call    5
+        mvi     c,9
+        call    5
 
 loc2:
 
@@ -41,9 +41,9 @@ loop:
 		mvi	m,0
 
 ; execute copy code
-        jmp     200h
+        jmp     200h
 
-msg:    db "Hello World in "
-num:	db	"1"
-		db	"00",13,10,"$"
-        end
+msg:    db 'Hello World in '
+num:	db	'1'
+		db	'00',13,10,'$'
+        end
