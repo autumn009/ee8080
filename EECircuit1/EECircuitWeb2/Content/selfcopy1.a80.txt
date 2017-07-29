@@ -1,18 +1,12 @@
 ﻿        org     100h
 
 ; Hello World
-        lxi     d,msg
+		db	11h	;lxi d
+loc1:	dw	msg
         mvi     c,9
         call    5
 
-; if flag is on, quit
-		lda	flag
-		ora	a
-		jnz	term
-
-; set flag
-		mvi	a,1
-		sta	 flag
+loc2:
 
 ; copy 100h to 200h 256 byte
 		lxi	d,100h
@@ -26,13 +20,30 @@ loop:
 		dcr	b
 		jnz	loop
 
+		lxi	h,num
+		lxi	d,100h
+		dad	d
+		inr	m
+
+		lxi	h,loc1
+		lxi	d,100h
+		dad	d
+		inx	h
+		inr	m
+
+		lxi	h,loc2
+		lxi	d,100h
+		dad	d
+		mvi	m,0c3h
+		inx	h
+		mvi	m,0
+		inx	h
+		mvi	m,0
+
 ; execute copy code
         jmp     200h
 
-; terminate
-term:
-; stop for CP/M
-		jmp	0
-msg:    db      "Hello World",13,10,"$"
-flag:	db	0
+msg:    db "Hello World in "
+num:	db	"1"
+		db	"00",13,10,"$"
         end
