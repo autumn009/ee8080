@@ -21,6 +21,8 @@
 loop:
 		ldax	d
 		mov	m,a
+		inx	h
+		inx	d
 		dcr	b
 		jnz	loop
 
@@ -29,8 +31,6 @@ loop:
 
 ; terminate
 term:
-; stop for DDT
-		rst	7
 ; stop for CP/M
 		jmp	0
 msg:    db      "Hello World$"
