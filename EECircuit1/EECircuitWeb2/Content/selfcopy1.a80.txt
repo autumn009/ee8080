@@ -1,14 +1,14 @@
 ﻿        org     100h
 
-; if flag is on, quit
-		lda	flag
-		ora	a
-		jnz	term
-
 ; Hello World
         lxi     d,msg
         mvi     c,9
         call    5
+
+; if flag is on, quit
+		lda	flag
+		ora	a
+		jnz	term
 
 ; set flag
 		mvi	a,1
@@ -33,6 +33,6 @@ loop:
 term:
 ; stop for CP/M
 		jmp	0
-msg:    db      "Hello World$"
+msg:    db      "Hello World",13,10,"$"
 flag:	db	0
         end
