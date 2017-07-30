@@ -1,0 +1,8 @@
+﻿ org 100h
+ lxi h,loop
+ lxi d,0ffffh
+ lxi sp,loop
+loop:
+ push d
+ pchl
+ end

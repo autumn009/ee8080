@@ -1,0 +1,86 @@
+﻿        org     100h
+
+; base offset
+loc1:
+		lxi	b,0
+
+		mov	a,b
+		cpi	9
+		jnc	0
+
+; Hello World
+		lxi	h,msg
+		dad	b
+		xchg
+		push	b
+        mvi     c,9
+        call    5
+		pop	b
+
+; transfer
+; make bc+100h to stack top
+		mov	l,c
+		mov	h,b
+		lxi	d,100h
+		dad	d
+		push	h
+
+; make bc+200h to hl
+		lxi	d,100h
+		dad	d
+
+; bc+100h to de
+		pop	d
+
+; keep bc+100h to later use
+		push	d
+
+; keep bc+200h to later use
+		push	h
+
+		push	b
+		mvi	b,0
+loop:
+		ldax	d
+		mov	m,a
+		inx	h
+		inx	d
+		dcr	b
+loc2:	jnz	loop
+		pop	b
+
+; update number
+		lxi	h,num
+		dad	b
+		lxi	d,100h
+		dad	d
+		inr	m
+
+; update loc2
+		lxi	h,loc2
+		dad	b
+		lxi	d,100h
+		dad	d
+		inx	h
+		inx	h
+		inr	m
+
+; update lxi b,XXXX to XXXX+100h
+		pop	h	; bc+200h
+		pop	d	; bc+100h
+		inx	h
+		mov	m,e
+		inx	h
+		mov	m,d
+
+; hl must be point entry point
+		dcx	h
+		dcx	h
+
+; go to new copy
+		pchl
+
+msg:    db 'Hello World in '
+num:	db	'1'
+		db	'00',13,10,'$'
+        end
