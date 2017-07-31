@@ -232,7 +232,7 @@
             <div data-role="collapsible" data-inset="false">
                 <h2>CPU</h2>
                 <ul data-role="listview">
-                    <li><a data-rel="close" class="anchor" href="#" id="navreset">Reset System</a></li>
+                    <li><a data-rel="close" class="anchor" href="#" id="navreset">Reset</a></li>
                 </ul>
             </div>
             <div data-role="collapsible" data-inset="false">

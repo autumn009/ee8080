@@ -433,7 +433,7 @@
     });
 
     $("#navreset").click(() => {
-        virtualMachine.reset();
+        virtualMachine.cpu.reset();
     });
 
     $("#navecho").click(() => {

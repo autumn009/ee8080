@@ -427,7 +427,7 @@ var emu;
         setRdr();
     });
     $("#navreset").click(function () {
-        emu.virtualMachine.reset();
+        emu.virtualMachine.cpu.reset();
     });
     $("#navecho").click(function () {
         setConsole();
