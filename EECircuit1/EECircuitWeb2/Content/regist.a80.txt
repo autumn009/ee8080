@@ -1,0 +1,44 @@
+﻿ org 100h
+
+conin equ 0f209h
+resume equ 0fff8h
+
+; copy regpart to ff00h 256 byte
+		lxi	d,regpart
+		lxi	h,0ff00h
+		mvi	b,0
+loop:
+		ldax	d
+		mov	m,a
+		inx	h
+		inx	d
+		dcr	b
+		jnz	loop
+
+		lxi	d,resume
+		lxi	h,conin
+		mov	a,m
+		stax	d
+		mvi	m,0c3h
+		inx	d
+		inx	h
+		mov	a,m
+		stax	d
+		mvi	m,000h
+		inx	d
+		inx	h
+		mov	a,m
+		stax	d
+		mvi	m,0ffh
+
+		jmp 0
+
+regpart:
+	call	resume
+	cpi	041h
+	rnz
+	hlt
+
+	end
+
+
