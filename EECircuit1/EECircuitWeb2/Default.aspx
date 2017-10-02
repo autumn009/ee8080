@@ -3,7 +3,7 @@
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <ul data-role="listview" id="toplistview">
         <li data-role="collapsible" data-inset="false" data-iconpos="right">
-            <h2>Logic Simlators</h2>
+            <h2>Logic Simulators</h2>
             <ul data-role="listview" data-theme="b">
                 <li><a href="/logic.aspx">Simple Logics</a></li>
                 <li><a href="/counter.aspx">Counters</a></li>
