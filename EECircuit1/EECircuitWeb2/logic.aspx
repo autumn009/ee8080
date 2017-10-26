@@ -343,7 +343,7 @@
             <li><a data-rel="close" class="anchor" href="#" id="nav2comp">2's complement(3digit)</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navsel">SELECTOR(like 74153)</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navdec">DECODER(like 74138)</a></li>
-            <li><a data-rel="close" class="anchor" href="#" id="navoc">OPEN CORRECTOR NOT</a></li>
+            <li><a data-rel="close" class="anchor" href="#" id="navoc">OPEN COLLECTOR NOT</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navbuf">3 STATE(like LS244)</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navdlatch">D LATCH</a></li>
             <li><a data-rel="close" class="anchor" href="#" id="navrsff">RS FLIPFLOP</a></li>

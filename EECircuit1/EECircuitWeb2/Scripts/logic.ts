@@ -411,8 +411,8 @@
 
         $("#logicname").text(name);
         $("#logicicon").attr("src", "/Content/images/gate/" + pictureName + ".png");
-        $("#simname").text(name + "・シミュレーター");
-        $("#tablename").text(name + "真理表");
+        $("#simname").text(name + "・Simulator");
+        $("#tablename").text(name + " Truth Table(真理表)");
 
         setupInputChecks(ignoreableInputLabels.concat(inputLabels));
         setupOutputFlags(outputLabels);
@@ -437,7 +437,7 @@
         }, null, ["A"], null);
     });
     $("#navoc").click(() => {
-        setup("OPEN CORRECTOR NOT GATE", "OCNOT", (input: Logic[]): Logic[] => {
+        setup("OPEN COLLECTOR NOT GATE", "OCNOT", (input: Logic[]): Logic[] => {
             if (input[0] == Logic.L) return [Logic.H];
             return [Logic.Z];
         }, null, ["A"], null);

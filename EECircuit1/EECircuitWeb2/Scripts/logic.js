@@ -406,8 +406,8 @@ var logic;
         thefunc = func;
         $("#logicname").text(name);
         $("#logicicon").attr("src", "/Content/images/gate/" + pictureName + ".png");
-        $("#simname").text(name + "・シミュレーター");
-        $("#tablename").text(name + "真理表");
+        $("#simname").text(name + "・Simulator");
+        $("#tablename").text(name + " Truth Table(真理表)");
         setupInputChecks(ignoreableInputLabels.concat(inputLabels));
         setupOutputFlags(outputLabels);
         var table = createLogicalTable(ignoreableInputLabels, inputLabels, outputLabels);
@@ -428,7 +428,7 @@ var logic;
         }, null, ["A"], null);
     });
     $("#navoc").click(function () {
-        setup("OPEN CORRECTOR NOT GATE", "OCNOT", function (input) {
+        setup("OPEN COLLECTOR NOT GATE", "OCNOT", function (input) {
             if (input[0] == Logic.L)
                 return [Logic.H];
             return [Logic.Z];
