@@ -68,7 +68,7 @@ var edu8080;
         RegisterSelect16[RegisterSelect16["pc"] = 5] = "pc";
         RegisterSelect16[RegisterSelect16["latch"] = 6] = "latch";
     })(RegisterSelect16 || (RegisterSelect16 = {}));
-    var AddressBuffer = (function () {
+    var AddressBuffer = /** @class */ (function () {
         function AddressBuffer(thischip) {
             this.chip = thischip;
         }
@@ -92,7 +92,7 @@ var edu8080;
         };
         return AddressBuffer;
     }());
-    var Register = (function () {
+    var Register = /** @class */ (function () {
         function Register() {
             this.upperLimit = 65535;
             this.value = 0;
@@ -121,7 +121,7 @@ var edu8080;
         };
         return Register;
     }());
-    var Register8 = (function (_super) {
+    var Register8 = /** @class */ (function (_super) {
         __extends(Register8, _super);
         function Register8() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -130,14 +130,14 @@ var edu8080;
         }
         return Register8;
     }(Register));
-    var DataBusBufferLatch = (function (_super) {
+    var DataBusBufferLatch = /** @class */ (function (_super) {
         __extends(DataBusBufferLatch, _super);
         function DataBusBufferLatch() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
         return DataBusBufferLatch;
     }(Register8));
-    var Register16 = (function (_super) {
+    var Register16 = /** @class */ (function (_super) {
         __extends(Register16, _super);
         function Register16() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -147,28 +147,28 @@ var edu8080;
         };
         return Register16;
     }(Register));
-    var Accumulator = (function (_super) {
+    var Accumulator = /** @class */ (function (_super) {
         __extends(Accumulator, _super);
         function Accumulator() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
         return Accumulator;
     }(Register8));
-    var AccumulatorLatch = (function (_super) {
+    var AccumulatorLatch = /** @class */ (function (_super) {
         __extends(AccumulatorLatch, _super);
         function AccumulatorLatch() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
         return AccumulatorLatch;
     }(Register8));
-    var TempReg = (function (_super) {
+    var TempReg = /** @class */ (function (_super) {
         __extends(TempReg, _super);
         function TempReg() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
         return TempReg;
     }(Register8));
-    var ArithmeticLogicUnit = (function () {
+    var ArithmeticLogicUnit = /** @class */ (function () {
         function ArithmeticLogicUnit(thischip) {
             this.result = new Register8();
             this.chip = thischip;
@@ -323,7 +323,7 @@ var edu8080;
         };
         return ArithmeticLogicUnit;
     }());
-    var FlagFlipFlop = (function () {
+    var FlagFlipFlop = /** @class */ (function () {
         function FlagFlipFlop() {
             this.z = false;
             this.s = false;
@@ -354,7 +354,7 @@ var edu8080;
         };
         return FlagFlipFlop;
     }());
-    var DecimalAdjust = (function () {
+    var DecimalAdjust = /** @class */ (function () {
         function DecimalAdjust(thischip) {
             this.chip = thischip;
         }
@@ -376,14 +376,14 @@ var edu8080;
         };
         return DecimalAdjust;
     }());
-    var InstructionRegister = (function (_super) {
+    var InstructionRegister = /** @class */ (function (_super) {
         __extends(InstructionRegister, _super);
         function InstructionRegister() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
         return InstructionRegister;
     }(Register8));
-    var InstructionDecoderAndMachineCycleEncoding = (function () {
+    var InstructionDecoderAndMachineCycleEncoding = /** @class */ (function () {
         function InstructionDecoderAndMachineCycleEncoding(thischip) {
             this.g1 = 0;
             this.g2 = 0;
@@ -527,7 +527,7 @@ var edu8080;
         };
         return InstructionDecoderAndMachineCycleEncoding;
     }());
-    var RegisterArray = (function () {
+    var RegisterArray = /** @class */ (function () {
         function RegisterArray(thischip) {
             this.w = new Register8();
             this.z = new Register8();
@@ -597,7 +597,7 @@ var edu8080;
                     return this.getRegisterPairValue(this.chip.registerSelect16);
                 case RegisterSelect16.pc:
                     return this.pc.getValue();
-                default:
+                default:// IncrementerDecrementerAddressLatch
                     return this.incrementerDecrementerAddressLatch.getValue();
             }
         };
@@ -612,7 +612,7 @@ var edu8080;
                 case RegisterSelect16.pc:
                     this.pc.setValue(v);
                     break;
-                default:
+                default:// IncrementerDecrementerAddressLatch
                     this.incrementerDecrementerAddressLatch.setValue(v);
                     break;
             }
@@ -639,7 +639,7 @@ var edu8080;
         };
         return RegisterArray;
     }());
-    var TimingAndControl = (function () {
+    var TimingAndControl = /** @class */ (function () {
         function TimingAndControl(thischip) {
             this.chip = thischip;
         }
@@ -1035,7 +1035,7 @@ var edu8080;
         };
         return TimingAndControl;
     }());
-    var i8080 = (function () {
+    var i8080 = /** @class */ (function () {
         function i8080() {
             this.halt = true;
             this.accumulator = new Accumulator();
@@ -1163,28 +1163,28 @@ var edu8080;
             $("#runStopStatus").text("STOP");
         };
         i8080.prototype.undefinedInstuction = function (n) {
-            alert(n.toString(16) + " is not undefined machine code");
+            alert(n.toString(16) + " is undefined machine code");
         };
         i8080.prototype.notImplemented = function (n) {
             alert(n.toString(16) + " is not implemented");
         };
         i8080.prototype.condCommon = function (g2) {
             switch (g2) {
-                case 0:
+                case 0:// NZ
                     return !this.flags.z;
-                case 1:
+                case 1:// Z
                     return this.flags.z;
-                case 2:
+                case 2:// NC
                     return !this.flags.cy;
-                case 3:
+                case 3:// C
                     return this.flags.cy;
-                case 4:
+                case 4:// PO
                     return !this.flags.p;
-                case 5:
+                case 5:// PE
                     return this.flags.p;
-                case 6:
+                case 6:// P
                     return !this.flags.s;
-                case 7:
+                case 7:// M
                     return this.flags.s;
             }
         };

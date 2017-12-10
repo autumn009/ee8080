@@ -20,7 +20,7 @@ var miniAssembler;
         else
             resultMessage += msg + "\r\n";
     }
-    var mnemonicUnit2 = (function () {
+    var mnemonicUnit2 = /** @class */ (function () {
         function mnemonicUnit2(operands, bytes, generate) {
             this.operands = operands;
             this.bytes = bytes;
@@ -31,7 +31,7 @@ var miniAssembler;
     function isEmpty(s) {
         return s != null && s != undefined && s != "";
     }
-    var mnemonicUnit0 = (function (_super) {
+    var mnemonicUnit0 = /** @class */ (function (_super) {
         __extends(mnemonicUnit0, _super);
         function mnemonicUnit0(operands, bytes, generate) {
             return _super.call(this, operands, bytes, function (opr1, opr2, out2) {
@@ -44,7 +44,7 @@ var miniAssembler;
         }
         return mnemonicUnit0;
     }(mnemonicUnit2));
-    var mnemonicUnit1 = (function (_super) {
+    var mnemonicUnit1 = /** @class */ (function (_super) {
         __extends(mnemonicUnit1, _super);
         function mnemonicUnit1(operands, bytes, generate) {
             return _super.call(this, operands, bytes, function (opr1, opr2, out2) {

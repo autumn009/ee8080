@@ -8,7 +8,7 @@ var emu;
     emu.stepMode = false;
     //var debugCounter = 0;
     //var rightCount = 0;
-    var DelayedTraceBox = (function () {
+    var DelayedTraceBox = /** @class */ (function () {
         function DelayedTraceBox() {
             this.lines = [];
             this.total = 0;
@@ -49,7 +49,7 @@ var emu;
     function getVirtualMachine() {
         return emu.virtualMachine;
     }
-    var NumberArray = (function () {
+    var NumberArray = /** @class */ (function () {
         function NumberArray() {
             this.buffer = new ArrayBuffer(65536);
             this.view = new Uint8ClampedArray(this.buffer);
@@ -79,14 +79,14 @@ var emu;
         return NumberArray;
     }());
     emu.NumberArray = NumberArray;
-    var MemoryUnit = (function () {
+    var MemoryUnit = /** @class */ (function () {
         function MemoryUnit() {
             this.Bytes = new NumberArray();
         }
         return MemoryUnit;
     }());
     var outputCharCount = 0;
-    var IOUnit = (function () {
+    var IOUnit = /** @class */ (function () {
         function IOUnit() {
             this.rdrImage = null;
         }
@@ -236,7 +236,7 @@ var emu;
         vdt.commonInputRowCode(r.charCodeAt(0));
     }
     emu.pushAutoTypeQueue = pushAutoTypeQueue;
-    var vm = (function () {
+    var vm = /** @class */ (function () {
         function vm() {
             this.memory = new MemoryUnit();
             this.io = new IOUnit();

@@ -118,14 +118,14 @@ var logic;
         }
     }
     var thefunc;
-    var LogicTableUnit = (function () {
+    var LogicTableUnit = /** @class */ (function () {
         function LogicTableUnit() {
             this.outputValues = [];
             this.canShurink = false;
         }
         return LogicTableUnit;
     }());
-    var LogicTable = (function () {
+    var LogicTable = /** @class */ (function () {
         function LogicTable() {
             this.logicTables = [];
         }
