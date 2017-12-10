@@ -968,7 +968,7 @@
         }
 
         public undefinedInstuction(n: number) {
-            alert(n.toString(16) + " is not undefined machine code");
+            alert(n.toString(16) + " is undefined machine code");
         }
 
         public notImplemented(n: number) {
