@@ -1,6 +1,7 @@
 var disk;
 (function (disk) {
     disk.drives = [];
+    var driveDirty = [false, false, false, false];
     function read(drive, track, sector, dma) {
         //alert("read " + (drives[0])[0]);
         //if (drive < 0 || drive > 3) return 0xff;
@@ -24,6 +25,7 @@ var disk;
         for (var i = 0; i < 128; i++) {
             view[p++] = emu.virtualMachine.memory.Bytes.read(dma++);
         }
+        driveDirty[drive] = true;
         return 0; // success
     }
     disk.write = write;
@@ -80,6 +82,17 @@ var disk;
         }
         return false;
     }
+    function update() {
+        for (var i = 0; i < 4; i++) {
+            if (driveDirty[i]) {
+                for (var j = 0; j < 77; j++) {
+                    trackSave(i, j, disk.drives[i]);
+                }
+                driveDirty[i] = false;
+            }
+        }
+    }
+    disk.update = update;
     $(document).on("pagecreate", function () {
         var initdisk = (arg["initdisk"] != undefined);
         var totalSize = 128 * 26 * 77;
@@ -103,11 +116,7 @@ var disk;
         }
     });
     $(window).unload(function () {
-        for (var i = 0; i < 4; i++) {
-            for (var j = 0; j < 77; j++) {
-                trackSave(i, j, disk.drives[i]);
-            }
-        }
+        update();
     });
 })(disk || (disk = {}));
 //# sourceMappingURL=disk.js.map

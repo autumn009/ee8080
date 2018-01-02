@@ -1,5 +1,6 @@
 ﻿namespace disk {
     export var drives: Uint8ClampedArray[] = [];
+    var driveDirty: boolean[] = [false, false, false, false];
 
     export function read(drive: number, track: number, sector: number, dma: number): number {
         //alert("read " + (drives[0])[0]);
@@ -24,6 +25,7 @@
         for (var i = 0; i < 128; i++) {
             view[p++] = emu.virtualMachine.memory.Bytes.read(dma++);
         }
+        driveDirty[drive] = true;
         return 0;   // success
     }
 
@@ -82,6 +84,17 @@
         return false;
     }
 
+    export function update() {
+        for (var i = 0; i < 4; i++) {
+            if (driveDirty[i]) {
+                for (var j = 0; j < 77; j++) {
+                    trackSave(i, j, drives[i]);
+                }
+                driveDirty[i] = false;
+            }
+        }
+    }
+
     $(document).on("pagecreate", function () {
         var initdisk = (arg["initdisk"] != undefined);
         var totalSize = 128 * 26 * 77;
@@ -106,10 +119,6 @@
     });
 
     $(window).unload(function () {
-        for (var i = 0; i < 4; i++) {
-            for (var j = 0; j < 77; j++) {
-                trackSave(i, j, drives[i]);
-            }
-        }
+        update();
     });
 }

@@ -191,6 +191,12 @@
                 else
                     outputCharCount++;
             }
+            if (addr == 0xf2) {
+                // worm boot notify
+                reloadCpm(0xf200 - 0xdc00);
+                // syncing virtual disk
+                disk.update();
+            }
             if (addr == 0xf3) {
                 this.outputCharLst(v);
                 if (v == 0x0d || outputCharCount >= 10) {
@@ -210,7 +216,6 @@
                     outputCharCount++;
                 this.rdrImage = null;
             }
-            if (addr == 0xf2) reloadCpm(0xf200 - 0xdc00);
             if (addr == 0xff) this.putBitsPortFF(v);
         }
     }
