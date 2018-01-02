@@ -419,12 +419,16 @@ var fast8080;
         };
         i8080.prototype.runMain = function () {
             var _this = this;
+            var refreshCounter = 0;
             vdt.inputFunc = function (num) {
                 emu.inputChars += String.fromCharCode(num);
                 if (vdt.inputFuncAfter)
                     vdt.inputFuncAfter();
             };
             for (;;) {
+                refreshCounter = (refreshCounter + 1) % 65536;
+                if (refreshCounter == 0)
+                    emu.screenRefreshRequest = true;
                 if (emu.waitingInput) {
                     emu.waitingInput = false;
                     vdt.inputFuncAfter = function () {

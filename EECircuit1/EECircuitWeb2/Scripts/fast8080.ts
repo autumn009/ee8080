@@ -372,11 +372,15 @@
         private lastval = 65536;
 
         public runMain() {
+            var refreshCounter = 0;
             vdt.inputFunc = (num) => {
                 emu.inputChars += String.fromCharCode(num);
                 if (vdt.inputFuncAfter) vdt.inputFuncAfter();
             };
             for (; ;) {
+                refreshCounter = (refreshCounter + 1) % 65536;
+                if (refreshCounter == 0) emu.screenRefreshRequest = true;
+
                 if (emu.waitingInput) {
                     emu.waitingInput = false;
                     vdt.inputFuncAfter = () => {
