@@ -24,6 +24,7 @@
     <TypeScriptToolsVersion>2.2</TypeScriptToolsVersion>
     <ApplicationInsightsResourceId>/subscriptions/b9385dc2-4fb8-4c5f-9c35-e42080d01d0f/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/EECircuitWeb2</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/b9385dc2-4fb8-4c5f-9c35-e42080d01d0f/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/EECircuitWeb2</ApplicationInsightsAnnotationResourceId>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -135,6 +136,7 @@
   <ItemGroup>
     <Content Include="About.aspx" />
     <Content Include="Contact.aspx" />
+    <Content Include="Content\8080EX1.m80.txt" />
     <Content Include="Content\bios.a80.txt" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
