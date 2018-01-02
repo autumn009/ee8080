@@ -1,4 +1,4 @@
-﻿	title	'Z80 instruction set exerciser'
+	title	'Z80 instruction set exerciser'
 
 ; zexlax.z80 - Z80 instruction set exerciser
 ; Copyright (C) 1994  Frank D. Cringle
@@ -1283,4 +1283,4 @@ crctab:	db	000h,000h,000h,000h
 	db	02dh,002h,0efh,08dh
 
 	end
-
+騚騚騚騚騚騚騚騚騚騚騚騚騚騚騚騚騚騚騚騚騚騚騚騚騚騚騚騚騚
