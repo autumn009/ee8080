@@ -10,6 +10,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var fast8080;
 (function (fast8080) {
+    // DEBUG CODE START
+    // var debugCounter = 0;
+    // DEBUG CODE END
     var Register = /** @class */ (function () {
         function Register() {
             this.upperLimit = 65535;
@@ -476,6 +479,16 @@ var fast8080;
                 //tracebox.addPacked("[" + virtualMachine.cpu.regarray.pc.getValue().toString(16) + ":" + virtualMachine.cpu.regarray.sp.getValue().toString(16) + "]");
                 //}
                 var machinCode1 = this.fetchNextByte();
+                // DEBUG CODE START
+                //if (this.regarray.pc.getValue() >= 0x100 && this.regarray.pc.getValue() <= 0x7fff) {
+                //    emu.tracebox.add("pc=" + this.regarray.pc.getValue().toString(16) + " MC=" + machinCode1.toString(16));
+                //    debugCounter++;
+                //    if (debugCounter > 500) {
+                //        this.hlt();
+                //        return;
+                //    }
+                //}
+                // DEBUG CODE END
                 var g1 = machinCode1 >> 6;
                 var g2 = (machinCode1 >> 3) & 0x7;
                 var g3 = machinCode1 & 0x7;

@@ -393,10 +393,14 @@ var emu;
         emu.virtualMachine.update();
     }
     emu.setMonitor = setMonitor;
+    function isIde() {
+        return $("#ide").css("display") == "inherit";
+    }
     function setIde() {
         $(".mypane").css("display", "none");
         $("#ide").css("display", "inherit");
         $("#logicname").text("IDE");
+        ideResiezer(true);
     }
     function setLst() {
         $(".mypane").css("display", "none");
@@ -583,22 +587,25 @@ var emu;
         var rect = element.getBoundingClientRect();
         return rect.top + window.pageYOffset;
     }
-    function ideResiezer() {
-        //$("#sourceCode").height($(window).height());
-        var rect1 = document.getElementById("sourceCode").getBoundingClientRect();
-        var rect2 = document.getElementById("myhooter").getBoundingClientRect();
-        if (rect2.top == 0 || rect1.top == 0) {
-            setTimeout(function () {
-                ideResiezer();
-            }, 1000);
+    function ideResiezer(forceToRun) {
+        if (forceToRun === void 0) { forceToRun = false; }
+        if (forceToRun || isIde()) {
+            //$("#sourceCode").height($(window).height());
+            var rect1 = document.getElementById("sourceCode").getBoundingClientRect();
+            var rect2 = document.getElementById("myhooter").getBoundingClientRect();
+            if (rect2.top == 0 || rect1.top == 0) {
+                setTimeout(function () {
+                    ideResiezer();
+                }, 1000);
+            }
+            else
+                //$("#sourceCode").height(rect2.top - rect1.top - 20);
+                setTimeout(function () {
+                    var rect1 = document.getElementById("sourceCode").getBoundingClientRect();
+                    var rect2 = document.getElementById("myhooter").getBoundingClientRect();
+                    $("#sourceCode").height(rect2.top - rect1.top - 20);
+                }, 1000);
         }
-        else
-            //$("#sourceCode").height(rect2.top - rect1.top - 20);
-            setTimeout(function () {
-                var rect1 = document.getElementById("sourceCode").getBoundingClientRect();
-                var rect2 = document.getElementById("myhooter").getBoundingClientRect();
-                $("#sourceCode").height(rect2.top - rect1.top - 20);
-            }, 1000);
     }
     $(window).resize(function () {
         ideResiezer();
