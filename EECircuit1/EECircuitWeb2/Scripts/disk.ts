@@ -1,6 +1,19 @@
 ﻿namespace disk {
-    export var drives: Uint8ClampedArray[] = [];
+    var drives: Uint8ClampedArray[] = [];
     var driveDirty: boolean[] = [false, false, false, false];
+
+    export function getDriveAsBlob(drive: number) {
+        return new Blob([drives[drive].buffer]);
+    }
+
+    export function loadDisk(drive: number, arrayBuffer: ArrayBuffer, afterproc: () => void) {
+        var array = new Uint8Array(arrayBuffer);
+        for (var i = 0; i < array.length; i++) {
+            drives[drive][i] = array[i];
+        }
+        driveDirty[drive] = true;
+        if (afterproc) afterproc();
+    }
 
     export function read(drive: number, track: number, sector: number, dma: number): number {
         //alert("read " + (drives[0])[0]);
@@ -74,6 +87,7 @@
         for (var j = 0; j < totalSize; j++) {
             view[j] = 0xe5;
         }
+        driveDirty[drive] = true;
     }
 
     function isSaveDriveExist(drive: number) {

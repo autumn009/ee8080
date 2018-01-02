@@ -1,13 +1,27 @@
 var disk;
 (function (disk) {
-    disk.drives = [];
+    var drives = [];
     var driveDirty = [false, false, false, false];
+    function getDriveAsBlob(drive) {
+        return new Blob([drives[drive].buffer]);
+    }
+    disk.getDriveAsBlob = getDriveAsBlob;
+    function loadDisk(drive, arrayBuffer, afterproc) {
+        var array = new Uint8Array(arrayBuffer);
+        for (var i = 0; i < array.length; i++) {
+            drives[drive][i] = array[i];
+        }
+        driveDirty[drive] = true;
+        if (afterproc)
+            afterproc();
+    }
+    disk.loadDisk = loadDisk;
     function read(drive, track, sector, dma) {
         //alert("read " + (drives[0])[0]);
         //if (drive < 0 || drive > 3) return 0xff;
         //if (track < 0 || track > 76) return 0xff;
         //if (sector < 0 || sector > 25) return 0xff;
-        var view = disk.drives[drive];
+        var view = drives[drive];
         var p = (sector + 26 * track) * 128;
         for (var i = 0; i < 128; i++) {
             var v = view[p++];
@@ -20,7 +34,7 @@ var disk;
         //if (drive < 0 || drive > 3) return 0xff;
         //if (track < 0 || track > 76) return 0xff;
         //if (sector < 0 || sector > 25) return 0xff;
-        var view = disk.drives[drive];
+        var view = drives[drive];
         var p = (sector + 26 * track) * 128;
         for (var i = 0; i < 128; i++) {
             view[p++] = emu.virtualMachine.memory.Bytes.read(dma++);
@@ -68,10 +82,11 @@ var disk;
     }
     function initdrive(drive) {
         var totalSize = 128 * 26 * 77;
-        var view = disk.drives[drive];
+        var view = drives[drive];
         for (var j = 0; j < totalSize; j++) {
             view[j] = 0xe5;
         }
+        driveDirty[drive] = true;
     }
     disk.initdrive = initdrive;
     function isSaveDriveExist(drive) {
@@ -86,7 +101,7 @@ var disk;
         for (var i = 0; i < 4; i++) {
             if (driveDirty[i]) {
                 for (var j = 0; j < 77; j++) {
-                    trackSave(i, j, disk.drives[i]);
+                    trackSave(i, j, drives[i]);
                 }
                 driveDirty[i] = false;
             }
@@ -99,7 +114,7 @@ var disk;
         for (var i = 0; i < 4; i++) {
             var buffer = new ArrayBuffer(totalSize);
             var view = new Uint8ClampedArray(buffer);
-            disk.drives.push(view);
+            drives.push(view);
             if (i == 0 && (initdisk || !isSaveDriveExist(i))) {
                 emu.loadDisk(i, "stdA.bin.exe", null);
             }

@@ -343,12 +343,7 @@ var emu;
     }
     function loadDisk(drive, filename, afterproc) {
         loadBinary("/Content/" + filename, function (arrayBuffer) {
-            var array = new Uint8Array(arrayBuffer);
-            for (var i = 0; i < array.length; i++) {
-                disk.drives[drive][i] = array[i];
-            }
-            if (afterproc)
-                afterproc();
+            disk.loadDisk(drive, arrayBuffer, afterproc);
         });
     }
     emu.loadDisk = loadDisk;
@@ -488,7 +483,7 @@ var emu;
         uploadTPASub();
     });
     function downloadDrive(drive, target) {
-        var blob = new Blob([disk.drives[drive].buffer]);
+        var blob = disk.getDriveAsBlob(drive);
         var filename = "drive" + String.fromCharCode(drive + 0x41) + ".bin";
         if (window.navigator.msSaveBlob) {
             window.navigator.msSaveBlob(blob, filename);
@@ -548,13 +543,7 @@ var emu;
             x.panel("close");
             if (confirmErase(driveForUp))
                 return;
-            loadBinary("/Content/" + filename, function (arrayBuffer) {
-                var array = new Uint8Array(arrayBuffer);
-                for (var i = 0; i < array.length; i++) {
-                    disk.drives[driveForUp][i] = array[i];
-                }
-                showCompleted();
-            });
+            loadDisk(driveForUp, filename, function () { showCompleted(); });
         }, 500);
     }
     emu.loadDiskWithComplete = loadDiskWithComplete;
@@ -583,9 +572,9 @@ var emu;
         $(reader).load(function (evt) {
             var t = evt.target;
             var ab = t.result;
-            var view = new Uint8ClampedArray(ab);
-            disk.drives[driveForUp] = view;
-            $("#fileUpDrive").val("");
+            disk.loadDisk(driveForUp, ab, function () {
+                $("#fileUpDrive").val("");
+            });
         });
         reader.readAsArrayBuffer(f);
     });

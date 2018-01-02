@@ -343,11 +343,7 @@
 
     export function loadDisk(drive:number, filename: string, afterproc: () => void) {
         loadBinary("/Content/" + filename, (arrayBuffer) => {
-            var array = new Uint8Array(arrayBuffer);
-            for (var i = 0; i < array.length; i++) {
-                disk.drives[drive][i] = array[i];
-            }
-            if (afterproc) afterproc();
+            disk.loadDisk(drive, arrayBuffer, afterproc);
         });
     }
 
@@ -503,7 +499,7 @@
     });
 
     function downloadDrive(drive: number, target) {
-        var blob = new Blob([disk.drives[drive].buffer]);
+        var blob = disk.getDriveAsBlob(drive);
         var filename = "drive" + String.fromCharCode(drive + 0x41) + ".bin";
         if (window.navigator.msSaveBlob) {
             window.navigator.msSaveBlob(blob, filename);
@@ -566,13 +562,7 @@
             var x: any = $("#menu-left");
             x.panel("close");
             if (confirmErase(driveForUp)) return;
-            loadBinary("/Content/" + filename, (arrayBuffer) => {
-                var array = new Uint8Array(arrayBuffer);
-                for (var i = 0; i < array.length; i++) {
-                    disk.drives[driveForUp][i] = array[i];
-                }
-                showCompleted();
-            });
+            loadDisk(driveForUp, filename, () => { showCompleted(); });
         }, 500);
     }
 
@@ -602,9 +592,9 @@
         $(reader).load((evt) => {
             var t: any = evt.target;
             var ab: ArrayBuffer = t.result;
-            var view = new Uint8ClampedArray(ab);
-            disk.drives[driveForUp] = view;
-            $("#fileUpDrive").val("");
+            disk.loadDisk(driveForUp, ab, () => {
+                $("#fileUpDrive").val("");
+            });
         });
         reader.readAsArrayBuffer(f);
     });
