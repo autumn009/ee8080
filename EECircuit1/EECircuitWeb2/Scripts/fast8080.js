@@ -173,9 +173,6 @@ var fast8080;
             this.tempReg = new TempReg();
             this.regarray = new RegisterArray();
             this.flags = new FlagFlipFlop();
-            // Taken from https://github.com/begoon/i8080-js/blob/master/i8080.js and modefied
-            this.half_carry_table = [false, false, true, false, true, false, true, true];
-            this.sub_half_carry_table = [false, true, true, true, false, false, false, 1];
             this.lastval = 65536;
         }
         i8080.prototype.update = function () {
@@ -327,8 +324,8 @@ var fast8080;
             if (!cyUnchange)
                 this.flags.cy = rc;
             this.setps(r0);
-            var index = ((a & 0x88) >> 1) | ((b & 0x88) >> 2) | ((r0 & 0x88) >> 3);
-            this.flags.ac = this.half_carry_table[index & 0x7];
+            var t = (a & 0xf) + (b & 0xf) + ((c ? 1 : 0) & 0xf);
+            this.flags.ac = (t & 0x10) != 0;
             return r0;
         };
         i8080.prototype.sub = function (a, b, cyUnchange, c) {
