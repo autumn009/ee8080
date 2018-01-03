@@ -246,8 +246,7 @@
             alert(n.toString(16) + " is not implemented");
         }
 
-        private setps(a: number) {
-            this.flags.s = ((a & 0x80) != 0);
+        private setp(a: number) {
             var p = 0;
             var x = a;
             for (var i = 0; i < 8; i++) {
@@ -255,6 +254,10 @@
                 x >>= 1;
             }
             this.flags.p = ((p & 1) == 0);
+        }
+        private setps(a: number) {
+            this.flags.s = ((a & 0x80) != 0);
+            this.setp(a);
         }
 
         private cmp(a: number, b: number) {
@@ -590,18 +593,31 @@
                         }
                         else if (g2 == 4)    // DAA
                         {
+                            //var a = this.accumulator.getValue();
+                            //var al4 = a & 15;
+                            //if (al4 > 9 || this.flags.ac) a += 6;
+                            //var ah4 = (a >> 4) & 15;
+                            //if (ah4 > 9 || this.flags.cy) a += 0x60;
+                            //var r0 = a & 255;
+                            //this.accumulator.setValue(r0);
+                            //var rc = (a >> 8) != 0;
+                            //this.flags.z = (a == 0);
+                            //this.flags.cy = rc;
+                            //this.setps(r0);
+                            //this.flags.ac = false;
+
+                            var carry = this.flags.cy;
+                            var add = 0;
                             var a = this.accumulator.getValue();
-                            var al4 = a & 15;
-                            if (al4 > 9 || this.flags.ac) a += 6;
-                            var ah4 = (a >> 4) & 15;
-                            if (ah4 > 9 || this.flags.cy) a += 0x60;
-                            var r0 = a & 255;
-                            this.accumulator.setValue(r0);
-                            var rc = (a >> 8) != 0;
-                            this.flags.z = (a == 0);
-                            this.flags.cy = rc;
-                            this.setps(r0);
-                            this.flags.ac = false;
+                            if (this.flags.ac || (a & 0x0f) > 9) add = 0x06;
+                            if (this.flags.cy || (a >> 4) > 9 || ((a >> 4) >= 9 && (a & 0xf) > 9)) {
+                                add |= 0x60;
+                                carry = true;
+                            }
+                            var r = this.add(this.accumulator.getValue(), add);
+                            this.accumulator.setValue(r);
+                            this.setp(r);
+                            this.flags.cy = carry;
                         }
                         else if (g2 == 5)    // CMA
                         {
