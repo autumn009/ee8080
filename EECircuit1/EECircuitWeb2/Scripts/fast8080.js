@@ -350,7 +350,7 @@ var fast8080;
         };
         i8080.prototype.and = function (a, b) {
             var r = a & b;
-            this.setlogicFlags(r, true);
+            this.setlogicFlags(r, ((a | b) & 0x08) != 0);
             return r;
         };
         i8080.prototype.or = function (a, b) {

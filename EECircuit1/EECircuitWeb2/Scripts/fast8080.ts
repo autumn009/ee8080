@@ -297,7 +297,7 @@
 
         private and(a: number, b: number): number {
             var r = a & b;
-            this.setlogicFlags(r, true);
+            this.setlogicFlags(r, ((a | b) & 0x08) != 0);
             return r;
         }
         private or(a: number, b: number): number {
