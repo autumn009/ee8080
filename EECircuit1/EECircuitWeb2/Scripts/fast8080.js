@@ -337,7 +337,8 @@ var fast8080;
             if (!cyUnchange)
                 this.flags.cy = rc;
             this.setps(r0);
-            this.flags.ac = false;
+            var t = (a & 0xf) + ((~b + 1) & 0xf) + ((~(c ? 1 : 0) + 1) & 0xf);
+            this.flags.ac = false; //(t & 0x100) != 0;
             return r0;
         };
         i8080.prototype.setlogicFlags = function (v, ac) {
