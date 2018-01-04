@@ -341,55 +341,22 @@ var fast8080;
         i8080.prototype.sub = function (a, b, cyUnchange, c) {
             if (cyUnchange === void 0) { cyUnchange = false; }
             if (c === void 0) { c = false; }
-            var w16 = a - b - (c ? 1 : 0);
-            var index = ((a & 0x8) >> 1) | ((b & 0x8) >> 2) | ((w16 & 0x8) >> 3);
-            var n = w16 & 0xff;
-            this.flags.z = n == 0;
-            var acx = !this.sub_half_carry_table[index & 0x7];
+            var r = a - b - (c ? 1 : 0);
+            if (!cyUnchange)
+                this.flags.cy = !!(r & 0x0100);
+            r = r & 0xff;
             this.flags.ac = true;
             if (a & 8) {
-                if ((b & 8) && (w16 & 8))
+                if ((b & 8) && (r & 8))
                     this.flags.ac = false;
             }
             else {
-                if (((b & 8) || (w16 & 8)))
+                if (((b & 8) || (r & 8)))
                     this.flags.ac = false;
             }
-            if (acx != this.flags.ac) {
-                var x = 0;
-            }
-            this.setps(n);
-            if (!cyUnchange)
-                this.flags.cy = !!(w16 & 0x0100);
-            return n;
-        };
-        i8080.prototype.addOld = function (a, b, cyUnchange, c) {
-            if (cyUnchange === void 0) { cyUnchange = false; }
-            if (c === void 0) { c = false; }
-            var r = a + b + (c ? 1 : 0);
-            var r0 = r & 255;
-            var rc = (r >> 8) != 0;
-            this.flags.z = (r0 == 0);
-            if (!cyUnchange)
-                this.flags.cy = rc;
-            this.setps(r0);
-            var t = (a & 0xf) + (b & 0xf) + ((c ? 1 : 0) & 0xf);
-            this.flags.ac = (t & 0x10) != 0;
-            return r0;
-        };
-        i8080.prototype.subOld = function (a, b, cyUnchange, c) {
-            if (cyUnchange === void 0) { cyUnchange = false; }
-            if (c === void 0) { c = false; }
-            var r = a - b - (c ? 1 : 0);
-            var r0 = r & 255;
-            var rc = (r >> 8) != 0;
-            this.flags.z = (r0 == 0);
-            if (!cyUnchange)
-                this.flags.cy = rc;
-            this.setps(r0);
-            var t = (a & 0xf) + ((~b + 1) & 0xf) + ((~(c ? 1 : 0) + 1) & 0xf);
-            this.flags.ac = (t & 0x10) != 0;
-            return r0;
+            this.flags.z = r == 0;
+            this.setps(r);
+            return r;
         };
         i8080.prototype.setlogicFlags = function (v, ac) {
             this.flags.z = (v == 0);
