@@ -329,7 +329,7 @@ var fast8080;
             this.flags.ac = this.half_carry_table[index & 0x7] != 0;
             this.setps(a);
             if (!cyUnchange)
-                this.flags.cy = (w16 & 0x0100) != 0;
+                this.flags.cy = !!(w16 & 0x0100);
             return a;
         };
         i8080.prototype.sub = function (a, b, cyUnchange, c) {
@@ -342,7 +342,7 @@ var fast8080;
             this.flags.ac = !this.sub_half_carry_table[index & 0x7];
             this.setps(a);
             if (!cyUnchange)
-                this.flags.cy = (w16 & 0x0100) != 0;
+                this.flags.cy = !!(w16 & 0x0100);
             return a;
         };
         i8080.prototype.addOld = function (a, b, cyUnchange, c) {
