@@ -79,8 +79,7 @@
             this.chip = thischip;
         }
         public result: Register8 = new Register8();
-        public setps(a: number) {
-            this.chip.flags.s = ((a & 0x80) != 0);
+        public setp(a: number) {
             var p = 0;
             var x = a;
             for (var i = 0; i < 8; i++) {
@@ -89,21 +88,29 @@
             }
             this.chip.flags.p = ((p & 1) == 0);
         }
+        private setps(a: number) {
+            this.chip.flags.s = ((a & 0x80) != 0);
+            this.setp(a);
+        }
 
         public cmp() {
             this.sub();
         }
-        private addbase(a: number, b: number, cyUnchange: boolean = false, cyOnlyChange = false, c: boolean = false) {
+        public addbase(a: number, b: number, cyUnchange: boolean = false, cyOnlyChange = false, c: boolean = false) {
             var r = a + b + (c ? 1 : 0);
-            var r0 = r & 255;
-            var rc = (r >> 8) != 0;
-            if (!cyUnchange) this.chip.flags.cy = rc;
+            if (!cyUnchange) this.chip.flags.cy = !!(r & 0x0100);
+            r = r & 0xff;
             if (!cyOnlyChange) {
-                this.chip.flags.z = (r0 == 0);
-                this.setps(r0);
-                this.chip.flags.ac = ((a & 0x8) & (b & 0x8)) != 0;
+                this.chip.flags.z = r == 0;
+                this.chip.flags.ac = false;
+                if (a & 8) {
+                    if (((b & 8) || !(r & 8))) this.chip.flags.ac = true;
+                } else {
+                    if ((b & 8) && !(r & 8)) this.chip.flags.ac = true;
+                }
+                this.setps(r);
             }
-            return r0;
+            return r;
         }
         private addraw(cyUnchange: boolean = false, cyOnlyChange = false, c: boolean = false) {
             var a = this.chip.accumulatorLatch.getValue();
@@ -129,13 +136,17 @@
         }
         private subbase(a: number, b: number, cyUnchange: boolean = false, c: boolean = false) {
             var r = a - b - (c ? 1 : 0);
-            var r0 = r & 255;
-            var rc = (r >> 8) != 0;
-            this.chip.flags.z = (r0 == 0);
-            if (!cyUnchange) this.chip.flags.cy = rc;
-            this.setps(r0);
-            this.chip.flags.ac = false;
-            return r0;
+            if (!cyUnchange) this.chip.flags.cy = !!(r & 0x0100);
+            r = r & 0xff;
+            this.chip.flags.ac = true;
+            if (a & 8) {
+                if ((b & 8) && (r & 8)) this.chip.flags.ac = false;
+            } else {
+                if (((b & 8) || (r & 8))) this.chip.flags.ac = false;
+            }
+            this.chip.flags.z = r == 0;
+            this.setps(r);
+            return r;
         }
         private subraw(cyUnchange: boolean = false, c: boolean = false) {
             var a = this.chip.accumulatorLatch.getValue();
@@ -159,7 +170,7 @@
             var a = this.chip.accumulatorLatch.getValue();
             var b = this.chip.tempReg.getValue();
             var r = a & b;
-            this.setlogicFlags(r, true);
+            this.setlogicFlags(r, ((a | b) & 0x08) != 0);
             this.result.setValue(r);
         }
         public or() {
@@ -237,18 +248,18 @@
             this.chip = thischip;
         }
         public adjust() {
+            var carry = this.chip.flags.cy;
+            var add = 0;
             var a = this.chip.accumulator.getValue();
-            var al4 = a & 15;
-            if (al4 > 9 || this.chip.flags.ac) a += 6;
-            var ah4 = (a >> 4) & 15;
-            if (ah4 > 9 || this.chip.flags.cy) a += 0x60;
-            var r0 = a & 255;
-            this.chip.accumulator.setValue(r0);
-            var rc = (a >> 8) != 0;
-            this.chip.flags.z = (a == 0);
-            this.chip.flags.cy = rc;
-            this.chip.alu.setps(r0);
-            this.chip.flags.ac = false;
+            if (this.chip.flags.ac || (a & 0x0f) > 9) add = 0x06;
+            if (this.chip.flags.cy || (a >> 4) > 9 || ((a >> 4) >= 9 && (a & 0xf) > 9)) {
+                add |= 0x60;
+                carry = true;
+            }
+            var r = this.chip.alu.addbase(this.chip.accumulator.getValue(), add);
+            this.chip.accumulator.setValue(r);
+            this.chip.alu.setp(r);
+            this.chip.flags.cy = carry;
         }
     }
     class InstructionRegister extends Register8 { }
