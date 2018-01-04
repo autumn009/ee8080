@@ -173,7 +173,6 @@ var fast8080;
             this.tempReg = new TempReg();
             this.regarray = new RegisterArray();
             this.flags = new FlagFlipFlop();
-            this.half_carry_table = [0, 0, 1, 0, 1, 0, 1, 1];
             this.sub_half_carry_table = [0, 1, 1, 1, 0, 0, 0, 1];
             this.lastval = 65536;
         }
@@ -322,28 +321,22 @@ var fast8080;
         i8080.prototype.add = function (a, b, cyUnchange, c) {
             if (cyUnchange === void 0) { cyUnchange = false; }
             if (c === void 0) { c = false; }
-            var w16 = a + b + (c ? 1 : 0);
-            var index = ((a & 0x8) >> 1) | ((b & 0x8) >> 2) | ((w16 & 0x8) >> 3);
-            var n = w16 & 0xff;
-            this.flags.z = n == 0;
-            //this.flags.ac = this.half_carry_table[index & 0x7] != 0;
-            var acx = this.half_carry_table[index & 0x7] != 0;
+            var r = a + b + (c ? 1 : 0);
+            if (!cyUnchange)
+                this.flags.cy = !!(r & 0x0100);
+            r = r & 0xff;
+            this.flags.z = r == 0;
             this.flags.ac = false;
             if (a & 8) {
-                if (((b & 8) || !(w16 & 8)))
+                if (((b & 8) || !(r & 8)))
                     this.flags.ac = true;
             }
             else {
-                if ((b & 8) && !(w16 & 8))
+                if ((b & 8) && !(r & 8))
                     this.flags.ac = true;
             }
-            if (acx != this.flags.ac) {
-                var x = 0;
-            }
-            this.setps(n);
-            if (!cyUnchange)
-                this.flags.cy = !!(w16 & 0x0100);
-            return n;
+            this.setps(r);
+            return r;
         };
         i8080.prototype.sub = function (a, b, cyUnchange, c) {
             if (cyUnchange === void 0) { cyUnchange = false; }

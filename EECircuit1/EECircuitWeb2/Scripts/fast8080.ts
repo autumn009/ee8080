@@ -268,28 +268,21 @@
             this.sub(a, b);
         }
 
-        private half_carry_table = [0, 0, 1, 0, 1, 0, 1, 1];
         private sub_half_carry_table = [0, 1, 1, 1, 0, 0, 0, 1];
 
         private add(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
-            var w16 = a + b + (c ? 1 : 0);
-            var index = ((a & 0x8) >> 1) | ((b & 0x8) >> 2) | ((w16 & 0x8) >> 3);
-            var n = w16 & 0xff;
-            this.flags.z = n == 0;
-            //this.flags.ac = this.half_carry_table[index & 0x7] != 0;
-            var acx = this.half_carry_table[index & 0x7] != 0;
+            var r = a + b + (c ? 1 : 0);
+            if (!cyUnchange) this.flags.cy = !!(r & 0x0100);
+            r = r & 0xff;
+            this.flags.z = r == 0;
             this.flags.ac = false;
             if (a & 8) {
-                if (((b & 8) || !(w16 & 8))) this.flags.ac = true;
+                if (((b & 8) || !(r & 8))) this.flags.ac = true;
             } else {
-                if ((b & 8) && !(w16 & 8)) this.flags.ac = true;
+                if ((b & 8) && !(r & 8)) this.flags.ac = true;
             }
-            if (acx != this.flags.ac) {
-                var x = 0;
-            }
-            this.setps(n);
-            if (!cyUnchange) this.flags.cy = !!(w16 & 0x0100);
-            return n;
+            this.setps(r);
+            return r;
         }
         private sub(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
             var w16 = a - b - (c ? 1 : 0);
