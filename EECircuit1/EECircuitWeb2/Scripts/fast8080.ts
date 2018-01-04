@@ -291,23 +291,21 @@
 
         private add(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
             var w16 = a + b + (c ? 1 : 0);
-            var index = ((a & 0x88) >> 1) | ((b & 0x88) >> 2) | ((w16 & 0x88) >> 3);
+            var index = ((a & 0x8) >> 1) | ((b & 0x8) >> 2) | ((w16 & 0x8) >> 3);
             a = w16 & 0xff;
-            this.flags.s = (a & 0x80) != 0;
             this.flags.z = (a == 0);
             this.flags.ac = this.half_carry_table[index & 0x7] != 0;
-            this.flags.p = this.parity_table[a] != 0;
+            this.setps(a);
             if (!cyUnchange) this.flags.cy = (w16 & 0x0100) != 0;
             return a;
         }
         private sub(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
             var w16 = (a - b - (c ? 1 : 0)) & 0xffff;
-            var index = ((a & 0x88) >> 1) | ((b & 0x88) >> 2) | ((w16 & 0x88) >> 3);
+            var index = ((a & 0x8) >> 1) | ((b & 0x8) >> 2) | ((w16 & 0x8) >> 3);
             a = w16 & 0xff;
-            this.flags.s = (a & 0x80) != 0;
             this.flags.z = (a == 0);
             this.flags.ac = !this.sub_half_carry_table[index & 0x7];
-            this.flags.p = this.parity_table[a] != 0;
+            this.setps(a);
             if (!cyUnchange) this.flags.cy = (w16 & 0x0100) != 0;
             return a;
         }
