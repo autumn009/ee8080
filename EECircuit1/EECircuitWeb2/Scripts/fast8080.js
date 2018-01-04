@@ -173,6 +173,26 @@ var fast8080;
             this.tempReg = new TempReg();
             this.regarray = new RegisterArray();
             this.flags = new FlagFlipFlop();
+            this.half_carry_table = [0, 0, 1, 0, 1, 0, 1, 1];
+            this.sub_half_carry_table = [0, 1, 1, 1, 0, 0, 0, 1];
+            this.parity_table = [
+                1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+                0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+                0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+                1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+                0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+                1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+                1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+                0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+                0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+                1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+                1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+                0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+                1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+                0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+                0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+                1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+            ];
             this.lastval = 65536;
         }
         i8080.prototype.update = function () {
@@ -320,6 +340,34 @@ var fast8080;
         i8080.prototype.add = function (a, b, cyUnchange, c) {
             if (cyUnchange === void 0) { cyUnchange = false; }
             if (c === void 0) { c = false; }
+            var w16 = a + b + (c ? 1 : 0);
+            var index = ((a & 0x88) >> 1) | ((b & 0x88) >> 2) | ((w16 & 0x88) >> 3);
+            a = w16 & 0xff;
+            this.flags.s = (a & 0x80) != 0;
+            this.flags.z = (a == 0);
+            this.flags.ac = this.half_carry_table[index & 0x7] != 0;
+            this.flags.p = this.parity_table[a] != 0;
+            if (!cyUnchange)
+                this.flags.cy = (w16 & 0x0100) != 0;
+            return a;
+        };
+        i8080.prototype.sub = function (a, b, cyUnchange, c) {
+            if (cyUnchange === void 0) { cyUnchange = false; }
+            if (c === void 0) { c = false; }
+            var w16 = (a - b - (c ? 1 : 0)) & 0xffff;
+            var index = ((a & 0x88) >> 1) | ((b & 0x88) >> 2) | ((w16 & 0x88) >> 3);
+            a = w16 & 0xff;
+            this.flags.s = (a & 0x80) != 0;
+            this.flags.z = (a == 0);
+            this.flags.ac = !this.sub_half_carry_table[index & 0x7];
+            this.flags.p = this.parity_table[a] != 0;
+            if (!cyUnchange)
+                this.flags.cy = (w16 & 0x0100) != 0;
+            return a;
+        };
+        i8080.prototype.addOld = function (a, b, cyUnchange, c) {
+            if (cyUnchange === void 0) { cyUnchange = false; }
+            if (c === void 0) { c = false; }
             var r = a + b + (c ? 1 : 0);
             var r0 = r & 255;
             var rc = (r >> 8) != 0;
@@ -331,7 +379,7 @@ var fast8080;
             this.flags.ac = (t & 0x10) != 0;
             return r0;
         };
-        i8080.prototype.sub = function (a, b, cyUnchange, c) {
+        i8080.prototype.subOld = function (a, b, cyUnchange, c) {
             if (cyUnchange === void 0) { cyUnchange = false; }
             if (c === void 0) { c = false; }
             var r = a - b - (c ? 1 : 0);

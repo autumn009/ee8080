@@ -268,7 +268,51 @@
             this.sub(a, b);
         }
 
+        private half_carry_table = [0, 0, 1, 0, 1, 0, 1, 1];
+        private sub_half_carry_table = [0, 1, 1, 1, 0, 0, 0, 1];
+        private parity_table = [
+            1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+            0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+            0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+            1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+            0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+            1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+            1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+            0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+            0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+            1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+            1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+            0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+            1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+            0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+            0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+            1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+        ];
+
         private add(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
+            var w16 = a + b + (c ? 1 : 0);
+            var index = ((a & 0x88) >> 1) | ((b & 0x88) >> 2) | ((w16 & 0x88) >> 3);
+            a = w16 & 0xff;
+            this.flags.s = (a & 0x80) != 0;
+            this.flags.z = (a == 0);
+            this.flags.ac = this.half_carry_table[index & 0x7] != 0;
+            this.flags.p = this.parity_table[a] != 0;
+            if (!cyUnchange) this.flags.cy = (w16 & 0x0100) != 0;
+            return a;
+        }
+        private sub(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
+            var w16 = (a - b - (c ? 1 : 0)) & 0xffff;
+            var index = ((a & 0x88) >> 1) | ((b & 0x88) >> 2) | ((w16 & 0x88) >> 3);
+            a = w16 & 0xff;
+            this.flags.s = (a & 0x80) != 0;
+            this.flags.z = (a == 0);
+            this.flags.ac = !this.sub_half_carry_table[index & 0x7];
+            this.flags.p = this.parity_table[a] != 0;
+            if (!cyUnchange) this.flags.cy = (w16 & 0x0100) != 0;
+            return a;
+        }
+
+        private addOld(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
             var r = a + b + (c ? 1 : 0);
             var r0 = r & 255;
             var rc = (r >> 8) != 0;
@@ -279,7 +323,7 @@
             this.flags.ac = (t & 0x10) != 0;
             return r0;
         }
-        private sub(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
+        private subOld(a: number, b: number, cyUnchange: boolean = false, c: boolean = false): number {
             var r = a - b - (c ? 1 : 0);
             var r0 = r & 255;
             var rc = (r >> 8) != 0;
