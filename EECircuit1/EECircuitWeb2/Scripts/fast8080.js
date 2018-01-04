@@ -325,7 +325,7 @@ var fast8080;
             var w16 = a + b + (c ? 1 : 0);
             var index = ((a & 0x8) >> 1) | ((b & 0x8) >> 2) | ((w16 & 0x8) >> 3);
             a = w16 & 0xff;
-            this.flags.z = (a == 0);
+            this.flags.z = a == 0;
             this.flags.ac = this.half_carry_table[index & 0x7] != 0;
             this.setps(a);
             if (!cyUnchange)
@@ -335,10 +335,10 @@ var fast8080;
         i8080.prototype.sub = function (a, b, cyUnchange, c) {
             if (cyUnchange === void 0) { cyUnchange = false; }
             if (c === void 0) { c = false; }
-            var w16 = (a - b - (c ? 1 : 0));
+            var w16 = a - b - (c ? 1 : 0);
             var index = ((a & 0x8) >> 1) | ((b & 0x8) >> 2) | ((w16 & 0x8) >> 3);
             a = w16 & 0xff;
-            this.flags.z = (a == 0);
+            this.flags.z = a == 0;
             this.flags.ac = !this.sub_half_carry_table[index & 0x7];
             this.setps(a);
             if (!cyUnchange)
