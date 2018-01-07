@@ -97,7 +97,6 @@ loop2:
 	jz	0
 	cpi	5BH	;'['
 	jnz	loop2
-	inx	h
 	jmp	main
 
 getnext:
