@@ -462,6 +462,9 @@ var emu;
             for (var i = 0; i < view.length; i++) {
                 emu.virtualMachine.memory.Bytes.write(i + 0x100, view[i]);
             }
+            for (; (i & 255) != 0; i++) {
+                emu.virtualMachine.memory.Bytes.write(i + 0x100, 0x1a);
+            }
             if (autoType) {
                 var pages = Math.floor((view.length + 255) / 256);
                 var filename = f.name;
