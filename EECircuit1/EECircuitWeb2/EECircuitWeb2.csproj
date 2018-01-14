@@ -142,7 +142,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\brainfuck.a80.txt" />
+    <Content Include="Content\minibf.asm.txt" />
     <Content Include="Content\ccdisk1.bin.exe" />
     <Content Include="Content\ccdisk2.bin.exe" />
     <Content Include="Content\CPMDISK.bin.exe" />
@@ -161,12 +161,12 @@
     <Content Include="Content\images\gate\SELECTOR.png" />
     <Content Include="Content\images\gate\TWOCOMP.png" />
     <Content Include="Content\images\gate\XOR.png" />
-    <Content Include="Content\kill.a80.txt" />
-    <Content Include="Content\regist.a80.txt" />
-    <Content Include="Content\selfcopy1.a80.txt" />
+    <Content Include="Content\kill.asm.txt" />
+    <Content Include="Content\reg.asm.txt" />
+    <Content Include="Content\selfcpy1.asm.txt" />
     <Content Include="Content\JRTPascal4.bin.exe" />
     <Content Include="Content\mbasic.bin.exe" />
-    <Content Include="Content\selfcopy2.a80.txt" />
+    <Content Include="Content\selfcpy2.asm.txt" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\stdA.bin.exe" />
     <Content Include="Content\tpas30.bin.exe" />
