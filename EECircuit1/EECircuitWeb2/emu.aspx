@@ -267,6 +267,9 @@
         <label>
             <input type="checkbox" name="auto" checked="checked" id="tpaauto">Auto type of SAVE command
         </label>
+        <label>
+            <input type="checkbox" name="removebom" id="tparemovebom">Remove UTF-8 BOM before Upload
+        </label>
         <input type="file" id="fileUpTPA" name="files[]" multiple />
     </div>
 

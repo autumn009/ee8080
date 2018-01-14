@@ -461,6 +461,7 @@
 
     var files: File[];
     var autoType = false;
+    var removeBom = false;
     function uploadTPASub()
     {
         if (files.length == 0) {
@@ -474,8 +475,12 @@
             var ab: ArrayBuffer = t.result;
             var view = new Uint8ClampedArray(ab);
             //console.log(view[0]);
-            for (var i = 0; i < view.length; i++) {
-                virtualMachine.memory.Bytes.write(i + 0x100, view[i]);
+            var offset = 0;
+            if (removeBom && view[0] == 0xEF && view[1] == 0xBB && view[2] == 0xBF) {
+                offset = 3;
+            }
+            for (var i = 0; i < view.length-offset; i++) {
+                virtualMachine.memory.Bytes.write(i + 0x100, view[i + offset]);
             }
             for (; (i & 255) != 0; i++) {
                 virtualMachine.memory.Bytes.write(i + 0x100, 0x1a);
@@ -503,6 +508,7 @@
             files.push(target.files[i])
         }
         autoType = $("#tpaauto").prop("checked");
+        removeBom = $("#tparemovebom").prop("checked");
         uploadTPASub();
     });
 
