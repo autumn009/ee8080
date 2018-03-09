@@ -94,6 +94,7 @@ for (var i = 0; pair[i]; i++) {
 interface icpu {
     runMain();
     reset();
+    restart();
     update();
     diskread(): number;
     diskwrite(): number;

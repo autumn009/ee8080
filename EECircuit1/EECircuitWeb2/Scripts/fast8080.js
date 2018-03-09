@@ -426,7 +426,7 @@ var fast8080;
             this.halt = true;
             emu.virtualMachine.update();
             this.setStopped();
-            emu.setMonitor();
+            //emu.setMonitor();
             emu.tracebox.dump();
         };
         i8080.prototype.break = function () {
@@ -858,6 +858,14 @@ var fast8080;
             var _this = this;
             this.randomInitialize();
             this.regarray.pc.setValue(0);
+            this.halt = false;
+            this.setRuning();
+            setTimeout(function () {
+                _this.runMain();
+            }, 100);
+        };
+        i8080.prototype.restart = function () {
+            var _this = this;
             this.halt = false;
             this.setRuning();
             setTimeout(function () {

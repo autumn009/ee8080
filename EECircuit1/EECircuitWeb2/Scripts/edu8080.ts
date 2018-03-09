@@ -1035,7 +1035,7 @@
             this.halt = true;
             emu.virtualMachine.update();
             this.setStopped();
-            emu.setMonitor();
+            //emu.setMonitor();
             emu.tracebox.dump();
         }
 
@@ -1059,7 +1059,13 @@
                 this.runMain();
             }, 100);
         }
-
+        public restart() {
+            this.halt = false;
+            this.setRuning();
+            setTimeout(() => {
+                this.runMain();
+            }, 100);
+        }
         public diskread() {
             var hl = this.regarray.getRegisterPairValue(2);
             var r = disk.read(this.regarray.b.getValue(),

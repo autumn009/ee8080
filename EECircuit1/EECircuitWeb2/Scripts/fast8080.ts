@@ -373,7 +373,7 @@
             this.halt = true;
             emu.virtualMachine.update();
             this.setStopped();
-            emu.setMonitor();
+            //emu.setMonitor();
             emu.tracebox.dump();
         }
         private break() {
@@ -860,6 +860,13 @@
 
             this.randomInitialize();
             this.regarray.pc.setValue(0);
+            this.halt = false;
+            this.setRuning();
+            setTimeout(() => {
+                this.runMain();
+            }, 100);
+        }
+        public restart() {
             this.halt = false;
             this.setRuning();
             setTimeout(() => {
