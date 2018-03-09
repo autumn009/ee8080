@@ -129,6 +129,32 @@ var emu;
             }
             $("#outPortFF").text(createBitsString(ar));
         };
+        IOUnit.prototype.requestToHostOpen = function () {
+            this.toHostMemoryArray = [];
+        };
+        IOUnit.prototype.requestToHostBuffer = function () {
+            var array = new Uint8Array(128);
+            for (var i = 0; i < 128; i++)
+                array[i] = emu.virtualMachine.memory.Bytes.read(i + 0x80);
+            this.toHostMemoryArray.push(array);
+        };
+        IOUnit.prototype.requestToHostClose = function () {
+            var filename = "";
+            for (var i = 0; i < 8; i++) {
+                var c = emu.virtualMachine.memory.Bytes.read(i + 0x5c + 1) & 0x7f;
+                if (c >= 0x33)
+                    filename = filename + String.fromCharCode(c);
+            }
+            filename = filename + ".";
+            for (var i = 0; i < 3; i++) {
+                var c = emu.virtualMachine.memory.Bytes.read(i + 0x5c + 9) & 0x7f;
+                if (c >= 0x33)
+                    filename = filename + String.fromCharCode(c);
+            }
+            var blob = new Blob(this.toHostMemoryArray);
+            download(blob, $("#popupDownFD0")[0], filename);
+            this.toHostMemoryArray = [];
+        };
         IOUnit.prototype.in = function (addr) {
             if (addr == 0xf0) {
                 //console.log("f0:"+(inputChars.length + autoTypeQueue.length));
@@ -223,6 +249,12 @@ var emu;
                     outputCharCount++;
                 this.rdrImage = null;
             }
+            if (addr == 0xf8)
+                this.requestToHostOpen();
+            if (addr == 0xf9)
+                this.requestToHostBuffer();
+            if (addr == 0xfa)
+                this.requestToHostClose();
             if (addr == 0xff)
                 this.putBitsPortFF(v);
         };
@@ -495,9 +527,7 @@ var emu;
         removeBom = $("#tparemovebom").prop("checked");
         uploadTPASub();
     });
-    function downloadDrive(drive, target) {
-        var blob = disk.getDriveAsBlob(drive);
-        var filename = "drive" + String.fromCharCode(drive + 0x41) + ".bin";
+    function download(blob, target, filename) {
         if (window.navigator.msSaveBlob) {
             window.navigator.msSaveBlob(blob, filename);
         }
@@ -506,6 +536,11 @@ var emu;
             $(target).attr("href", url);
             $(target).attr("download", filename);
         }
+    }
+    function downloadDrive(drive, target) {
+        var blob = disk.getDriveAsBlob(drive);
+        var filename = "drive" + String.fromCharCode(drive + 0x41) + ".bin";
+        download(blob, target, filename);
     }
     $("#popupDownFD0").click(function (evt) {
         downloadDrive(0, evt.target);
