@@ -73,7 +73,7 @@
             </asp:ContentPlaceHolder>
             <div data-role="footer" data-position="fixed" data-fullscreen="true" id="myhooter">
                 <footer>
-                    <p>&copy; 2017 EE8080 [<a href="/" >Home</a>][解説はこちら <a href="http://gihyo.jp/book/2018/978-4-7741-9499-8">アタマとカラダで理解する！コンピュータプログラムはどのように動くのか？</a>]</p>
+                    <p>&copy; 2017,2018 EE8080 [<a href="/" >Home</a>][解説はこちら <a href="http://gihyo.jp/book/2018/978-4-7741-9499-8">アタマとカラダで理解する！コンピュータプログラムはどのように動くのか？</a>]</p>
                 </footer>
             </div>
         </div>
