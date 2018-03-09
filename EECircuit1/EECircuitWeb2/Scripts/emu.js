@@ -155,6 +155,27 @@ var emu;
             download(blob, $("#popupDownFD0")[0], filename);
             this.toHostMemoryArray = [];
         };
+        IOUnit.prototype.requestToKickEditor = function () {
+            $("#popupUpEditorTextArea").text("EDIT TEXT HERE");
+            $("#popupUpEditor").popup("open");
+        };
+        IOUnit.prototype.requestToHostCreate = function () {
+            // TBW
+        };
+        IOUnit.prototype.requestToHostBufferWrite = function () {
+            // TBW
+        };
+        IOUnit.prototype.requestToHostCloseWrite = function () {
+            // TBW
+        };
+        IOUnit.prototype.needToSave = function () {
+            // TBW
+            return 0; // not need to save
+        };
+        IOUnit.prototype.hasMoreRecord = function () {
+            // TBW
+            return 0; // has no more records
+        };
         IOUnit.prototype.in = function (addr) {
             if (addr == 0xf0) {
                 //console.log("f0:"+(inputChars.length + autoTypeQueue.length));
@@ -210,6 +231,10 @@ var emu;
                     rc = 0x1a;
                 return rc;
             }
+            if (addr == 0xf8)
+                return this.needToSave();
+            if (addr == 0xf9)
+                return this.hasMoreRecord();
             if (addr == 0xff)
                 return this.getBitsPortFF();
             return 0;
@@ -255,6 +280,14 @@ var emu;
                 this.requestToHostBuffer();
             if (addr == 0xfa)
                 this.requestToHostClose();
+            if (addr == 0xfb)
+                this.requestToKickEditor();
+            if (addr == 0xfc)
+                this.requestToHostCreate();
+            if (addr == 0xfd)
+                this.requestToHostBufferWrite();
+            if (addr == 0xfe)
+                this.requestToHostCloseWrite();
             if (addr == 0xff)
                 this.putBitsPortFF(v);
         };

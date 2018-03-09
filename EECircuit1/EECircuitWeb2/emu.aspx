@@ -293,6 +293,11 @@
         <p style="color:lightskyblue;font-size:larger;">Completed.</p>
     </div>
 
+    <div id="popupUpEditor" data-role="popup" data-theme="a">
+        <a class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" href="#" data-rel="back">Close</a>
+        <textarea id="popupUpEditorTextArea"></textarea>
+    </div>
+
     <div id="souceCodes" data-role="popup" data-theme="a">
         <a class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" href="#" data-rel="back">Close</a>
         <ul data-role="listview">

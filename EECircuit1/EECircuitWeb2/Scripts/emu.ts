@@ -149,7 +149,30 @@
             this.toHostMemoryArray = [];
         }
 
+        private requestToKickEditor() {
+            $("#popupUpEditorTextArea").text("EDIT TEXT HERE");
+            $("#popupUpEditor").popup("open");
+        }
+        private requestToHostCreate() {
+            // TBW
+        }
+        private requestToHostBufferWrite() {
+            // TBW
+        }
+        private requestToHostCloseWrite() {
+            // TBW
+        }
+
         private rdrImage: string = null;
+
+        private needToSave(): number {
+            // TBW
+            return 0; // not need to save
+        }
+        private hasMoreRecord(): number {
+            // TBW
+            return 0; // has no more records
+        }
 
         public in(addr: number): number {
             if (addr == 0xf0) {
@@ -204,6 +227,8 @@
                 if (!rc) rc = 0x1a;
                 return rc;
             }
+            if (addr == 0xf8) return this.needToSave();
+            if (addr == 0xf9) return this.hasMoreRecord();
             if (addr == 0xff) return this.getBitsPortFF();
             return 0;
         }
@@ -245,6 +270,10 @@
             if (addr == 0xf8) this.requestToHostOpen();
             if (addr == 0xf9) this.requestToHostBuffer();
             if (addr == 0xfa) this.requestToHostClose();
+            if (addr == 0xfb) this.requestToKickEditor();
+            if (addr == 0xfc) this.requestToHostCreate();
+            if (addr == 0xfd) this.requestToHostBufferWrite();
+            if (addr == 0xfe) this.requestToHostCloseWrite();
             if (addr == 0xff) this.putBitsPortFF(v);
         }
     }
