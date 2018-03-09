@@ -1,6 +1,6 @@
-﻿; WE.EXE
-; Sending a file to host environment in EE8080
-; usage TOHOST filename_to_transfer
+﻿; WE.COM
+; Web Bases Text Editor in EE8080
+; usage WE filename
         ORG     100H
 BDOS    EQU     0005H   ;DOS ENTRY POINT
 CONS    EQU     1       ;READ CONSOLE
@@ -27,9 +27,17 @@ FCBCR   EQU     FCB+32  ;CURRENT (NEXT) RECORD NUMBER (0 TO 127)
 FCBLN   EQU     FCB+33  ;FCB LENGTH
 
 ; OUTPUT PORTS FOR EE8080
+; READ REQUESTS
 RQOPEN  EQU     0F8H
 RQBUF   EQU     0F9H
 RQCLOS  EQU     0FAH
+; EDIT REQUESTS
+
+; WRITE REQUESTS
+WRQOPEN EQU     0FBH
+WRQBUF  EQU     0FCH
+WRQCLS  EQU     0FDH
+
 
 ;       SET UP STACK
         LXI     H,0
