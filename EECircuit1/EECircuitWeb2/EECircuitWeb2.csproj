@@ -171,6 +171,7 @@
     <Content Include="Content\stdA.bin.exe" />
     <Content Include="Content\tohost.asm.txt" />
     <Content Include="Content\tpas30.bin.exe" />
+    <Content Include="Content\we.asm.txt" />
     <Content Include="Content\wrdmastr.bin.exe" />
     <Content Include="Content\zsid.bin.exe" />
     <Content Include="counter.aspx" />

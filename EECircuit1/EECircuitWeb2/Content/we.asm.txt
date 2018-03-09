@@ -1,4 +1,4 @@
-﻿; TOHOST.COM
+﻿; WE.EXE
 ; Sending a file to host environment in EE8080
 ; usage TOHOST filename_to_transfer
         ORG     100H
