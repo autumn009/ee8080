@@ -193,7 +193,9 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\CPM.bin.exe" />
     <Content Include="Connected Services\Application Insights\ConnectedService.json" />
+    <None Include="Properties\PublishProfiles\EE8080 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\EE8080 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\EE8080 - Web Deploy1.pubxml" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="logic.aspx" />
     <Content Include="Scripts\bootstrap.js" />
