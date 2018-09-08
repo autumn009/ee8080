@@ -1,7 +1,10 @@
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -422,7 +425,8 @@ var edu8080;
                     else
                         this.chip.notImplemented(machinCode1);
                 }
-                else if (g3 == 1) {
+                else if (g3 == 1) // LXI or DAD
+                 {
                     if ((g2 & 1) == 0)
                         this.operationCode = OperationCode.LXI;
                     else
@@ -613,7 +617,7 @@ var edu8080;
                     return this.getRegisterPairValue(this.chip.registerSelect16);
                 case RegisterSelect16.pc:
                     return this.pc.getValue();
-                default:// IncrementerDecrementerAddressLatch
+                default: // IncrementerDecrementerAddressLatch
                     return this.incrementerDecrementerAddressLatch.getValue();
             }
         };
@@ -628,7 +632,7 @@ var edu8080;
                 case RegisterSelect16.pc:
                     this.pc.setValue(v);
                     break;
-                default:// IncrementerDecrementerAddressLatch
+                default: // IncrementerDecrementerAddressLatch
                     this.incrementerDecrementerAddressLatch.setValue(v);
                     break;
             }
@@ -893,7 +897,7 @@ var edu8080;
                         break;
                     case OperationCode.Rxx:
                         if (this.chip.instructonDecoder.g3 == 1 // in case of RET
-                            || this.chip.condCommon(this.chip.instructonDecoder.g2)) {
+                            || this.chip.condCommon(this.chip.instructonDecoder.g2)) { // in case of Rxx
                             this.chip.popToWZ();
                             this.chip.registerSelect16 = RegisterSelect16.wz;
                             var hl = this.chip.regarray.getSelectedRegisterPairValue();
@@ -989,7 +993,7 @@ var edu8080;
                     case OperationCode.Jxx:
                         this.chip.timingAndControl.fetchNextWordToWZ();
                         if (this.chip.instructonDecoder.g3 == 3 // in case of JMP
-                            || this.chip.condCommon(this.chip.instructonDecoder.g2)) {
+                            || this.chip.condCommon(this.chip.instructonDecoder.g2)) { // in case of Jxx
                             this.chip.registerSelect16 = RegisterSelect16.wz;
                             this.chip.regarray.transferSelectedRefgister16toPC();
                         }
@@ -1028,7 +1032,7 @@ var edu8080;
                     case OperationCode.Cxx:
                         this.chip.timingAndControl.fetchNextWordToWZ();
                         if (this.chip.instructonDecoder.g3 != 4 // in case of CALL
-                            || this.chip.condCommon(this.chip.instructonDecoder.g2)) {
+                            || this.chip.condCommon(this.chip.instructonDecoder.g2)) { // in case of Cxx
                             this.chip.pushCommon(this.chip.regarray.pc.getValue());
                             this.chip.registerSelect16 = RegisterSelect16.wz;
                             this.chip.regarray.transferSelectedRefgister16toPC();
@@ -1134,7 +1138,7 @@ var edu8080;
         };
         i8080.prototype.setRegister = function (n, v) {
             var r = this.selectRegister(n);
-            if (r == null) {
+            if (r == null) { // it's M register
                 this.registerSelect16 = RegisterSelect16.hl;
                 this.regarray.transferSelectedRefgister16toAddressLatch();
                 this.dataBusBufferLatch.setValue(v);
@@ -1145,7 +1149,7 @@ var edu8080;
         };
         i8080.prototype.getRegister = function (n) {
             var r = this.selectRegister(n);
-            if (r == null) {
+            if (r == null) { // it's M register
                 this.registerSelect16 = RegisterSelect16.hl;
                 this.regarray.transferSelectedRefgister16toAddressLatch();
                 this.memoryRead();
@@ -1190,21 +1194,21 @@ var edu8080;
         };
         i8080.prototype.condCommon = function (g2) {
             switch (g2) {
-                case 0:// NZ
+                case 0: // NZ
                     return !this.flags.z;
-                case 1:// Z
+                case 1: // Z
                     return this.flags.z;
-                case 2:// NC
+                case 2: // NC
                     return !this.flags.cy;
-                case 3:// C
+                case 3: // C
                     return this.flags.cy;
-                case 4:// PO
+                case 4: // PO
                     return !this.flags.p;
-                case 5:// PE
+                case 5: // PE
                     return this.flags.p;
-                case 6:// P
+                case 6: // P
                     return !this.flags.s;
-                case 7:// M
+                case 7: // M
                     return this.flags.s;
             }
         };

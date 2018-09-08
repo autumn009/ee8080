@@ -38,7 +38,7 @@ var vdt;
                 escapeMode = escapeModes.waitingRow;
                 return;
             }
-            else if (charCode == 0x2a) {
+            else if (charCode == 0x2a) { // *, requested by WordMaster document
                 clearScreen();
             }
             else {
@@ -55,54 +55,61 @@ var vdt;
             locate(col, row);
             escapeMode = escapeModes.notMode;
         }
-        else {
-            if (charCode == 0) {
+        else { // escapeModes.notMode
+            if (charCode == 0) // Nul
+             {
                 // do nothing
                 return;
             }
-            else if (charCode == 0x07) {
+            else if (charCode == 0x07) { // BEL
                 var snd = new Audio("data:audio/wav;base64,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qJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=");
                 snd.play();
                 return;
             }
-            else if (charCode == 0x08) {
+            else if (charCode == 0x08) { // BS
                 cursorBack();
                 return;
             }
-            else if (charCode == 0x0a) {
+            else if (charCode == 0x0a) { // LF
                 lf();
                 return;
             }
-            else if (charCode == 0x0b) {
+            else if (charCode == 0x0b) { // VT
                 cursorUp();
                 return;
             }
-            else if (charCode == 0x0c) {
+            else if (charCode == 0x0c) { // FF
                 cursorNext();
                 return;
             }
-            else if (charCode == 0x0d) {
+            else if (charCode == 0x0d) // CR
+             {
                 cursorX = 0;
                 setCursorClass();
                 return;
             }
-            else if (charCode == 0x1a) {
+            else if (charCode == 0x1a) // SUB (Clear Screen)
+             {
                 clearScreen();
                 return;
             }
-            else if (charCode == 0x1b) {
+            else if (charCode == 0x1b) // ESC
+             {
                 escapeMode = escapeModes.waiting2ndChar;
                 return;
             }
-            else if (charCode == 0x1e) {
+            else if (charCode == 0x1e) // RS (Home)
+             {
                 homeScreen();
                 return;
             }
-            else if (charCode == 0x7f) {
+            else if (charCode == 0x7f) // RUB (del)
+             {
                 // do nothing
                 return;
             }
-            else if (charCode < 0x20) {
+            else if (charCode < 0x20) // other control codes
+             {
                 outputChar("^".charCodeAt(0));
                 outputChar(charCode + 0x40);
                 return;
@@ -216,68 +223,84 @@ var vdt;
         if ($("#con").css("display") == "none")
             return true;
         var code = 0;
-        if (evt.keyCode == 16) {
+        if (evt.keyCode == 16) // Shift
+         {
             setKeyboardShiftState(true, ctrlState);
         }
-        else if (evt.keyCode == 17) {
+        else if (evt.keyCode == 17) // Ctrl
+         {
             setKeyboardShiftState(shiftState, true);
         }
-        else if (evt.keyCode == 8) {
+        else if (evt.keyCode == 8) // BS
+         {
             commonInputRowCode(8);
             //commonInputRowCode(0x7f);   // BS as RUB
             return false;
         }
-        else if (evt.keyCode == 9) {
+        else if (evt.keyCode == 9) // TAB
+         {
             commonInputRowCode(9);
             return false;
         }
-        else if (evt.keyCode == 37) {
+        else if (evt.keyCode == 37) // ←
+         {
             commonInputRowCode("S".charCodeAt(0) - 0x40);
             return false;
         }
-        else if (evt.keyCode == 38) {
+        else if (evt.keyCode == 38) // ↑
+         {
             commonInputRowCode("E".charCodeAt(0) - 0x40);
             return false;
         }
-        else if (evt.keyCode == 39) {
+        else if (evt.keyCode == 39) // →
+         {
             commonInputRowCode("D".charCodeAt(0) - 0x40);
             return false;
         }
-        else if (evt.keyCode == 40) {
+        else if (evt.keyCode == 40) // ↓
+         {
             commonInputRowCode("X".charCodeAt(0) - 0x40);
             return false;
         }
-        else if (evt.keyCode == 33) {
+        else if (evt.keyCode == 33) // PageUp
+         {
             commonInputRowCode("R".charCodeAt(0) - 0x40);
             return false;
         }
-        else if (evt.keyCode == 34) {
+        else if (evt.keyCode == 34) // PageDown
+         {
             commonInputRowCode("C".charCodeAt(0) - 0x40);
             return false;
         }
-        else if (evt.keyCode == 45) {
+        else if (evt.keyCode == 45) // Insert
+         {
             commonInputRowCode("O".charCodeAt(0) - 0x40);
             return false;
         }
-        else if (evt.keyCode == 46) {
+        else if (evt.keyCode == 46) // Delete
+         {
             //commonInputRowCode(0x7f);
             commonInputRowCode("G".charCodeAt(0) - 0x40); // Delete as Ctrl-G
             return false;
         }
-        else if (evt.keyCode == 36 && evt.ctrlKey) {
+        else if (evt.keyCode == 36 && evt.ctrlKey) // Ctrl+Home
+         {
             commonInputRowCode(0x1e);
             return false;
         }
-        else if (evt.keyCode == 35 && evt.ctrlKey) {
+        else if (evt.keyCode == 35 && evt.ctrlKey) // Ctrl+End
+         {
             commonInputRowCode(0x1e);
             commonInputRowCode(0x1e);
             return false;
         }
-        else if (evt.keyCode == 36 && !evt.ctrlKey) {
+        else if (evt.keyCode == 36 && !evt.ctrlKey) // Home
+         {
             commonInputRowCode("B".charCodeAt(0) - 0x40);
             return false;
         }
-        else if (evt.keyCode == 35 && !evt.ctrlKey) {
+        else if (evt.keyCode == 35 && !evt.ctrlKey) // End
+         {
             commonInputRowCode("B".charCodeAt(0) - 0x40);
             commonInputRowCode("B".charCodeAt(0) - 0x40);
             return false;
@@ -292,13 +315,16 @@ var vdt;
         if ($("#con").css("display") == "none")
             return true;
         if (code == null) {
-            if (evt.keyCode == 16) {
+            if (evt.keyCode == 16) // Shift
+             {
                 setKeyboardShiftState(false, ctrlState);
             }
-            else if (evt.keyCode == 17) {
+            else if (evt.keyCode == 17) // Ctrl
+             {
                 setKeyboardShiftState(shiftState, false);
             }
-            else if (evt.keyCode == 8) {
+            else if (evt.keyCode == 8) // BS
+             {
                 return false;
             }
         }

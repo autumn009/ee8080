@@ -394,8 +394,10 @@ var emu;
                 var arrayBuffer;
                 var fileReader = new FileReader();
                 fileReader.onload = function () {
-                    if (afterproc)
-                        afterproc(this.result);
+                    if (afterproc) {
+                        var t = this.result;
+                        afterproc(t);
+                    }
                 };
                 fileReader.onerror = function () { alert("Error"); };
                 fileReader.readAsArrayBuffer(blob);
