@@ -329,7 +329,8 @@
                 var arrayBuffer;
                 var fileReader = new FileReader();
                 fileReader.onload = function () {
-                    if (afterproc) afterproc(this.result);
+                    var r: any = this.result;
+                    if (afterproc) afterproc(r);
                 };
                 fileReader.onerror = () => { alert("Error"); };
                 fileReader.readAsArrayBuffer(blob);

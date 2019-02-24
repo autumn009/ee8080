@@ -21,7 +21,7 @@ var logic;
             var val = output[i];
             if (val == null)
                 continue; // unchanged
-            if (val == Logic.Invert0) {
+            if (val == Logic.Invert0) { // for overline Q
                 var img0 = $("#flag0");
                 if (img0.hasClass("flag-on"))
                     val = Logic.L;
