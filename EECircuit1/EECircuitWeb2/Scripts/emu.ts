@@ -133,6 +133,17 @@
             for (var i = 0; i < 128; i++) array[i] = virtualMachine.memory.Bytes.read(i + 0x80);
             this.toHostMemoryArray.push(array);
         }
+        // this was from https://qiita.com/kerupani129/items/99fd7a768538fcd33420
+        // for Firefox, Chrome, Edge
+        private silentDownload(blob: Blob, filename: string) {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = filename;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
         private requestToHostClose() {
             var filename = "";
             for (var i = 0; i < 8; i++) {
@@ -144,8 +155,8 @@
                 var c = virtualMachine.memory.Bytes.read(i + 0x5c + 9) & 0x7f;
                 if (c >= 0x33) filename = filename + String.fromCharCode(c);
             }
-            var blob = new Blob(this.toHostMemoryArray);
-            download(blob, $("#popupDownFD0")[0], filename);
+            var blob = new Blob(this.toHostMemoryArray, { type: 'application/octet-stream' });
+            this.silentDownload(blob, filename);
             this.toHostMemoryArray = [];
         }
 
